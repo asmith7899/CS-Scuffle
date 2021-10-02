@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>CS Scuffle Character Movement</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; background-color: white; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="960" height="640"></canvas>
+
+<script>
+	// initialize canvas
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
+
+	// initial positions and offset
+	var x = window.innerWidth/2;
+	var y = window.innerHeight/2;
+
+	// character image
+	var img = new Image();
+	img.src = 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg';
+	img.width = 70;
+	img.height = 90;
+
+
+	function drawCharacter() {
+		ctx.beginPath();
+		ctx.drawImage(img, x, y, img.width, img.height);
+	    ctx.fill();
+	    ctx.closePath();
+	}
+
+	drawCharacter()
+</script>
+
+</body>
+</html>
