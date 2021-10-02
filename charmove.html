@@ -44,6 +44,45 @@
 	    ctx.closePath();
 	}
 
+	function draw() {
+
+
+  		// move right and adjust if outside window border
+  		if(rightPressed) {
+			if (x+dx  > canvas.width-img.width) {
+				x = canvas.width-img.width -borderBounce;
+			}
+			x += dx;
+  		}
+
+  		// move left and adjust if outside window border
+  		else if (leftPressed){
+  			if(x-dx  < 0){
+  				x = borderBounce;
+  			}
+			x -= dx;
+  		}
+
+  		// move up and adjust if outside window border
+  		else if(upPressed){
+	  		if(y + dy <  0) {
+	  			y = borderBounce;
+	  		}
+			y += dy;
+  		}
+
+  		// move down and adjust if outside window border
+  		else if(downPressed){
+	  		if (y - dy > canvas.height-img.height) { // implement this in game
+			    y = canvas.height- img.height - borderBounce;
+			}
+			y -= dy;
+  		}
+  		// clear the canvas to redraw character image
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    drawCharacter();
+	}
+
 	// code to detect keyboard press
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
@@ -77,7 +116,7 @@
 	    	downPressed = false;
 	    }
 	}
-	drawCharacter()
+	setInterval(draw, 10);
 </script>
 
 </body>
