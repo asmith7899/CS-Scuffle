@@ -45,7 +45,9 @@
 	}
 
 	function draw() {
-
+		// adjust canvas size so that borders of game move with window size
+		ctx.canvas.width  = window.innerWidth;
+  		ctx.canvas.height = window.innerHeight;
 
   		// move right and adjust if outside window border
   		if(rightPressed) {
