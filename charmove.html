@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>CS Scuffle Character Movement</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; background-color: white; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="960" height="640"></canvas>
+
+<script>
+	// initialize canvas
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
+
+	// initial positions and offset
+	var x = window.innerWidth/2;
+	var y = window.innerHeight/2;
+	var dx = 2;
+	var dy = -2;
+	var borderBounce = 20;
+
+	// character image
+	var img = new Image();
+	img.src = 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg';
+	img.width = 70;
+	img.height = 90;
+
+	// booleans for keyboard arrow press
+	var rightPressed = false;
+	var leftPressed = false;
+	var upPressed = false;
+	var downPressed = false;
+
+	// redraw character image in new position
+	function drawCharacter() {
+		ctx.beginPath();
+		ctx.drawImage(img, x, y, img.width, img.height);
+	    ctx.fill();
+	    ctx.closePath();
+	}
+
+	function draw() {
+		// adjust canvas size so that borders of game move with window size
+		ctx.canvas.width  = window.innerWidth;
+  		ctx.canvas.height = window.innerHeight;
+
+  		// move right and adjust if outside window border
+  		if(rightPressed) {
+			if (x+dx  > canvas.width-img.width) {
+				x = canvas.width-img.width -borderBounce;
+			}
+			x += dx;
+  		}
+
+  		// move left and adjust if outside window border
+  		else if (leftPressed){
+  			if(x-dx  < 0){
+  				x = borderBounce;
+  			}
+			x -= dx;
+  		}
+
+  		// move up and adjust if outside window border
+  		else if(upPressed){
+	  		if(y + dy <  0) {
+	  			y = borderBounce;
+	  		}
+			y += dy;
+  		}
+
+  		// move down and adjust if outside window border
+  		else if(downPressed){
+	  		if (y - dy > canvas.height-img.height) { // implement this in game
+			    y = canvas.height- img.height - borderBounce;
+			}
+			y -= dy;
+  		}
+  		// clear the canvas to redraw character image
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    drawCharacter();
+	}
+
+	// code to detect keyboard press
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
+
+	function keyDownHandler(e) {
+	    if(e.key == "Right" || e.key == "ArrowRight") {
+	        rightPressed = true;
+	    }
+	    else if(e.key == "Left" || e.key == "ArrowLeft") {
+	        leftPressed = true;
+	    }
+	    else if (e.key == "Up" || e.key == "ArrowUp"){
+	    	upPressed = true;
+	    }
+	    else if (e.key == "Down" || e.key == "ArrowDown") {
+	    	downPressed = true;
+	    }
+	}
+
+	function keyUpHandler(e) {
+	    if(e.key == "Right" || e.key == "ArrowRight") {
+	        rightPressed = false;
+	    }
+	    else if(e.key == "Left" || e.key == "ArrowLeft") {
+	        leftPressed = false;
+	    }
+	    else if (e.key == "Up" || e.key == "ArrowUp"){
+	    	upPressed = false;
+	    }
+	    else if (e.key == "Down" || e.key == "ArrowDown") {
+	    	downPressed = false;
+	    }
+	}
+	setInterval(draw, 10);
+</script>
+
+</body>
+</html>
