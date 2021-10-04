@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>CS Scuffle Character Movement</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; background-color: white; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="960" height="640"></canvas>
+
+<script>
+	// initialize canvas
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
+
+  //Constants
+  var NORMAL_STATE = "normal";
+  var BUMPING_STATE = "bumping";
+  var HIT_STATE = "hit";
+  var HIT_COOLDOWN = 15;
+  var ACTION_COOLDOWN = 15;
+  var UP_DIR = "up";
+  var DOWN_DIR = "down";
+  var RIGHT_DIR = "right";
+  var LEFT_DIR = "left";
+
+  class Entity {
+    entityImg = new Image();
+    x = window.innerWidth/2;
+    y = window.innerHeight/2;
+    dx = 10;
+    dy = 10;
+    actionState = NORMAL_STATE;
+    facingDirection = RIGHT_DIR;
+    hitCooldown = 0;
+    actionCooldown = 0;
+
+    constructor(height, width, src) {
+    	this.entityImg.src = src;
+    	this.entityImg.width = width;
+    	this.entityImg.height = height;
+    }
+
+    getActionState() {
+      return this.actionState;
+    }
+
+    getFacingDirection() {
+      return this.facingDirection;
+    }
+
+    getHeight() {
+      return this.entityImg.height;
+    }
+
+    getWidth() {
+      return this.entityImg.width;
+    }
+
+    getImage() {
+      return this.entityImg;
+    }
+
+    getX() {
+      return this.x;
+    }
+
+    getY() {
+      return this.y;
+    }
+
+    getDx() {
+      return this.dx;
+    }
+
+    getDy() {
+      return this.dy;
+    }
+
+    getHitCooldown() {
+      return this.hitCooldown;
+    }
+
+    getActionCooldown() {
+      return this.actionCooldown;
+    }
+
+    setActionState(actionState) {
+      this.actionState = actionState;
+    }
+
+    setFacingDirection(facingDirection) {
+      this.facingDirection = facingDirection;
+    }
+
+    setX(x) {
+      this.x = x;
+    }
+
+    setY(y) {
+      this.y = y;
+    }
+
+    setDx(dx) {
+      this.dx = dx;
+    }
+
+    setDy(dy) {
+      this.dy = dy;
+    }
+
+    setHitCooldown(hitCooldown) {
+      this.hitCooldown = hitCooldown;
+    }
+
+    setActionCooldown(actionCooldown) {
+      this.actionCooldown = actionCooldown;
+    }
+
+    setStartingPosition(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+  }
+
+	//initialize player1
+  const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg');
+	var borderBounce = 10;
+
+  //initialize opponent1
+  const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg');
+  opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
+
+  //initialize testEntity
+  const testEntity = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg');
+  testEntity.setStartingPosition(300, 300);
+
+  var entities = new Array(opp1, testEntity);
+
+  //Default Keyboard controls
+  var p1BumpKey = "e";
+
+	// booleans for keyboard press
+	var rightPressed = false;
+	var leftPressed = false;
+	var upPressed = false;
+	var downPressed = false;
+  var p1BumpPressed = false;
+
+  //Debug variables
+  var showDebug = false;
+  var lastDraw = new Date();
+  var fps_Count = 0;
+  var tot_fps = 0;
+
+  //Animation variables
+  var animationCounter = 0;
+  var bumpAniFrames = 14;
+  var bumpDistance = 80;
+  var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2);
+
+  //Collision Function
+  function rectCollisionCheck(object1, object2) {
+      if (
+        //x + w, y
+        ( ( object1.getX() + object1.getWidth() >= object2.getX() && object1.getX() + object1.getWidth() <= object2.getX() + object2.getWidth() ) &&
+        ( object1.getY() >= object2.getY() && object1.getY() <= object2.getY() + object2.getHeight() ) ) ||
+        //x, y
+        ( ( object1.getX() >= object2.getX() && object1.getX() <= object2.getX() + object2.getWidth() ) &&
+        ( object1.getY() >= object2.getY() && object1.getY() <= object2.getY() + object2.getHeight() ) ) ||
+        //x + w, y + h
+        ( ( object1.getX() + object1.getWidth() >= object2.getX() && object1.getX() + object1.getWidth() <= object2.getX() + object2.getWidth() ) &&
+        ( object1.getY() + object1.getHeight() >= object2.getY() && object1.getY() + object1.getHeight() <= object2.getY() + object2.getHeight() ) ) ||
+        //x, y + h
+        ( ( object1.getX() >= object2.getX() && object1.getX() <= object2.getX() + object2.getWidth() ) &&
+        ( object1.getY() + object1.getHeight() >= object2.getY() && object1.getY() + object1.getHeight() <= object2.getY() + object2.getHeight() ) ) ) {
+          return true;
+      }
+      return false;
+    }
+
+  //Animation/Action Functions Start
+
+  //During a bump action this function controls the rightward movement and collisionDetection
+  function p1BumpRight() {
+    if (player1.getX() + bumpMovPerFrame  > canvas.width - player1.getWidth()) {
+      player1.setX(canvas.width - player1.getWidth() - bumpMovPerFrame);
+    }
+    player1.setX(player1.getX() + bumpMovPerFrame);
+
+    //check to see if any entities were collided with
+    var hitSomething = false;
+    for (var i = 0; i < entities.length; i++) {
+      if (rectCollisionCheck(player1, entities[i])) {
+        entities[i].setActionState(HIT_STATE);
+        hitSomething = true;
+      }
+    }
+    if ( hitSomething ) {
+      player1.setX(player1.getX() - bumpMovPerFrame);
+    }
+  }
+
+  //During a bump action this function controls the leftward movement and collisionDetection
+  function p1BumpLeft() {
+    if(player1.getX() - bumpMovPerFrame  < 0){
+        player1.setX(bumpMovPerFrame);
+    }
+    player1.setX(player1.getX() - bumpMovPerFrame);
+
+    //check to see if any entities were collided with
+    var hitSomething = false;
+    for (var i = 0; i < entities.length; i++) {
+      if (rectCollisionCheck(player1, entities[i])) {
+        entities[i].setActionState(HIT_STATE);
+        hitSomething = true;
+      }
+    }
+    if ( hitSomething ) {
+      player1.setX(player1.getX() + bumpMovPerFrame);
+    }
+  }
+
+  //During a bump action this function controls the upward movement and collisionDetection
+  function p1BumpUp() {
+    if(player1.getY() + bumpMovPerFrame <  0) {
+      player1.setY(bumpMovPerFrame);
+    }
+    player1.setY(player1.getY() - bumpMovPerFrame);
+
+    //check to see if any entities were collided with
+    var hitSomething = false;
+    for (var i = 0; i < entities.length; i++) {
+      if (rectCollisionCheck(player1, entities[i])) {
+        entities[i].setActionState(HIT_STATE);
+        hitSomething = true;
+      }
+    }
+    if ( hitSomething ) {
+      player1.setY(player1.getY() + bumpMovPerFrame);
+    }
+  }
+
+  //During a bump action this function controls the downward movement and collisionDetection
+  function p1BumpDown() {
+    if (player1.getY() - bumpMovPerFrame > canvas.height - player1.getHeight()) { // implement this in game
+      player1.setY(canvas.height- player1.getHeight() - bumpMovPerFrame);
+    }
+    player1.setY(player1.getY() + bumpMovPerFrame);
+
+    //check to see if any entities were collided with
+    var hitSomething = false;
+    for (var i = 0; i < entities.length; i++) {
+      if (rectCollisionCheck(player1, entities[i])) {
+        entities[i].setActionState(HIT_STATE);
+        hitSomething = true;
+      }
+    }
+    if ( hitSomething ) {
+      player1.setY(player1.getY() - bumpMovPerFrame);
+    }
+  }
+
+  //Animation/Action Functions End
+
+	//Draw Player1
+	function drawCharacter() {
+    //BUMPING_STATE highlight animation
+    if (player1.getActionState() == BUMPING_STATE) {
+        ctx.beginPath();
+        ctx.rect(player1.getX()-5, player1.getY()-5, player1.getWidth()+10, player1.getHeight()+10);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath;
+    }
+
+    //Regularcharacter
+		ctx.beginPath();
+		ctx.drawImage(player1.getImage(), player1.getX(), player1.getY(), player1.getWidth(), player1.getHeight());
+    ctx.fill();
+	  ctx.closePath();
+	}
+
+  //Draw Opponent1
+  function drawOpponent1() {
+    //BUMPING_STATE highlight animation
+    if (opp1.getActionState() == BUMPING_STATE) {
+        ctx.beginPath();
+        ctx.rect(opp1.getX()-5, opp1.getY()-5, opp1.getWidth()+10, opp1.getHeight()+10);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath;
+    }
+    //HIT_STATE highlight animation
+    else if (opp1.getActionState() == HIT_STATE) {
+        opp1.setHitCooldown(opp1.getHitCooldown() + 1);
+        ctx.beginPath();
+        ctx.rect(opp1.getX()-5, opp1.getY()-5, opp1.getWidth()+10, opp1.getHeight()+10);
+        ctx.fillStyle = "#FF0000";
+        ctx.fill();
+        ctx.closePath;
+        if (opp1.getHitCooldown() > HIT_COOLDOWN) {
+          opp1.setActionState(NORMAL_STATE);
+          opp1.setHitCooldown(0);
+        }
+    }
+
+    ctx.beginPath();
+    ctx.drawImage(opp1.getImage(), opp1.getX(), opp1.getY(), opp1.getWidth(), opp1.getHeight());
+    ctx.fill();
+	  ctx.closePath();
+  }
+
+  //Draw test object
+  function drawTestObject() {
+    ctx.beginPath();
+    ctx.drawImage(testEntity.getImage(), testEntity.getX(), testEntity.getY(), testEntity.getWidth(), testEntity.getHeight());
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  //Show Debug information
+  function drawDebugInfo() {
+    //calculate fps
+    var thisDraw = new Date();
+    var fps = 1000 / (thisDraw - lastDraw);
+
+    //Calculate avg fps
+    fps_Count++;
+    if (fps_Count > 60) {
+      fps_Count = 0;
+      tot_fps = 0;
+    }
+    tot_fps = tot_fps + fps;
+    var avg_fps = tot_fps / fps_Count;
+    avg_fps = avg_fps.toFixed(1);
+    lastDraw = thisDraw
+    var dbListPos = 20;
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("AnimationCounter: "+animationCounter, 8, dbListPos);
+    ctx.fillText("Player1ActionState: "+player1.getActionState(), 8, dbListPos*2);
+    ctx.fillText("Player1FacingDir: "+player1.getFacingDirection(), 8, dbListPos*3);
+    ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*4);
+    ctx.fillText("Opp1FacingDir: "+opp1.getFacingDirection(), 8, dbListPos*5);
+    ctx.fillText("FPS: "+avg_fps, 8, dbListPos*6);
+  }
+
+	function draw() {
+		  // adjust canvas size so that borders of game move with window size
+      ctx.canvas.width  = window.innerWidth;
+  		ctx.canvas.height = window.innerHeight;
+
+      //When no special actions are being taken
+      if (player1.actionState == NORMAL_STATE) {
+          // move right and adjust if outside window border
+          if(rightPressed) {
+          if (player1.getX()+player1.getDx()  > canvas.width - player1.getWidth()) {
+            player1.setX(canvas.width - player1.getWidth() - borderBounce);
+          }
+          player1.setX(player1.getX() + player1.getDx());
+
+          //check to see if any entities were collided with
+          var hitSomething = false;
+          for (var i = 0; i < entities.length; i++) {
+            if (rectCollisionCheck(player1, entities[i])) {
+              hitSomething = true;
+            }
+          }
+          if ( hitSomething ) {
+            player1.setX(player1.getX() - player1.getDx());
+          }
+          player1.setFacingDirection(RIGHT_DIR);
+          }
+
+          // move left and adjust if outside window border
+          else if (leftPressed){
+            if(player1.getX() - player1.getDx()  < 0){
+              player1.setX(borderBounce);
+            }
+          player1.setX(player1.getX() - player1.getDx());
+
+          //check to see if any entities were collided with
+          var hitSomething = false;
+          for (var i = 0; i < entities.length; i++) {
+            if (rectCollisionCheck(player1, entities[i])) {
+              hitSomething = true;
+            }
+          }
+          if ( hitSomething ) {
+            player1.setX(player1.getX() + player1.getDx());
+          }
+          player1.setFacingDirection(LEFT_DIR);
+          }
+
+          // move up and adjust if outside window border
+          else if(upPressed){
+            if(player1.getY() + player1.getDy() <  0) {
+              player1.setY(borderBounce);
+            }
+          player1.setY(player1.getY() - player1.getDy());
+
+          //check to see if any entities were collided with
+          var hitSomething = false;
+          for (var i = 0; i < entities.length; i++) {
+            if (rectCollisionCheck(player1, entities[i])) {
+              hitSomething = true;
+            }
+          }
+          if ( hitSomething ) {
+            player1.setY(player1.getY() + player1.getDy());
+          }
+          player1.setFacingDirection(UP_DIR);
+          }
+
+          // move down and adjust if outside window border
+          else if(downPressed){
+            if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
+              player1.setY(canvas.height - player1.getHeight() - borderBounce);
+          }
+          player1.setY(player1.getY() + player1.getDy());
+
+          //check to see if any entities were collided with
+          var hitSomething = false;
+          for (var i = 0; i < entities.length; i++) {
+            if (rectCollisionCheck(player1, entities[i])) {
+              hitSomething = true;
+            }
+          }
+          if ( hitSomething ) {
+            player1.setY(player1.getY() - player1.getDy());
+          }
+          player1.setFacingDirection(DOWN_DIR);
+          }
+      }
+      //When the player is performing a bump action
+      else if (player1.getActionState() == BUMPING_STATE) {
+        if (player1.getFacingDirection() == RIGHT_DIR) {
+          if (animationCounter <= bumpAniFrames/2) {
+            p1BumpRight();
+          }
+          else {
+            p1BumpLeft();
+          }
+        }
+        else if (player1.getFacingDirection() == LEFT_DIR) {
+          if (animationCounter <= bumpAniFrames/2) {
+            p1BumpLeft();
+          }
+          else {
+            p1BumpRight();
+          }
+        }
+        else if (player1.getFacingDirection() == UP_DIR) {
+          if (animationCounter <= bumpAniFrames/2) {
+            p1BumpUp();
+          }
+          else {
+            p1BumpDown();
+          }
+        }
+        else if (player1.getFacingDirection() == DOWN_DIR) {
+          if (animationCounter <= bumpAniFrames/2) {
+            p1BumpDown();
+          }
+          else {
+            p1BumpUp();
+          }
+        }
+
+        animationCounter++;
+        if (animationCounter >= bumpAniFrames) {
+          animationCounter = 0;
+          player1.setActionState(NORMAL_STATE);
+          player1.setActionCooldown(ACTION_COOLDOWN);
+        }
+      }
+  		// clear the canvas to redraw character image
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    drawCharacter();
+      drawOpponent1();
+      drawTestObject();
+      if (showDebug) {
+        drawDebugInfo();
+      }
+      if (player1.getActionCooldown() > 0) {
+        player1.setActionCooldown(player1.getActionCooldown() - 1);
+      }
+	}
+
+	// code to detect keyboard press
+	document.addEventListener("keydown", keyDownHandler, false);
+	document.addEventListener("keyup", keyUpHandler, false);
+
+	function keyDownHandler(e) {
+	    if(e.key == "Right" || e.key == "ArrowRight") {
+	        rightPressed = true;
+	    }
+	    else if(e.key == "Left" || e.key == "ArrowLeft") {
+	        leftPressed = true;
+	    }
+	    else if (e.key == "Up" || e.key == "ArrowUp"){
+	    	upPressed = true;
+	    }
+	    else if (e.key == "Down" || e.key == "ArrowDown") {
+	    	downPressed = true;
+	    }
+      else if (e.key == p1BumpKey) {
+        if (player1.getActionCooldown() == 0) {
+          p1BumpPressed = true;
+          player1.setActionState("bumping");
+        }
+      }
+      else if (e.key == "l") {
+        showDebug = !showDebug
+      }
+	}
+
+	function keyUpHandler(e) {
+	    if(e.key == "Right" || e.key == "ArrowRight") {
+	        rightPressed = false;
+	    }
+	    else if(e.key == "Left" || e.key == "ArrowLeft") {
+	        leftPressed = false;
+	    }
+	    else if (e.key == "Up" || e.key == "ArrowUp"){
+	    	upPressed = false;
+	    }
+	    else if (e.key == "Down" || e.key == "ArrowDown") {
+	    	downPressed = false;
+	    }
+      else if (e.key == p1BumpKey) {
+        p1BumpPressed = false;
+      }
+	}
+	setInterval(draw, 10);
+</script>
+
+</body>
+</html>
