@@ -28,21 +28,41 @@
   var RIGHT_DIR = "right";
   var LEFT_DIR = "left";
 
+  /*
+  / Purpose: This class is to be used for all entities, those being player and
+  /           non-player characters within the game.
+  /
+  / Variables:
+  /           entityImg: The image object for the entity
+  /           x: the x value on the 2d coordinant grid where the entity is located
+  /           y: the y value on the 2d coordinant grid where the entity is located
+  /           dx: the speed in which the entity moves in the x direction
+  /           dy: the speed in which the entity moves in the y direction
+  /           actionState: What is going on with the entity, are they bumping, just got hit, ect.
+  /           facingDirection: The direction the entity last moved in
+  /           hitCooldown: counter after being hit to avoid multiple hits in the same timeframe
+  /           actionCooldown: counter after doing an action to stop the spamming of actions
+  /           animationaCounter: Current animation frame for an action
+  /
+  */
   class Entity {
-    entityImg = new Image();
-    x = window.innerWidth/2;
-    y = window.innerHeight/2;
-    dx = 10;
-    dy = 10;
-    actionState = NORMAL_STATE;
-    facingDirection = RIGHT_DIR;
-    hitCooldown = 0;
-    actionCooldown = 0;
+    entityImg = new Image();      //entityImg: The image object for the entity
+    x = window.innerWidth/2;      //x: the x value on the 2d coordinant grid where the entity is located
+    y = window.innerHeight/2;     //y: the y value on the 2d coordinant grid where the entity is located
+    dx = 10;                      //dx: the speed in which the entity moves in the x direction
+    dy = 10;                      //dy: the speed in which the entity moves in the y direction
+    actionState = NORMAL_STATE;   //actionState: What is going on with the entity, are they bumping, just got hit, ect.
+    facingDirection = RIGHT_DIR;  //facingDirection: The direction the entity last moved in
+    hitCooldown = 0;              //hitCooldown: counter after being hit to avoid multiple hits in the same timeframe
+    actionCooldown = 0;           //actionCooldown: counter after doing an action to stop the spamming of actions
+    animationCounter = 0;         //animationaCounter: Current animation frame for an action
+    entityID = 0;                 //An entities unique ID set before putting in entity list
 
+    //initializing function
     constructor(height, width, src) {
-    	this.entityImg.src = src;
-    	this.entityImg.width = width;
-    	this.entityImg.height = height;
+    	this.entityImg.src = src;        //src: The link to the source file
+    	this.entityImg.width = width;    //width: The Width of the image
+    	this.entityImg.height = height;  //height: The height of the image
     }
 
     getActionState() {
@@ -51,6 +71,10 @@
 
     getFacingDirection() {
       return this.facingDirection;
+    }
+
+    getAnimationCounter() {
+      return this.animationCounter;
     }
 
     getHeight() {
@@ -89,12 +113,20 @@
       return this.actionCooldown;
     }
 
+    getEntityID() {
+      return this.entityID;
+    }
+
     setActionState(actionState) {
       this.actionState = actionState;
     }
 
     setFacingDirection(facingDirection) {
       this.facingDirection = facingDirection;
+    }
+
+    setAnimationCounter(animationCounter) {
+      this.animationCounter = animationCounter;
     }
 
     setX(x) {
@@ -121,6 +153,11 @@
       this.actionCooldown = actionCooldown;
     }
 
+    setEntityID(entityID) {
+      this.entityID = entityID;
+    }
+
+    //Sets X and Y and the same time, only for convinence
     setStartingPosition(x, y) {
       this.x = x;
       this.y = y;
@@ -139,31 +176,51 @@
   const testEntity = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg');
   testEntity.setStartingPosition(300, 300);
 
-  var entities = new Array(opp1, testEntity);
+  //initialize entity list (EntityID must be unique)
+  opp1.setEntityID(1);
+  testEntity.setEntityID(2);
+  player1.setEntityID(3);
+  var entities = new Array(opp1, testEntity, player1);
 
   //Default Keyboard controls
-  var p1BumpKey = "e";
+  //update these variables to allow for control changes in options menu
+  var p1BumpKey = "e";            //Player1 default bump key
 
 	// booleans for keyboard press
 	var rightPressed = false;
 	var leftPressed = false;
 	var upPressed = false;
 	var downPressed = false;
-  var p1BumpPressed = false;
+  var p1BumpPressed = false;      //Player1 has pressed the bump key?
 
   //Debug variables
-  var showDebug = false;
-  var lastDraw = new Date();
-  var fps_Count = 0;
-  var tot_fps = 0;
+  var showDebug = false;          //Show the debug overlay?
+  var lastDraw = new Date();      //Time of last draw, used in FPS calculation
+  var fps_Count = 0;              //The total number of frames or draws
+  var tot_fps = 0;                //The time to draw each frame summed together
 
-  //Animation variables
-  var animationCounter = 0;
-  var bumpAniFrames = 14;
-  var bumpDistance = 80;
-  var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2);
+  //Animation/Action variables
+  var bumpAniFrames = 14;         //Length of bump animation in frames
+  var bumpDistance = 80;          //How far the bump animation takes you forward
+  var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
 
-  //Collision Function
+  /*
+  / Purpose: Checks whether or not two objects are currently colliding with each
+  /          other. Specifically, it looks at the four corners of object1 (assumed
+  /          to be a rectangle) and check to see if any of those corners are
+  /          inside the area of object2 (Also assumed to be a rectangle).
+  /
+  / Params:
+  /         object1: Assumed to be an entity object and a rectangle in shape.
+  /         object2: Assumed to be an entity object and a rectangle in shape.
+  /
+  / return:
+  /         Returns true if the objects have collided, false otherwise.
+  /
+  / note:
+  /         Should be updated to account of non-entities being given as objects,
+  /         at the moment the function will crash for non-entitise.
+  */
   function rectCollisionCheck(object1, object2) {
       if (
         //x + w, y
@@ -195,7 +252,7 @@
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i])) {
+      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -215,7 +272,7 @@
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i])) {
+      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -235,7 +292,7 @@
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i])) {
+      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -255,7 +312,7 @@
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i])) {
+      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -267,67 +324,52 @@
 
   //Animation/Action Functions End
 
-	//Draw Player1
-	function drawCharacter() {
+  /*
+  / Purpose: draw any entity onto the screen based on it's current state
+  /
+  / Params: Entity you want to draw
+  /
+  / Notes: Will crash for non-entities
+  */
+  function drawEntity(genEnt) {
     //BUMPING_STATE highlight animation
-    if (player1.getActionState() == BUMPING_STATE) {
+    if (genEnt.getActionState() == BUMPING_STATE) {
         ctx.beginPath();
-        ctx.rect(player1.getX()-5, player1.getY()-5, player1.getWidth()+10, player1.getHeight()+10);
-        ctx.fillStyle = "#0095DD";
-        ctx.fill();
-        ctx.closePath;
-    }
-
-    //Regularcharacter
-		ctx.beginPath();
-		ctx.drawImage(player1.getImage(), player1.getX(), player1.getY(), player1.getWidth(), player1.getHeight());
-    ctx.fill();
-	  ctx.closePath();
-	}
-
-  //Draw Opponent1
-  function drawOpponent1() {
-    //BUMPING_STATE highlight animation
-    if (opp1.getActionState() == BUMPING_STATE) {
-        ctx.beginPath();
-        ctx.rect(opp1.getX()-5, opp1.getY()-5, opp1.getWidth()+10, opp1.getHeight()+10);
+        ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
         ctx.closePath;
     }
     //HIT_STATE highlight animation
-    else if (opp1.getActionState() == HIT_STATE) {
-        opp1.setHitCooldown(opp1.getHitCooldown() + 1);
+    else if (genEnt.getActionState() == HIT_STATE) {
+        genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
         ctx.beginPath();
-        ctx.rect(opp1.getX()-5, opp1.getY()-5, opp1.getWidth()+10, opp1.getHeight()+10);
+        ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
         ctx.fillStyle = "#FF0000";
         ctx.fill();
         ctx.closePath;
-        if (opp1.getHitCooldown() > HIT_COOLDOWN) {
-          opp1.setActionState(NORMAL_STATE);
-          opp1.setHitCooldown(0);
+        if (genEnt.getHitCooldown() > HIT_COOLDOWN) {
+          genEnt.setActionState(NORMAL_STATE);
+          genEnt.setHitCooldown(0);
         }
     }
 
     ctx.beginPath();
-    ctx.drawImage(opp1.getImage(), opp1.getX(), opp1.getY(), opp1.getWidth(), opp1.getHeight());
+    ctx.drawImage(genEnt.getImage(), genEnt.getX(), genEnt.getY(), genEnt.getWidth(), genEnt.getHeight());
     ctx.fill();
 	  ctx.closePath();
-  }
 
-  //Draw test object
-  function drawTestObject() {
-    ctx.beginPath();
-    ctx.drawImage(testEntity.getImage(), testEntity.getX(), testEntity.getY(), testEntity.getWidth(), testEntity.getHeight());
-    ctx.fill();
-    ctx.closePath();
+    //decrement Action Cooldown if it's above 0
+    if (genEnt.getActionCooldown() > 0) {
+      genEnt.setActionCooldown(genEnt.getActionCooldown() - 1);
+    }
   }
 
   //Show Debug information
   function drawDebugInfo() {
     //calculate fps
-    var thisDraw = new Date();
-    var fps = 1000 / (thisDraw - lastDraw);
+    var thisDraw = new Date();              //current time
+    var fps = 1000 / (thisDraw - lastDraw); //estimated frames per second
 
     //Calculate avg fps
     fps_Count++;
@@ -336,10 +378,12 @@
       tot_fps = 0;
     }
     tot_fps = tot_fps + fps;
-    var avg_fps = tot_fps / fps_Count;
+    var avg_fps = tot_fps / fps_Count;    //The Average estimated FPS
     avg_fps = avg_fps.toFixed(1);
     lastDraw = thisDraw
-    var dbListPos = 20;
+
+
+    var dbListPos = 20;     //Starting Y position for the debug overlay
     ctx.font = "16px Arial";
     ctx.fillStyle = "#0095DD";
     ctx.fillText("AnimationCounter: "+animationCounter, 8, dbListPos);
@@ -350,12 +394,13 @@
     ctx.fillText("FPS: "+avg_fps, 8, dbListPos*6);
   }
 
+  //Main Draw function, responsible for drawing each frame
 	function draw() {
 		  // adjust canvas size so that borders of game move with window size
       ctx.canvas.width  = window.innerWidth;
   		ctx.canvas.height = window.innerHeight;
 
-      //When no special actions are being taken
+      //When no special actions are being taken by player1: allows free movement
       if (player1.actionState == NORMAL_STATE) {
           // move right and adjust if outside window border
           if(rightPressed) {
@@ -367,7 +412,7 @@
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i])) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
               hitSomething = true;
             }
           }
@@ -378,7 +423,7 @@
           }
 
           // move left and adjust if outside window border
-          else if (leftPressed){
+          if (leftPressed){
             if(player1.getX() - player1.getDx()  < 0){
               player1.setX(borderBounce);
             }
@@ -387,7 +432,7 @@
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i])) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
               hitSomething = true;
             }
           }
@@ -398,7 +443,7 @@
           }
 
           // move up and adjust if outside window border
-          else if(upPressed){
+          if(upPressed){
             if(player1.getY() + player1.getDy() <  0) {
               player1.setY(borderBounce);
             }
@@ -407,7 +452,7 @@
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i])) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
               hitSomething = true;
             }
           }
@@ -418,7 +463,7 @@
           }
 
           // move down and adjust if outside window border
-          else if(downPressed){
+          if(downPressed){
             if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
               player1.setY(canvas.height - player1.getHeight() - borderBounce);
           }
@@ -427,7 +472,7 @@
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i])) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
               hitSomething = true;
             }
           }
@@ -437,10 +482,10 @@
           player1.setFacingDirection(DOWN_DIR);
           }
       }
-      //When the player is performing a bump action
+      //When player1 is performing a bump action
       else if (player1.getActionState() == BUMPING_STATE) {
         if (player1.getFacingDirection() == RIGHT_DIR) {
-          if (animationCounter <= bumpAniFrames/2) {
+          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
             p1BumpRight();
           }
           else {
@@ -448,7 +493,7 @@
           }
         }
         else if (player1.getFacingDirection() == LEFT_DIR) {
-          if (animationCounter <= bumpAniFrames/2) {
+          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
             p1BumpLeft();
           }
           else {
@@ -456,7 +501,7 @@
           }
         }
         else if (player1.getFacingDirection() == UP_DIR) {
-          if (animationCounter <= bumpAniFrames/2) {
+          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
             p1BumpUp();
           }
           else {
@@ -464,7 +509,7 @@
           }
         }
         else if (player1.getFacingDirection() == DOWN_DIR) {
-          if (animationCounter <= bumpAniFrames/2) {
+          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
             p1BumpDown();
           }
           else {
@@ -472,23 +517,24 @@
           }
         }
 
-        animationCounter++;
-        if (animationCounter >= bumpAniFrames) {
-          animationCounter = 0;
+        player1.setAnimationCounter(player1.getAnimationCounter() + 1);
+        if (player1.getAnimationCounter() >= bumpAniFrames) {
+          player1.setAnimationCounter(0);
           player1.setActionState(NORMAL_STATE);
           player1.setActionCooldown(ACTION_COOLDOWN);
         }
       }
-  		// clear the canvas to redraw character image
+  		// clear the canvas to redraw screen
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);
-	    drawCharacter();
-      drawOpponent1();
-      drawTestObject();
+
+      //Draws each entity
+      for (var i = 0; i < entities.length; i++) {
+        drawEntity(entities[i]);
+      }
+
+      //Check for debug overlay flag
       if (showDebug) {
         drawDebugInfo();
-      }
-      if (player1.getActionCooldown() > 0) {
-        player1.setActionCooldown(player1.getActionCooldown() - 1);
       }
 	}
 
