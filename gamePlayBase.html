@@ -386,7 +386,7 @@
     var dbListPos = 20;     //Starting Y position for the debug overlay
     ctx.font = "16px Arial";
     ctx.fillStyle = "#0095DD";
-    ctx.fillText("AnimationCounter: "+animationCounter, 8, dbListPos);
+    ctx.fillText("AnimationCounter: "+player1.getAnimationCounter(), 8, dbListPos);
     ctx.fillText("Player1ActionState: "+player1.getActionState(), 8, dbListPos*2);
     ctx.fillText("Player1FacingDir: "+player1.getFacingDirection(), 8, dbListPos*3);
     ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*4);
