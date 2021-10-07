@@ -3,6 +3,7 @@
 <html class="no-js-fa-events-icons-ready" xmlns="http://w3.org/1999/xhtml" lang="en">
 
 <head>
+
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
@@ -42,15 +43,36 @@
     <link href="//www.purdue.edu/purdue/images/favicon.ico" rel="shortcut icon">
 
     <style type="text/css">
-        .hidden {
+        /* .hidden {
             position: absolute;
             left: -10000px;
             top: auto;
             width: 1px;
             height: 1px;
             overflow: hidden;
+        } */
+        #myCanvas {
+          position: absolute;
+          z-index: 3;
+          pointer-events: none;
+          top: 0px;
+          left: 0px;
+          background: transparent;
         }
-        canvas { background: #eee; display: block; margin: 0 auto; background-color: blue; }
+        #div {
+            font-size: 70px;
+            position: absolute;
+            top: 280px;
+            left: 100px;
+            z-index: 1;
+        }
+        #can {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 3;
+        }
+
     </style>
     <header class="header">
         <!-- Begin Gold Bar -->
@@ -507,8 +529,38 @@
 </body>
 <canvas id="myCanvas" width="960" height="640"></canvas>
 <script>
+
+var myCanvas;
+function createCanvasOverlay()
+ {
+   // Create a blank div where we are going to put the canvas into.
+    var canvasContainer = document.createElement('div');
+   // Add the div into the document
+    document.body.appendChild(canvasContainer);
+    canvasContainer.style.position="absolute";
+    // Set to 100% so that it will have the dimensions of the document
+    canvasContainer.style.left="0px";
+    canvasContainer.style.top="0px";
+    canvasContainer.style.width="100%";
+    canvasContainer.style.height="100%";
+    // Set to high index so that this is always above everything else
+    // (might need to be increased if you have other element at higher index)
+    canvasContainer.style.zIndex="1000";
+
+    // Now we create the canvas
+    myCanvas = document.createElement('canvas');
+    myCanvas.style.width = canvasContainer.scrollWidth+"px";
+    myCanvas.style.height = canvasContainer.scrollHeight+"px";
+    // You must set this otherwise the canvas will be streethed to fit the container
+    myCanvas.width=canvasContainer.scrollWidth;
+    myCanvas.height=canvasContainer.scrollHeight;
+    myCanvas.style.overflow = 'visible';
+    myCanvas.style.position = 'absolute';
+    // Add int into the container
+    canvasContainer.appendChild(myCanvas);
+ }
 	// initialize canvas
-	var canvas = document.getElementById("myCanvas");
+    var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
 
   //Constants
