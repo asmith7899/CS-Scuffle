@@ -26,6 +26,222 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
     vertical-align: baseline;
 }
 
+.footer {
+    padding: 3.125rem 0;
+}
+
+.footer {
+    width: 100%;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.footer #accordion {
+    margin: 0 -30px;
+    padding: 0 15px 0;
+}
+
+.footer #accordion .panel {
+    width: 20%;
+    padding: 0 15px;
+}
+
+.footer #accordion .panel {
+    float: left;
+    border: none;
+    font-size: .875em;
+    line-height: 1.6875em;
+}
+
+.footer #accordion .panel {
+    border: none;
+    background-color: transparent;
+    margin-top: 0;
+}
+.panel-group .panel {
+    margin-bottom: 0;
+    border-radius: 4px;
+}
+
+.panel-default {
+    border-color: #ddd;
+}
+
+.footer #accordion .panel .panel-heading {
+    display: block;
+    padding: 0;
+    background-color: transparent;
+    font-size: 1.3125em;
+    line-height: 1em;
+}
+.footer #accordion .panel .panel-heading {
+    padding: 0;
+    background-color: transparent;
+    font-size: 1.3125em;
+}
+.panel-default > .panel-heading {
+    color: #000;
+    background-color: #f5f5f5;
+    border-color: #6F727B;
+}
+.panel-group .panel-heading {
+    border-bottom: 0;
+        border-bottom-color: currentcolor;
+}
+.panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.footer #accordion .panel .panel-heading .panel-title {
+    font-family: acumin-pro-semi-condensed,"Franklin Gothic",sans-serif;
+    padding-top: 0;
+    padding-bottom: 0.625rem;
+    font-size: 1em;
+}
+.footer #accordion .panel .panel-heading .panel-title {
+    font-family: acumin-pro-semi-condensed,"Franklin Gothic",sans-serif !important;
+    font-size: 1em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.panel-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 16px;
+    color: inherit;
+}
+
+.footer #accordion .panel .panel-heading .panel-title a {
+    cursor: default;
+    color: #cfb991;
+    border-bottom: none;
+    font-weight: 700;
+}
+.footer #accordion .panel .panel-heading a:link, .footer #accordion .panel .panel-heading a:visited, .footer #accordion .panel .panel-heading a:hover, .footer #accordion .panel .panel-heading a:active {
+    color: #cfb991;
+    text-decoration: none;
+}
+.footer #accordion .panel .panel-heading a {
+    display: block;
+}
+.footer #accordion .panel a:link, .footer #accordion .panel a:visited {
+    color: #adadad;
+    font-weight: 400;
+    text-decoration: none;
+}
+.footer #accordion .panel a {
+    padding: 10px 0 2px;
+}
+.footer #accordion .panel a {
+    display: inline-block;
+    width: 100%;
+}
+
+.footer #accordion .panel .panel-heading .panel-title .fa {
+    display: none;
+}
+
+.footer #accordion .panel .panel-collapse {
+    display: block;
+    height: auto !important;
+}
+
+.footer #accordion .panel .panel-collapse .panel-body {
+    border: none;
+    padding: 0;
+}
+
+.footer #accordion .panel .panel-collapse .panel-body ul {
+    padding: 0;
+    list-style-type: none;
+    color:#adadad;
+}
+
+.footer #accordion .motto {
+    float: left;
+    width: 20%;
+    padding: 8px 15px 0 15px;
+    font-size: 1.35em;
+}
+.footer #accordion .motto {
+    clear: none;
+    padding: 32px 30px 0;
+    font-size: 1.85em;
+    text-align: center;
+}
+
+.footer #accordion .motto .taglineContainer {
+    width: auto;
+}
+.footer #accordion .motto .taglineContainer {
+    display: block;
+    width: auto;
+}
+.footer #accordion .motto .taglineContainer {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.footer #accordion .motto .taglineContainer .tagline {
+    margin-bottom: 10px;
+    padding-bottom: 20%;
+}
+.footer #accordion .motto .taglineContainer .tagline {
+    padding-bottom: 10%;
+}
+.footer #accordion .motto .tagline {
+    position: relative;
+    display: block;
+    padding-bottom: 13.95349%;
+}
+
+.footer #accordion .motto .taglineContainer .tagline .horizontal {
+    max-height: 48px;
+    width: 100%;
+}
+
+.footer #accordion .motto .horizontal {
+    display: none;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+
+.st0 {
+    fill: #FFFFFF;
+}
+
+.st1 {
+    fill: #CFB991;
+}
+
+.st2 {
+    fill: #9D9795;
+}
+
+footer #accordion .motto .vertical {
+    display: block;
+    height: 114px;
+    margin-left: auto;
+}
+
+.v-st0 {
+    fill: #CFB991;
+}
+
+.v-st1 {
+    fill: #9D9795;
+}
+
+.v-st2 {
+    fill: #FFFFFF;
+}
+
+
+
 .header {
     font-family: acumin-pro,"Franklin Gothic",sans-serif;
 }
@@ -341,6 +557,18 @@ a:link {
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
 }
+
+.blackbar .black > ul > li > a {
+    background-color: #fff;
+}
+
+.blackbar a:link {
+    color: inherit !important;
+    text-decoration: none !important;
+    font-weight: 400;
+    background-color: #fff;
+}
+
 strong, b {
     font-weight: 700;
 }
@@ -504,9 +732,7 @@ p {
     padding: 8px 15px;
         padding-top: 8px;
         padding-bottom: 8px;
-    margin-bottom: 20px;
     list-style: none;
-    background-color: #f5f5f5;
     border-radius: 4px;
 }
 .breadcrumb .row {
@@ -517,6 +743,12 @@ p {
     list-style-type: none;
     display: flex;
     flex-wrap: wrap;
+}
+
+.breadcrumb ol li:not(:last-child)::after {
+    content: " > ";
+    display: inline-block;
+    margin: 0 0.625rem 0 0.625rem;
 }
 .col-lg-12 {
     width: 100%;
