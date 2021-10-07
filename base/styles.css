@@ -4,10 +4,10 @@ html {
 }
 
 #myCanvas {
-    position: absolute;
+    position: fixed;
     z-index: 3;
     pointer-events: none;
-    top: 50%;
+    top: 0px;
     left: 0px;
     background: transparent;
   }
