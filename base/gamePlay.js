@@ -1,3 +1,19 @@
+/*
+/   Notes on useful debug features/gameplay elements currently implemented:
+/       -arrow keys to move Player1
+/       -e key for Player1 to perform bump actions
+              Note: a bump action is performed in the direction the entity was last facing when the key is pressed
+/       -l key to bring up debug overlay*
+/       -h key to hide entities (useful if you want to see what's behind them)*
+/       -v key to decrease current stamina for player1 and opp1 by 10 points*
+/       -z key to increase current stamina for player1 and opp1 by 10 points*
+/       -Destructible objects can be moved over without collision, non-destructible objects have collision
+/             Note: during a bump action the entity will collide and be stopped by any Destructible objects
+/                   Also, destructible objects are entities that have a TRUE destructibleObject flag.
+/
+/       *debug feature that will be disabled or removed for final version.
+*/
+
 // initialize canvas
   var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
@@ -172,9 +188,17 @@
       this.width = width;
     }
 
+    //Used to decrease or increase statmina by a set amount from the current total
+    //negative numbers add to stamina positive numbers lower stamina.
     decreaseStamina(amount) {
       if (this.stamina < amount) {
         this.stamina = 0;
+      } else if ( ( this.stamina - amount > MAX_STAMINA && !this.getDestructibleObject() ) || (this.stamina - amount > DESTRUCTIBLE_MAX_STAMINA && this.getDestructibleObject() ) ) {
+        if (this.getDestructibleObject()) {
+          this.stamina = DESTRUCTIBLE_MAX_STAMINA;
+        } else {
+          this.stamian = MAX_STAMINA;
+        }
       } else {
         this.stamina = this.stamina - amount;
       }
@@ -225,6 +249,7 @@
 
   //Debug variables
   var showDebug = false;          //Show the debug overlay?
+  var hideEntities = false;       //Used to stop entities from being draw
   var lastDraw = new Date();      //Time of last draw, used in FPS calculation
   var fps_Count = 0;              //The total number of frames or draws
   var tot_fps = 0;                //The time to draw each frame summed together
@@ -662,10 +687,11 @@
           for (var i = 0; i < entities.length; i++) {
             if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
               hitSomething = true;
+              collisionAmount = (entities[i].getY() + entities[i].getHeight()) - player1.getY() + 1;
             }
           }
           if ( hitSomething ) {
-            player1.setY(player1.getY() + player1.getDy());
+            player1.setY(player1.getY() + collisionAmount);
           }
           player1.setFacingDirection(UP_DIR);
           }
@@ -683,10 +709,11 @@
           for (var i = 0; i < entities.length; i++) {
             if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
               hitSomething = true;
+              collisionAmount = (player1.getY() + player1.getHeight()) - entities[i].getY() + 1;
             }
           }
           if ( hitSomething ) {
-            player1.setY(player1.getY() - player1.getDy());
+            player1.setY(player1.getY() - collisionAmount);
           }
           player1.setFacingDirection(DOWN_DIR);
           }
@@ -699,8 +726,10 @@
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       //Draws each entity
-      for (var i = 0; i < entities.length; i++) {
-        drawEntity(entities[i]);
+      if (!hideEntities) {
+        for (var i = 0; i < entities.length; i++) {
+          drawEntity(entities[i]);
+        }
       }
 
       //Check for debug overlay flag
@@ -733,7 +762,18 @@
         }
       }
       else if (e.key == "l") {
-        showDebug = !showDebug
+        showDebug = !showDebug;
+      }
+      else if (e.key == "h") {
+        hideEntities = !hideEntities;
+      }
+      else if (e.key == "v") {
+        player1.decreaseStamina(10);
+        opp1.decreaseStamina(10);
+      }
+      else if (e.key == "z") {
+        player1.decreaseStamina(-10);
+        opp1.decreaseStamina(-10);
       }
 	}
 
