@@ -722,6 +722,10 @@
       else if (player1.getActionState() == BUMPING_STATE) {
           entityBump(player1);
       }
+
+      //AI takes its actions after the player
+      AILogic();
+
   		// clear the canvas to redraw screen
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
