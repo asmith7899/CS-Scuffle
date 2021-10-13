@@ -7,10 +7,7 @@
 //begin AI functions
 
 /* 
-/  Bump/Move/other action functions for the AI.
-/  
-/  will update this code to use the general entityBump() function 
-/  instead of AI specific functions monday or tuesday
+/  Move/other action functions for the AI.
 */
 
 //move the AI left
@@ -27,7 +24,7 @@ function AIMoveLeft() {
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
+        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
             hitSomething = true;
         }
     }
@@ -57,7 +54,7 @@ function AIMoveRight() {
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
+        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
             hitSomething = true;
         }
     }
@@ -84,7 +81,7 @@ function AIMoveUp() {
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
+        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
             hitSomething = true;
         }
     }
@@ -104,7 +101,7 @@ function AIMoveUp() {
 //return false if collision happens
 function AIMoveDown() {
     // move down and adjust if outside window border
-    if (opp1.getY() - opp1.getDy() > canvas.height - opp1.getHeight()) { // implement this in game
+    if (opp1.getY() - opp1.getDy() > canvas.height - opp1.getHeight()) {
         opp1.setY(canvas.height - opp1.getHeight() - borderBounce);
     }
     opp1.setY(opp1.getY() + opp1.getDy());
@@ -112,7 +109,7 @@ function AIMoveDown() {
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
+        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
             hitSomething = true;
         }
     }
@@ -125,98 +122,6 @@ function AIMoveDown() {
         return false;
     }
     return true;
-}
-
-//p1BumpLeft but for the AI
-function AIBumpLeft() {
-    if(opp1.getX() - bumpMovPerFrame  < 0){
-        opp1.setX(bumpMovPerFrame);
-    }
-    opp1.setX(opp1.getX() - bumpMovPerFrame);
-
-    //check to see if any entities were collided with
-    var hitSomething = false;
-    for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
-            if (entities[i].getActionState() != HIT_STATE) {
-                entities[i].decreaseStamina(BUMP_DAMAGE);
-            }
-            entities[i].setActionState(HIT_STATE);
-            hitSomething = true;
-        }
-    }
-    if ( hitSomething ) {
-        opp1.setX(opp1.getX() + bumpMovPerFrame);
-    }
-}
-
-//p1BumpRight but for the AI
-function AIBumpRight() {
-    if (opp1.getX() + bumpMovPerFrame  > canvas.width - opp1.getWidth()) {
-        opp1.setX(canvas.width - opp1.getWidth() - bumpMovPerFrame);
-    }
-    opp1.setX(opp1.getX() + bumpMovPerFrame);
-
-    //check to see if any entities were collided with
-    var hitSomething = false;
-    for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
-            if (entities[i].getActionState() != HIT_STATE) {
-                entities[i].decreaseStamina(BUMP_DAMAGE);
-            }
-            entities[i].setActionState(HIT_STATE);
-            hitSomething = true;
-        }
-    }
-    if ( hitSomething ) {
-        opp1.setX(opp1.getX() - bumpMovPerFrame);
-    }
-}
-
-//p1BumpUp but for the AI
-function AIBumpUp() {
-    if(opp1.getY() + bumpMovPerFrame <  0) {
-        opp1.setY(bumpMovPerFrame);
-    }
-    opp1.setY(opp1.getY() - bumpMovPerFrame);
-
-    //check to see if any entities were collided with
-    var hitSomething = false;
-    for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
-            if (entities[i].getActionState() != HIT_STATE) {
-                entities[i].decreaseStamina(BUMP_DAMAGE);
-            }
-            entities[i].setActionState(HIT_STATE);
-            hitSomething = true;
-        }
-    }
-    if ( hitSomething ) {
-        opp1.setY(opp1.getY() + bumpMovPerFrame);
-    }
-}
-
-//p1BumpDown but for the AI
-function AIBumpDown() {
-    if (opp1.getY() - bumpMovPerFrame > canvas.height - opp1.getHeight()) { // implement this in game
-        opp1.setY(canvas.height- opp1.getHeight() - bumpMovPerFrame);
-    }
-    opp1.setY(opp1.getY() + bumpMovPerFrame);
-
-    //check to see if any entities were collided with
-    var hitSomething = false;
-    for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID()) {
-            if (entities[i].getActionState() != HIT_STATE) {
-                entities[i].decreaseStamina(BUMP_DAMAGE);
-            }
-            entities[i].setActionState(HIT_STATE);
-            hitSomething = true;
-        }
-    }
-    if ( hitSomething ) {
-        opp1.setY(opp1.getY() - bumpMovPerFrame);
-    }
 }
 
 /*
@@ -421,39 +326,16 @@ function AILogic() {
     if (opp1.getActionCooldown() == 0 && player1.getActionCooldown() != 0) {
         if (xDist(player1, opp1) <= bumpDistance * 1.75 && xDist(player1, opp1) >= 0 && yOverlap(opp1, player1)) {
             opp1.setFacingDirection(RIGHT_DIR);
-            if (opp1.getAnimationCounter() <= bumpAniFrames/2) {
-                AIBumpRight();
-            } else {
-                AIBumpLeft();
-            }
+            entityBump(opp1);
         } else if (xDist(player1, opp1) >= -bumpDistance * 1.75 && xDist(player1, opp1) <= 0 && yOverlap(opp1, player1)) {
             opp1.setFacingDirection(LEFT_DIR);
-            if (opp1.getAnimationCounter() <= bumpAniFrames/2) {
-                AIBumpLeft();
-            } else {
-                AIBumpRight();
-            }
+            entityBump(opp1);
         } else if (yDist(player1, opp1) <= bumpDistance * 1.75 && yDist(player1, opp1) >= 0 && xOverlap(opp1, player1)) {
             opp1.setFacingDirection(DOWN_DIR);
-            if (opp1.getAnimationCounter() <= bumpAniFrames/2) {
-                AIBumpDown();
-            } else {
-                AIBumpUp();
-            }
+            entityBump(opp1);
         } else if (yDist(player1, opp1) >= -bumpDistance * 1.75 && yDist(player1, opp1) <= 0 && xOverlap(opp1, player1)) {
             opp1.setFacingDirection(UP_DIR);
-            if (opp1.getAnimationCounter() <= bumpAniFrames/2) {
-                AIBumpUp();
-            } else {
-                AIBumpDown();
-            }
+            entityBump(opp1);
         } 
-        
-        opp1.setAnimationCounter(opp1.getAnimationCounter() + 1);
-        if (opp1.getAnimationCounter() >= bumpAniFrames) {
-            opp1.setAnimationCounter(0);
-            opp1.setActionState(NORMAL_STATE);
-            opp1.setActionCooldown(ACTION_COOLDOWN);
-        }
     }
 }

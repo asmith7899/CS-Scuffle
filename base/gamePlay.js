@@ -32,6 +32,18 @@
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
 
+
+//game timer count down to 0 starting at startTime
+var startTime = 60;
+var currTime = startTime;
+var timerInterval = setInterval(function() {
+  if (currTime == 0) {
+    clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
+    clearInterval(timerInterval); //stop the timer
+  }  
+  currTime--;
+}, 1000); // update about every second
+
   /*
   / Purpose: This class is to be used for all entities, those being player and
   /           non-player characters within the game.
@@ -480,7 +492,7 @@
         ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
-        ctx.closePath;
+        ctx.closePath();
     }
     //HIT_STATE highlight animation
     else if (genEnt.getActionState() == HIT_STATE) {
@@ -489,7 +501,7 @@
         ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
         ctx.fillStyle = "#FF0000";
         ctx.fill();
-        ctx.closePath;
+        ctx.closePath();
         if (genEnt.getHitCooldown() > HIT_COOLDOWN) {
           genEnt.setActionState(NORMAL_STATE);
           genEnt.setHitCooldown(0);
@@ -512,13 +524,13 @@
       ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), genEnt.getWidth(), 6);
       ctx.fillStyle = "#000000";
       ctx.fill();
-      ctx.closePath;
+      ctx.closePath();
       //Stamina bar
       ctx.beginPath();
       ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), (genEnt.getWidth()*genEnt.getStamina())/genEntMaxStam, 6);
       ctx.fillStyle = "#ccbb91";
       ctx.fill();
-      ctx.closePath;
+      ctx.closePath();
     }
 
     //decrement Action Cooldown if it's above 0
@@ -540,12 +552,12 @@
     ctx.rect(0, 0, window.innerWidth, gameUI.getHeight());
     ctx.fillStyle = "#000000";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     ctx.beginPath();
     ctx.rect(2, 2, window.innerWidth-21, gameUI.getHeight()-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     //Stamina Bars for non-destructible entities (players/AI)
     //PLAYER
     ctx.font = "20px Elephant";
@@ -562,8 +574,16 @@
     ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
 
+
+    ctx.font = "20px Elephant";
+    ctx.fillStyle = "#000000";
+    ctx.fillText(currTime, gameUI.getWidth()/2, 23+yOffset);
+
+    //ctx.font = "20px Elephant";
+    //ctx.fillstyle = "#000000";
+    //ctx.fillText("WHY DON'T YOU SHOW JESUS CRUST", 20, 60 + yOffset);
 
     //OPPONENT
     ctx.font = "20px Elephant";
@@ -574,13 +594,13 @@
     ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
     ctx.fillStyle = "#000000";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     //Stamina bar
     ctx.beginPath();
     ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
   }
 
   //Show Debug information
@@ -607,7 +627,7 @@
     ctx.globalAlpha = 0.8;
     ctx.fillStyle = "#000000";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     ctx.globalAlpha = 1;
 
     //Draw stats
@@ -802,4 +822,4 @@
         p1BumpPressed = false;
       }
 	}
-	setInterval(draw, 10);
+	var drawInterval = setInterval(draw, 10);
