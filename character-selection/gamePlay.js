@@ -1,32 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>CS Scuffle Character Movement</title>
-    <style>
-    	* { padding: 0; margin: 0; }
-    	canvas { background: #eee; display: block; margin: 0 auto; background-color: white; }
-    </style>
-</head>
-<body>
+/*
+/   Notes on useful debug features/gameplay elements currently implemented:
+/       -arrow keys to move Player1
+/       -e key for Player1 to perform bump actions
+              Note: a bump action is performed in the direction the entity was last facing when the key is pressed
+/       -l key to bring up debug overlay*
+/       -h key to hide entities (useful if you want to see what's behind them)*
+/       -v key to decrease current stamina for player1 and opp1 by 10 points*
+/       -z key to increase current stamina for player1 and opp1 by 10 points*
+/       -Destructible objects can be moved over without collision, non-destructible objects have collision
+/             Note: during a bump action the entity will collide and be stopped by any Destructible objects
+/                   Also, destructible objects are entities that have a TRUE destructibleObject flag.
+/
+/       *debug feature that will be disabled or removed for final version.
+*/
 
-<canvas id="myCanvas" width="960" height="640"></canvas>
-
-<script>
-	// initialize canvas
-	var canvas = document.getElementById("myCanvas");
+// initialize canvas
+  var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
 
   //Constants
   var NORMAL_STATE = "normal";
   var BUMPING_STATE = "bumping";
   var HIT_STATE = "hit";
-  var HIT_COOLDOWN = 15;
-  var ACTION_COOLDOWN = 15;
+  var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
+  var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
   var UP_DIR = "up";
   var DOWN_DIR = "down";
   var RIGHT_DIR = "right";
   var LEFT_DIR = "left";
+  var MAX_STAMINA = 100;                  //max stamina for players or AI
+  var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
+  var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
 
   /*
   / Purpose: This class is to be used for all entities, those being player and
@@ -43,6 +47,7 @@
   /           hitCooldown: counter after being hit to avoid multiple hits in the same timeframe
   /           actionCooldown: counter after doing an action to stop the spamming of actions
   /           animationaCounter: Current animation frame for an action
+  /           stamina: an entity resource that determines when wins a match
   /
   */
   class Entity {
@@ -57,12 +62,18 @@
     actionCooldown = 0;           //actionCooldown: counter after doing an action to stop the spamming of actions
     animationCounter = 0;         //animationaCounter: Current animation frame for an action
     entityID = 0;                 //An entities unique ID set before putting in entity list
+    stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
+
 
     //initializing function
-    constructor(height, width, src) {
+    constructor(height, width, src, destructibleObject) {
     	this.entityImg.src = src;        //src: The link to the source file
     	this.entityImg.width = width;    //width: The Width of the image
     	this.entityImg.height = height;  //height: The height of the image
+      this.destructibleObject = destructibleObject //true if Destructible Object, false if player or AI
+      if (destructibleObject) {
+        this.stamina = DESTRUCTIBLE_MAX_STAMINA;
+      }
     }
 
     getActionState() {
@@ -117,6 +128,14 @@
       return this.entityID;
     }
 
+    getStamina() {
+      return this.stamina;
+    }
+
+    getDestructibleObject() {
+      return this.destructibleObject;
+    }
+
     setActionState(actionState) {
       this.actionState = actionState;
     }
@@ -157,6 +176,34 @@
       this.entityID = entityID;
     }
 
+    setStamina(stamina) {
+      this.stamina = stamina;
+    }
+
+    setDestructibleObject(destructibleObject) {
+      this.destructibleObject = destructibleObject;
+    }
+
+    setWidth(width) {
+      this.width = width;
+    }
+
+    //Used to decrease or increase statmina by a set amount from the current total
+    //negative numbers add to stamina positive numbers lower stamina.
+    decreaseStamina(amount) {
+      if (this.stamina < amount) {
+        this.stamina = 0;
+      } else if ( ( this.stamina - amount > MAX_STAMINA && !this.getDestructibleObject() ) || (this.stamina - amount > DESTRUCTIBLE_MAX_STAMINA && this.getDestructibleObject() ) ) {
+        if (this.getDestructibleObject()) {
+          this.stamina = DESTRUCTIBLE_MAX_STAMINA;
+        } else {
+          this.stamian = MAX_STAMINA;
+        }
+      } else {
+        this.stamina = this.stamina - amount;
+      }
+    }
+
     //Sets X and Y and the same time, only for convinence
     setStartingPosition(x, y) {
       this.x = x;
@@ -165,22 +212,29 @@
   }
 
 	//initialize player1
-  const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg');
-	var borderBounce = 10;
+  const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false);
+	var vborderBounce = 20;
+  var borderBounce = 10;
 
   //initialize opponent1
-  const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg');
+  const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false);
   opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 
+  //initialize UI
+  const gameUI = new Entity(100, window.innerWidth, 'https://teamcolorcodes.com/wp-content/uploads/2017/10/Purdue-Boilermakers-Color-Palette-Image.png', true );
+  gameUI.setStartingPosition(0,0);
+
   //initialize testEntity
-  const testEntity = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg');
-  testEntity.setStartingPosition(300, 300);
+  const testDestructible = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg', true);
+  testDestructible.setStartingPosition(300, 300);
 
   //initialize entity list (EntityID must be unique)
-  opp1.setEntityID(1);
-  testEntity.setEntityID(2);
-  player1.setEntityID(3);
-  var entities = new Array(opp1, testEntity, player1);
+  gameUI.setEntityID(1);
+  testDestructible.setEntityID(2);
+  opp1.setEntityID(3);
+  player1.setEntityID(4);
+  var entities = new Array(gameUI, testDestructible, opp1, player1);
+  var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
   //Default Keyboard controls
   //update these variables to allow for control changes in options menu
@@ -195,6 +249,7 @@
 
   //Debug variables
   var showDebug = false;          //Show the debug overlay?
+  var hideEntities = false;       //Used to stop entities from being draw
   var lastDraw = new Date();      //Time of last draw, used in FPS calculation
   var fps_Count = 0;              //The total number of frames or draws
   var tot_fps = 0;                //The time to draw each frame summed together
@@ -242,83 +297,170 @@
 
   //Animation/Action Functions Start
 
-  //During a bump action this function controls the rightward movement and collisionDetection
-  function p1BumpRight() {
-    if (player1.getX() + bumpMovPerFrame  > canvas.width - player1.getWidth()) {
-      player1.setX(canvas.width - player1.getWidth() - bumpMovPerFrame);
+  /* Purpose: During a bump action this function controls the rightward movement and collisionDetection
+  /
+  / Params: bumpEnt - The entity that is performaing the rightward bump action
+  /
+  / Note: Assumes an entity is given do not use non entities as it's parameter
+  */
+  function entBumpRight(bumpEnt) {
+    if (bumpEnt.getX() + bumpMovPerFrame  > canvas.width - bumpEnt.getWidth()) {
+      bumpEnt.setX(canvas.width - bumpEnt.getWidth() - bumpMovPerFrame);
     }
-    player1.setX(player1.getX() + bumpMovPerFrame);
+    bumpEnt.setX(bumpEnt.getX() + bumpMovPerFrame);
 
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+      if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
+        if (entities[i].getActionState() != HIT_STATE) {
+          entities[i].decreaseStamina(BUMP_DAMAGE);
+        }
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
     }
     if ( hitSomething ) {
-      player1.setX(player1.getX() - bumpMovPerFrame);
+      bumpEnt.setX(bumpEnt.getX() - bumpMovPerFrame);
     }
   }
 
-  //During a bump action this function controls the leftward movement and collisionDetection
-  function p1BumpLeft() {
-    if(player1.getX() - bumpMovPerFrame  < 0){
-        player1.setX(bumpMovPerFrame);
+  /* Purpose: During a bump action this function controls the leftward movement and collisionDetection
+  /
+  / Params: bumpEnt - The entity that is performaing the leftward bump action
+  /
+  / Note: Assumes an entity is given do not use non entities as it's parameter
+  */
+  function entBumpLeft(bumpEnt) {
+    if(bumpEnt.getX() - bumpMovPerFrame  < 0){
+        bumpEnt.setX(bumpMovPerFrame);
     }
-    player1.setX(player1.getX() - bumpMovPerFrame);
+    bumpEnt.setX(bumpEnt.getX() - bumpMovPerFrame);
 
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+      if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
+        if (entities[i].getActionState() != HIT_STATE) {
+          entities[i].decreaseStamina(BUMP_DAMAGE);
+        }
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
     }
     if ( hitSomething ) {
-      player1.setX(player1.getX() + bumpMovPerFrame);
+      bumpEnt.setX(bumpEnt.getX() + bumpMovPerFrame);
     }
   }
 
-  //During a bump action this function controls the upward movement and collisionDetection
-  function p1BumpUp() {
-    if(player1.getY() + bumpMovPerFrame <  0) {
-      player1.setY(bumpMovPerFrame);
+  /* Purpose: During a bump action this function controls the upward movement and collisionDetection
+  /
+  / Params: bumpEnt - The entity that is performaing the upward bump action
+  /
+  / Note: Assumes an entity is given do not use non entities as it's parameter
+  */
+  function entBumpUp(bumpEnt) {
+    if(bumpEnt.getY() + bumpMovPerFrame <  0) {
+      bumpEnt.setY(bumpMovPerFrame);
     }
-    player1.setY(player1.getY() - bumpMovPerFrame);
+    bumpEnt.setY(bumpEnt.getY() - bumpMovPerFrame);
 
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+      if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
+        if (entities[i].getActionState() != HIT_STATE) {
+          entities[i].decreaseStamina(BUMP_DAMAGE);
+        }
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
     }
     if ( hitSomething ) {
-      player1.setY(player1.getY() + bumpMovPerFrame);
+      bumpEnt.setY(bumpEnt.getY() + bumpMovPerFrame);
     }
   }
 
-  //During a bump action this function controls the downward movement and collisionDetection
-  function p1BumpDown() {
-    if (player1.getY() - bumpMovPerFrame > canvas.height - player1.getHeight()) { // implement this in game
-      player1.setY(canvas.height- player1.getHeight() - bumpMovPerFrame);
+  /* Purpose: During a bump action this function controls the downward movement and collisionDetection
+  /
+  / Params: bumpEnt - The entity that is performaing the downward bump action
+  /
+  / Note: Assumes an entity is given do not use non entities as it's parameter
+  */
+  function entBumpDown(bumpEnt) {
+    if (bumpEnt.getY() - bumpMovPerFrame > canvas.height - bumpEnt.getHeight()) { // implement this in game
+      bumpEnt.setY(canvas.height- bumpEnt.getHeight() - bumpMovPerFrame);
     }
-    player1.setY(player1.getY() + bumpMovPerFrame);
+    bumpEnt.setY(bumpEnt.getY() + bumpMovPerFrame);
 
     //check to see if any entities were collided with
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+      if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
+        if (entities[i].getActionState() != HIT_STATE) {
+          entities[i].decreaseStamina(BUMP_DAMAGE);
+        }
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
     }
     if ( hitSomething ) {
-      player1.setY(player1.getY() - bumpMovPerFrame);
+      bumpEnt.setY(bumpEnt.getY() - bumpMovPerFrame);
+    }
+  }
+
+  /*
+  / Purpose: this function generically takes any entity and allows them to take the bump action
+  /
+  / Details: the bump action is performed in the direction the entity last moved in. If you wish
+  /           to choose the direction of the bump make sure and update the entities facingDirection
+  /           to the desired bump direction immediatly before this function.
+  /
+  / Params: bumpEntity - the entity that is performing the bump action
+  /
+  / Notes: the function does not check to make sure the given parameter is an entityID
+  /         make sure to only give this function entity objects.
+  /
+  */
+  function entityBump(bumpEntity) {
+    if (bumpEntity.getFacingDirection() == RIGHT_DIR) {
+      if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+        entBumpRight(bumpEntity);
+      }
+      else {
+        entBumpLeft(bumpEntity);
+      }
+    }
+    else if (bumpEntity.getFacingDirection() == LEFT_DIR) {
+      if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+        entBumpLeft(bumpEntity);
+      }
+      else {
+        entBumpRight(bumpEntity);
+      }
+    }
+    else if (bumpEntity.getFacingDirection() == UP_DIR) {
+      if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+        entBumpUp(bumpEntity);
+      }
+      else {
+        entBumpDown(bumpEntity);
+      }
+    }
+    else if (bumpEntity.getFacingDirection() == DOWN_DIR) {
+      if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+        entBumpDown(bumpEntity);
+      }
+      else {
+        entBumpUp(bumpEntity);
+      }
+    }
+
+    bumpEntity.setAnimationCounter(bumpEntity.getAnimationCounter() + 1);
+    if (bumpEntity.getAnimationCounter() >= bumpAniFrames) {
+      bumpEntity.setAnimationCounter(0);
+      bumpEntity.setActionState(NORMAL_STATE);
+      bumpEntity.setActionCooldown(ACTION_COOLDOWN);
     }
   }
 
@@ -359,14 +501,91 @@
     ctx.fill();
 	  ctx.closePath();
 
+    //Draw entity stamina bar when dubug overlay is active
+    if (showDebug) {
+      var genEntMaxStam = MAX_STAMINA;
+      if (genEnt.getDestructibleObject()) {
+        genEntMaxStam = DESTRUCTIBLE_MAX_STAMINA;
+      }
+      //Empty bar
+      ctx.beginPath();
+      ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), genEnt.getWidth(), 6);
+      ctx.fillStyle = "#000000";
+      ctx.fill();
+      ctx.closePath;
+      //Stamina bar
+      ctx.beginPath();
+      ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), (genEnt.getWidth()*genEnt.getStamina())/genEntMaxStam, 6);
+      ctx.fillStyle = "#ccbb91";
+      ctx.fill();
+      ctx.closePath;
+    }
+
     //decrement Action Cooldown if it's above 0
     if (genEnt.getActionCooldown() > 0) {
       genEnt.setActionCooldown(genEnt.getActionCooldown() - 1);
     }
+
+    if (genEnt.getEntityID() == gameUI.getEntityID()) {
+      drawGamePlayOverlay();
+    }
+  }
+
+  //Draw Gameplay overlay, currently just character stamina
+  function drawGamePlayOverlay() {
+    var yOffset = 10;
+    gameUI.setWidth(window.innerWidth);
+    //Base UI
+    ctx.beginPath();
+    ctx.rect(0, 0, window.innerWidth, gameUI.getHeight());
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath;
+    ctx.beginPath();
+    ctx.rect(2, 2, window.innerWidth-21, gameUI.getHeight()-4);
+    ctx.fillStyle = "#ccbb91";
+    ctx.fill();
+    ctx.closePath;
+    //Stamina Bars for non-destructible entities (players/AI)
+    //PLAYER
+    ctx.font = "20px Elephant";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("PLAYER STAMINA", 20, 23+yOffset);
+    //Empty bar
+    ctx.beginPath();
+    ctx.rect(gameUI.getX()+20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath();
+    //Stamina bar
+    ctx.beginPath();
+    ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
+    ctx.fillStyle = "#ccbb91";
+    ctx.fill();
+    ctx.closePath;
+
+
+    //OPPONENT
+    ctx.font = "20px Elephant";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("OPPONENT STAMINA", (gameUI.getWidth()/3)*2-20, 23+yOffset);
+    //Empty bar
+    ctx.beginPath();
+    ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath;
+    //Stamina bar
+    ctx.beginPath();
+    ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
+    ctx.fillStyle = "#ccbb91";
+    ctx.fill();
+    ctx.closePath;
   }
 
   //Show Debug information
   function drawDebugInfo() {
+    var dbListPos = 20;     //Starting Y position for the debug overlay
     //calculate fps
     var thisDraw = new Date();              //current time
     var fps = 1000 / (thisDraw - lastDraw); //estimated frames per second
@@ -382,16 +601,27 @@
     avg_fps = avg_fps.toFixed(1);
     lastDraw = thisDraw
 
+    //Draw background
+    ctx.beginPath();
+    ctx.rect(0, 0, 220, dbListPos*10);
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath;
+    ctx.globalAlpha = 1;
 
-    var dbListPos = 20;     //Starting Y position for the debug overlay
+    //Draw stats
     ctx.font = "16px Arial";
-    ctx.fillStyle = "#0095DD";
+    ctx.fillStyle = "#FFFFFF";
     ctx.fillText("AnimationCounter: "+player1.getAnimationCounter(), 8, dbListPos);
     ctx.fillText("Player1ActionState: "+player1.getActionState(), 8, dbListPos*2);
     ctx.fillText("Player1FacingDir: "+player1.getFacingDirection(), 8, dbListPos*3);
-    ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*4);
-    ctx.fillText("Opp1FacingDir: "+opp1.getFacingDirection(), 8, dbListPos*5);
-    ctx.fillText("FPS: "+avg_fps, 8, dbListPos*6);
+    ctx.fillText("Player1Stamina: "+player1.getStamina(), 8, dbListPos*4);
+    ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*5);
+    ctx.fillText("Opp1FacingDir: "+opp1.getFacingDirection(), 8, dbListPos*6);
+    ctx.fillText("Opp1Stamina: "+opp1.getStamina(), 8, dbListPos*7);
+    ctx.fillText("Opp1HitCooldown: "+opp1.getHitCooldown(), 8, dbListPos*8);
+    ctx.fillText("FPS: "+avg_fps, 8, dbListPos*9);
   }
 
   //Main Draw function, responsible for drawing each frame
@@ -402,6 +632,7 @@
 
       //When no special actions are being taken by player1: allows free movement
       if (player1.actionState == NORMAL_STATE) {
+          var collisionAmount = 0;
           // move right and adjust if outside window border
           if(rightPressed) {
           if (player1.getX()+player1.getDx()  > canvas.width - player1.getWidth()) {
@@ -412,12 +643,13 @@
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
               hitSomething = true;
+              collisionAmount = ( player1.getX() + player1.getWidth()) - entities[i].getX() + 1;
             }
           }
           if ( hitSomething ) {
-            player1.setX(player1.getX() - player1.getDx());
+            player1.setX(player1.getX() - collisionAmount);
           }
           player1.setFacingDirection(RIGHT_DIR);
           }
@@ -432,12 +664,13 @@
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
               hitSomething = true;
+              collisionAmount = ( entities[i].getX() + entities[i].getWidth()) - player1.getX() + 1;
             }
           }
           if ( hitSomething ) {
-            player1.setX(player1.getX() + player1.getDx());
+            player1.setX(player1.getX() + collisionAmount);
           }
           player1.setFacingDirection(LEFT_DIR);
           }
@@ -445,19 +678,20 @@
           // move up and adjust if outside window border
           if(upPressed){
             if(player1.getY() + player1.getDy() <  0) {
-              player1.setY(borderBounce);
+              player1.setY(player1.getY() + player1.getDy());
             }
           player1.setY(player1.getY() - player1.getDy());
 
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
               hitSomething = true;
+              collisionAmount = (entities[i].getY() + entities[i].getHeight()) - player1.getY() + 1;
             }
           }
           if ( hitSomething ) {
-            player1.setY(player1.getY() + player1.getDy());
+            player1.setY(player1.getY() + collisionAmount);
           }
           player1.setFacingDirection(UP_DIR);
           }
@@ -465,71 +699,41 @@
           // move down and adjust if outside window border
           if(downPressed){
             if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
-              player1.setY(canvas.height - player1.getHeight() - borderBounce);
+              //player1.setY(canvas.height - player1.getHeight() - vborderBounce);
+              player1.setY(player1.getY() - player1.getDy());
           }
           player1.setY(player1.getY() + player1.getDy());
 
           //check to see if any entities were collided with
           var hitSomething = false;
           for (var i = 0; i < entities.length; i++) {
-            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID()) {
+            if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
               hitSomething = true;
+              collisionAmount = (player1.getY() + player1.getHeight()) - entities[i].getY() + 1;
             }
           }
           if ( hitSomething ) {
-            player1.setY(player1.getY() - player1.getDy());
+            player1.setY(player1.getY() - collisionAmount);
           }
           player1.setFacingDirection(DOWN_DIR);
           }
       }
       //When player1 is performing a bump action
       else if (player1.getActionState() == BUMPING_STATE) {
-        if (player1.getFacingDirection() == RIGHT_DIR) {
-          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
-            p1BumpRight();
-          }
-          else {
-            p1BumpLeft();
-          }
-        }
-        else if (player1.getFacingDirection() == LEFT_DIR) {
-          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
-            p1BumpLeft();
-          }
-          else {
-            p1BumpRight();
-          }
-        }
-        else if (player1.getFacingDirection() == UP_DIR) {
-          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
-            p1BumpUp();
-          }
-          else {
-            p1BumpDown();
-          }
-        }
-        else if (player1.getFacingDirection() == DOWN_DIR) {
-          if (player1.getAnimationCounter() <= bumpAniFrames/2) {
-            p1BumpDown();
-          }
-          else {
-            p1BumpUp();
-          }
-        }
-
-        player1.setAnimationCounter(player1.getAnimationCounter() + 1);
-        if (player1.getAnimationCounter() >= bumpAniFrames) {
-          player1.setAnimationCounter(0);
-          player1.setActionState(NORMAL_STATE);
-          player1.setActionCooldown(ACTION_COOLDOWN);
-        }
+          entityBump(player1);
       }
+
+      //AI takes its actions after the player
+      AILogic();
+
   		// clear the canvas to redraw screen
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       //Draws each entity
-      for (var i = 0; i < entities.length; i++) {
-        drawEntity(entities[i]);
+      if (!hideEntities) {
+        for (var i = 0; i < entities.length; i++) {
+          drawEntity(entities[i]);
+        }
       }
 
       //Check for debug overlay flag
@@ -562,29 +766,40 @@
         }
       }
       else if (e.key == "l") {
-        showDebug = !showDebug
+        showDebug = !showDebug;
+      }
+      else if (e.key == "h") {
+        hideEntities = !hideEntities;
+      }
+      else if (e.key == "v") {
+        player1.decreaseStamina(10);
+        opp1.decreaseStamina(10);
+      }
+      else if (e.key == "z") {
+        player1.decreaseStamina(-10);
+        opp1.decreaseStamina(-10);
       }
 	}
 
 	function keyUpHandler(e) {
 	    if(e.key == "Right" || e.key == "ArrowRight") {
-	        rightPressed = false;
+            rightPressed = false;
+            e.preventDefault();
 	    }
 	    else if(e.key == "Left" || e.key == "ArrowLeft") {
-	        leftPressed = false;
+            leftPressed = false;
+            e.preventDefault();
 	    }
 	    else if (e.key == "Up" || e.key == "ArrowUp"){
-	    	upPressed = false;
+            upPressed = false;
+            e.preventDefault();
 	    }
 	    else if (e.key == "Down" || e.key == "ArrowDown") {
-	    	downPressed = false;
+            downPressed = false;
+            e.preventDefault();
 	    }
       else if (e.key == p1BumpKey) {
         p1BumpPressed = false;
       }
 	}
 	setInterval(draw, 10);
-</script>
-
-</body>
-</html>
