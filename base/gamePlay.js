@@ -34,15 +34,43 @@
 
 
 //game timer count down to 0 starting at startTime
-var startTime = 60;
+var startTime = 30;
 var currTime = startTime;
 var timerInterval = setInterval(function() {
   if (currTime == 0) {
-    clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
-    clearInterval(timerInterval); //stop the timer
+    endGame();
   }  
   currTime--;
 }, 1000); // update about every second
+
+
+function endGame() {
+  clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
+  clearInterval(timerInterval); //stop the timer
+  var maxScore = 0;
+  
+  for (i = 0; i < entities.length; i++) {
+    if (entities[i].isACharacter() == true) {
+      if (entities[i].getScore() > maxScore) {
+        winner = entities[i];
+        maxScore = winner.getScore();
+      }
+    }
+  }
+
+  //calculate 5% score bonus for each second remaining
+  timeBonus = maxScore * 0.05;
+  maxScore = maxScore + (timeBonus * currTime);
+
+  //calculate remaining stamina bonus
+  for (i = 0; i < winner.getStamina(); i += 10) {
+    maxScore += 50;
+  }
+
+  //display basic game over window. Will replace with actual ending screen, this is just a placeholder
+  alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
+}
+
 
   /*
   / Purpose: This class is to be used for all entities, those being player and
@@ -75,10 +103,11 @@ var timerInterval = setInterval(function() {
     animationCounter = 0;         //animationaCounter: Current animation frame for an action
     entityID = 0;                 //An entities unique ID set before putting in entity list
     stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
+    score = 0;
 
 
     //initializing function
-    constructor(height, width, src, destructibleObject) {
+    constructor(height, width, src, destructibleObject, isCharacter) {
     	this.entityImg.src = src;        //src: The link to the source file
     	this.entityImg.width = width;    //width: The Width of the image
     	this.entityImg.height = height;  //height: The height of the image
@@ -86,6 +115,23 @@ var timerInterval = setInterval(function() {
       if (destructibleObject) {
         this.stamina = DESTRUCTIBLE_MAX_STAMINA;
       }
+      this.isCharacter = isCharacter;
+    }
+
+    setIsCharacter(isCharacter) {
+      this.isCharacter = isCharacter;
+    }
+
+    isACharacter() {
+      return this.isCharacter;
+    }
+
+    getScore() {
+      return this.score;
+    }
+
+    addScore(score) {
+      this.score += score;
     }
 
     getActionState() {
@@ -224,12 +270,12 @@ var timerInterval = setInterval(function() {
   }
 
 	//initialize player1
-  const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false);
+  const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true);
 	var vborderBounce = 20;
   var borderBounce = 10;
 
   //initialize opponent1
-  const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false);
+  const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true);
   opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 
   //initialize UI
@@ -327,7 +373,14 @@ var timerInterval = setInterval(function() {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -355,7 +408,14 @@ var timerInterval = setInterval(function() {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -383,7 +443,14 @@ var timerInterval = setInterval(function() {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -411,7 +478,14 @@ var timerInterval = setInterval(function() {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -822,4 +896,5 @@ var timerInterval = setInterval(function() {
         p1BumpPressed = false;
       }
 	}
+
 	var drawInterval = setInterval(draw, 10);
