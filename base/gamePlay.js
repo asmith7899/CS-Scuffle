@@ -51,7 +51,7 @@ function endGame() {
   
   for (i = 0; i < entities.length; i++) {
     if (entities[i].isACharacter() == true) {
-      if (entities[i].getScore() > maxScore) {
+      if (entities[i].getScore() >= maxScore) {
         winner = entities[i];
         maxScore = winner.getScore();
       }
