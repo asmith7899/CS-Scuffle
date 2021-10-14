@@ -255,7 +255,7 @@ function endGame() {
         if (this.getDestructibleObject()) {
           this.stamina = DESTRUCTIBLE_MAX_STAMINA;
         } else {
-          this.stamian = MAX_STAMINA;
+          this.stamina = MAX_STAMINA;
         }
       } else {
         this.stamina = this.stamina - amount;
