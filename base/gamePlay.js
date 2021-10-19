@@ -308,6 +308,7 @@ function endGame() {
   //Debug variables
   var showDebug = false;          //Show the debug overlay?
   var hideEntities = false;       //Used to stop entities from being draw
+  var hideArena = false;          //Hides CS webpage background
   var lastDraw = new Date();      //Time of last draw, used in FPS calculation
   var fps_Count = 0;              //The total number of frames or draws
   var tot_fps = 0;                //The time to draw each frame summed together
@@ -823,6 +824,14 @@ function endGame() {
   		// clear the canvas to redraw screen
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      if (hideArena) {
+        ctx.beginPath();
+        ctx.rect(0, 0, window.innerWidth, window.innerHeight);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.closePath;
+      }
+
       //Draws each entity
       if (!hideEntities) {
         for (var i = 0; i < entities.length; i++) {
@@ -872,6 +881,9 @@ function endGame() {
       else if (e.key == "z") {
         player1.decreaseStamina(-10);
         opp1.decreaseStamina(-10);
+      }
+      else if (e.key == "w") {
+        hideArena = !hideArena;
       }
 	}
 
