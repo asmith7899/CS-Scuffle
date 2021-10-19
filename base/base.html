@@ -52,6 +52,32 @@
             overflow: hidden;
         }
     </style>
+    <div id="menu" class="overlay">
+      <!-- Button to close the overlay navigation -->
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+      <!-- Overlay content -->
+      <div class="overlay-content">
+        <a href="#">Change Difficulty</a>
+        <a href="#">Single Player </a>
+        <a href="#">Multiplayer </a>
+        <a href="#">Contact</a>
+      </div>
+    <script>
+      /* Open */
+      function openNav() {
+        document.getElementById("menu").style.width = "20%";
+      }
+      /* Close */
+      function closeNav() {
+        document.getElementById("menu").style.width = "0%";
+      }
+    </script>
+    </div>
+
+    <!-- Use any element to open/show the overlay navigation menu -->
+      <span id="menuButton" onclick="openNav()">Open Start Menu</span>
+
     <header class="header">
         <!-- Begin Gold Bar -->
         <div class="navbar navbar-inverse goldbar">

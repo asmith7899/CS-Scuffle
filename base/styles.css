@@ -16,6 +16,85 @@ html {
     box-sizing: border-box;
 }
 
+#menuButton {
+    position: fixed;
+    z-index: 4;
+    top: 20%;
+    left: 0px;
+    width: 10%;
+    height: 30px;
+    background-color: lightyellow;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+}
+
+ #menu {
+    position: fixed;
+    z-index: 4;
+    top:25%;
+    left: 0px;
+    background: lightyellow;
+    width: 20%;
+    height: 40%;
+}
+
+/* The menu background*/
+.overlay {
+    height: 40%;
+    width: 20%;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 25%;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0, 0.9);
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+  }
+  
+  /* Position links inside menu overlay */
+  .overlay-content {
+    position: relative;
+    top: 10%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  /* The navigation links inside the overlay */
+  .overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 20px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: black;
+    display: block; /* Display block instead of inline */
+    transition: 0.3s; /* Transition effects on hover (color) */
+  }
+  
+  /* When you mouse over the navigation links, change their color */
+  .overlay a:hover, .overlay a:focus {
+    color: #f3f3f3;
+  }
+  
+  /* Position the close button (top right corner) */
+  .overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 20px;
+  }
+  
+  /* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
+  @media screen and (max-height: 450px) {
+    .overlay a {font-size: 20px}
+    .overlay .closebtn {
+      font-size: 40px;
+      top: 15px;
+      right: 35px;
+    }
+  }
+
 body {
     font-family: acumin-pro,"Franklin Gothic",sans-serif;
     font-size: 1em;
