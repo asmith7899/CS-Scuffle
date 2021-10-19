@@ -32,6 +32,46 @@
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
 
+
+//game timer count down to 0 starting at startTime
+var startTime = 30;
+var currTime = startTime;
+var timerInterval = setInterval(function() {
+  if (currTime == 0) {
+    endGame();
+  }  
+  currTime--;
+}, 1000); // update about every second
+
+
+function endGame() {
+  clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
+  clearInterval(timerInterval); //stop the timer
+  var maxScore = 0;
+  
+  for (i = 0; i < entities.length; i++) {
+    if (entities[i].isACharacter() == true) {
+      if (entities[i].getScore() >= maxScore) {
+        winner = entities[i];
+        maxScore = winner.getScore();
+      }
+    }
+  }
+
+  //calculate 5% score bonus for each second remaining
+  timeBonus = maxScore * 0.05;
+  maxScore = maxScore + (timeBonus * currTime);
+
+  //calculate remaining stamina bonus
+  for (i = 0; i < winner.getStamina(); i += 10) {
+    maxScore += 50;
+  }
+
+  //display basic game over window. Will replace with actual ending screen, this is just a placeholder
+  alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
+}
+
+
   /*
   / Purpose: This class is to be used for all entities, those being player and
   /           non-player characters within the game.
@@ -63,10 +103,11 @@
     animationCounter = 0;         //animationaCounter: Current animation frame for an action
     entityID = 0;                 //An entities unique ID set before putting in entity list
     stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
+    score = 0;
 
 
     //initializing function
-    constructor(height, width, src, destructibleObject) {
+    constructor(height, width, src, destructibleObject, isCharacter) {
     	this.entityImg.src = src;        //src: The link to the source file
     	this.entityImg.width = width;    //width: The Width of the image
     	this.entityImg.height = height;  //height: The height of the image
@@ -74,6 +115,23 @@
       if (destructibleObject) {
         this.stamina = DESTRUCTIBLE_MAX_STAMINA;
       }
+      this.isCharacter = isCharacter;
+    }
+
+    setIsCharacter(isCharacter) {
+      this.isCharacter = isCharacter;
+    }
+
+    isACharacter() {
+      return this.isCharacter;
+    }
+
+    getScore() {
+      return this.score;
+    }
+
+    addScore(score) {
+      this.score += score;
     }
 
     getActionState() {
@@ -197,7 +255,7 @@
         if (this.getDestructibleObject()) {
           this.stamina = DESTRUCTIBLE_MAX_STAMINA;
         } else {
-          this.stamian = MAX_STAMINA;
+          this.stamina = MAX_STAMINA;
         }
       } else {
         this.stamina = this.stamina - amount;
@@ -212,12 +270,12 @@
   }
 
 	//initialize player1
-  const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false);
+  const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true);
 	var vborderBounce = 20;
   var borderBounce = 10;
 
   //initialize opponent1
-  const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false);
+  const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true);
   opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 
   //initialize UI
@@ -315,7 +373,14 @@
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -343,7 +408,14 @@
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -371,7 +443,14 @@
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -399,7 +478,14 @@
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
+          if (entities[i].isACharacter() == true) {
+            bumpEnt.addScore(100);
+            if (entities[i].getStamina() == 0) {
+              endGame();
+            }
+          }
         }
+        
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -480,7 +566,7 @@
         ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
-        ctx.closePath;
+        ctx.closePath();
     }
     //HIT_STATE highlight animation
     else if (genEnt.getActionState() == HIT_STATE) {
@@ -489,7 +575,7 @@
         ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
         ctx.fillStyle = "#FF0000";
         ctx.fill();
-        ctx.closePath;
+        ctx.closePath();
         if (genEnt.getHitCooldown() > HIT_COOLDOWN) {
           genEnt.setActionState(NORMAL_STATE);
           genEnt.setHitCooldown(0);
@@ -512,13 +598,13 @@
       ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), genEnt.getWidth(), 6);
       ctx.fillStyle = "#000000";
       ctx.fill();
-      ctx.closePath;
+      ctx.closePath();
       //Stamina bar
       ctx.beginPath();
       ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), (genEnt.getWidth()*genEnt.getStamina())/genEntMaxStam, 6);
       ctx.fillStyle = "#ccbb91";
       ctx.fill();
-      ctx.closePath;
+      ctx.closePath();
     }
 
     //decrement Action Cooldown if it's above 0
@@ -540,12 +626,12 @@
     ctx.rect(0, 0, window.innerWidth, gameUI.getHeight());
     ctx.fillStyle = "#000000";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     ctx.beginPath();
     ctx.rect(2, 2, window.innerWidth-21, gameUI.getHeight()-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     //Stamina Bars for non-destructible entities (players/AI)
     //PLAYER
     ctx.font = "20px Elephant";
@@ -562,8 +648,16 @@
     ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
 
+
+    ctx.font = "20px Elephant";
+    ctx.fillStyle = "#000000";
+    ctx.fillText(currTime, gameUI.getWidth()/2, 23+yOffset);
+
+    //ctx.font = "20px Elephant";
+    //ctx.fillstyle = "#000000";
+    //ctx.fillText("WHY DON'T YOU SHOW JESUS CRUST", 20, 60 + yOffset);
 
     //OPPONENT
     ctx.font = "20px Elephant";
@@ -574,13 +668,13 @@
     ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
     ctx.fillStyle = "#000000";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     //Stamina bar
     ctx.beginPath();
     ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
   }
 
   //Show Debug information
@@ -607,7 +701,7 @@
     ctx.globalAlpha = 0.8;
     ctx.fillStyle = "#000000";
     ctx.fill();
-    ctx.closePath;
+    ctx.closePath();
     ctx.globalAlpha = 1;
 
     //Draw stats
@@ -802,4 +896,5 @@
         p1BumpPressed = false;
       }
 	}
-	setInterval(draw, 10);
+
+	var drawInterval = setInterval(draw, 10);
