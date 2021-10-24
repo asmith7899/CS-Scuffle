@@ -2,11 +2,12 @@
 /   Notes on useful debug features/gameplay elements currently implemented:
 /       -arrow keys to move Player1
 /       -e key for Player1 to perform bump actions
-              Note: a bump action is performed in the direction the entity was last facing when the key is pressed
+/             Note: a bump action is performed in the direction the entity was last facing when the key is pressed
 /       -l key to bring up debug overlay*
 /       -h key to hide entities (useful if you want to see what's behind them)*
 /       -v key to decrease current stamina for player1 and opp1 by 10 points*
 /       -z key to increase current stamina for player1 and opp1 by 10 points*
+/       -t key to increase time by 3000 seconds
 /       -Destructible objects can be moved over without collision, non-destructible objects have collision
 /             Note: during a bump action the entity will collide and be stopped by any Destructible objects
 /                   Also, destructible objects are entities that have a TRUE destructibleObject flag.
@@ -39,7 +40,7 @@ var currTime = startTime;
 var timerInterval = setInterval(function() {
   if (currTime == 0) {
     endGame();
-  }  
+  }
   currTime--;
 }, 1000); // update about every second
 
@@ -48,7 +49,7 @@ function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
   clearInterval(timerInterval); //stop the timer
   var maxScore = 0;
-  
+
   for (i = 0; i < entities.length; i++) {
     if (entities[i].isACharacter() == true) {
       if (entities[i].getScore() >= maxScore) {
@@ -70,7 +71,6 @@ function endGame() {
   //display basic game over window. Will replace with actual ending screen, this is just a placeholder
   alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
 }
-
 
   /*
   / Purpose: This class is to be used for all entities, those being player and
@@ -214,6 +214,11 @@ function endGame() {
       this.y = y;
     }
 
+    setPosition(x,y) {
+      this.x = x;
+      this.y = y;
+    }
+
     setDx(dx) {
       this.dx = dx;
     }
@@ -287,12 +292,36 @@ function endGame() {
   testDestructible.setStartingPosition(300, 300);
 
   //initialize entity list (EntityID must be unique)
-  gameUI.setEntityID(1);
-  testDestructible.setEntityID(2);
-  opp1.setEntityID(3);
-  player1.setEntityID(4);
-  var entities = new Array(gameUI, testDestructible, opp1, player1);
+  gameUI.setEntityID('1');
+  testDestructible.setEntityID('2')
+  opp1.setEntityID('3');
+  player1.setEntityID('4');
+  var playerNumber = 4
+  var entities = new Array(gameUI, testDestructible);
   var nonDesEntityNumber = 2;   //Number of non-destructible entities
+
+  //html ElementID Array
+  var arenaElementIds = new Array('div1','div2');
+
+  for (var i = 0; i < arenaElementIds.length; i++) {
+    var genElement = document.getElementById(arenaElementIds[i]);
+    const tempEntity = new Entity(genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, 'https://www.pngkit.com/png/full/229-2290247_share-this-image-cracked-screen.png', true);
+    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top);
+    tempEntity.setEntityID(arenaElementIds[i]);
+    nonDesEntityNumber++;
+    entities.push(tempEntity);
+  }
+
+  entities.push(opp1);
+  entities.push(player1);
+
+  //Test Code to set starting positions of test divs (Will need to be commented out once a working arena is made)
+  moveElement('div1', player1.getX() + 100, player1.getY()+100);
+  moveElement('div2', opp1.getX() + 100, opp1.getY()+100);
+
+  //var genElement = document.getElementById(elementID);
+  //div.style.left = posx + 'px';
+  //div.style.top = posy + 'px';
 
   //Default Keyboard controls
   //update these variables to allow for control changes in options menu
@@ -317,6 +346,25 @@ function endGame() {
   var bumpAniFrames = 14;         //Length of bump animation in frames
   var bumpDistance = 80;          //How far the bump animation takes you forward
   var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
+
+  /*
+  / Purpose: Changes the x/y position of an html element
+  /
+  / Params:
+  /         elementID: the id assigned to the html element used to identify it.
+  /         x: the x position you want the element moved to
+  /         y: the y position you want the element moved to
+  /
+  / Note: The destructible entity overlayed ontop of any html elements with an ID moves to the current location
+  /       of the html element it's connected to whenever the draw() function is called so moving
+  /       the html element moves the destructible entity overlayed ontop of it.
+  */
+  function moveElement(elementID, x, y) {
+      var genE = document.getElementById(elementID);
+      genE.style.position = "absolute";
+      genE.style.left = x + 'px';
+      genE.style.top = y + 'px';
+  }
 
   /*
   / Purpose: Checks whether or not two objects are currently colliding with each
@@ -381,7 +429,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -416,7 +464,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -451,7 +499,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -486,7 +534,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -561,6 +609,11 @@ function endGame() {
   / Notes: Will crash for non-entities
   */
   function drawEntity(genEnt) {
+    //HTML Element Reposition elementBox
+    if (genEnt.getDestructibleObject() && genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
+      genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left,document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top);
+    }
+
     //BUMPING_STATE highlight animation
     if (genEnt.getActionState() == BUMPING_STATE) {
         ctx.beginPath();
@@ -593,6 +646,15 @@ function endGame() {
       var genEntMaxStam = MAX_STAMINA;
       if (genEnt.getDestructibleObject()) {
         genEntMaxStam = DESTRUCTIBLE_MAX_STAMINA;
+        ctx.font = "13px Elephant";
+        ctx.fillStyle = "#000000";
+        /* Show coordinates of html element and distructible entity overlay.
+        if (genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
+          ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY()-10);
+          ctx.fillText(genEnt.getY(), genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
+          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY()-20);
+          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-20);
+        }*/
       }
       //Empty bar
       ctx.beginPath();
@@ -884,6 +946,9 @@ function endGame() {
       }
       else if (e.key == "w") {
         hideArena = !hideArena;
+      }
+      else if (e.key == "t") {
+        currTime = 3000;
       }
 	}
 
