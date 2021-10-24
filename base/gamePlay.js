@@ -284,28 +284,28 @@ function endGame() {
   opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 
   //initialize UI
-  const gameUI = new Entity(100, window.innerWidth, 'https://teamcolorcodes.com/wp-content/uploads/2017/10/Purdue-Boilermakers-Color-Palette-Image.png', true );
+  const gameUI = new Entity(50, window.innerWidth, '', true );
   gameUI.setStartingPosition(0,0);
 
   //initialize testEntity
-  const testDestructible = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg', true);
-  testDestructible.setStartingPosition(300, 300);
+  //const testDestructible = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg', true);
+  //testDestructible.setStartingPosition(300, 300);
 
   //initialize entity list (EntityID must be unique)
   gameUI.setEntityID('1');
-  testDestructible.setEntityID('2')
-  opp1.setEntityID('3');
-  player1.setEntityID('4');
-  var playerNumber = 4
-  var entities = new Array(gameUI, testDestructible);
+  //testDestructible.setEntityID('2')
+  opp1.setEntityID('2');
+  player1.setEntityID('3');
+  var playerNumber = 3
+  var entities = new Array(gameUI);
   var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
   //html ElementID Array
-  var arenaElementIds = new Array('div1','div2');
+  var arenaElementIds = new Array('map_layer0_tile_17_1_0');
 
   for (var i = 0; i < arenaElementIds.length; i++) {
     var genElement = document.getElementById(arenaElementIds[i]);
-    const tempEntity = new Entity(genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, 'https://www.pngkit.com/png/full/229-2290247_share-this-image-cracked-screen.png', true);
+    const tempEntity = new Entity(genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true);
     tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top);
     tempEntity.setEntityID(arenaElementIds[i]);
     nonDesEntityNumber++;
@@ -316,8 +316,8 @@ function endGame() {
   entities.push(player1);
 
   //Test Code to set starting positions of test divs (Will need to be commented out once a working arena is made)
-  moveElement('div1', player1.getX() + 100, player1.getY()+100);
-  moveElement('div2', opp1.getX() + 100, opp1.getY()+100);
+  //moveElement('div1', player1.getX() + 100, player1.getY()+100);
+  //moveElement('div2', opp1.getX() + 100, opp1.getY()+100);
 
   //var genElement = document.getElementById(elementID);
   //div.style.left = posx + 'px';
@@ -687,57 +687,59 @@ function endGame() {
     //Base UI
     ctx.beginPath();
     ctx.rect(0, 0, window.innerWidth, gameUI.getHeight());
+    //ctx.globalAlpha = 0.3;
     ctx.fillStyle = "#000000";
     ctx.fill();
     ctx.closePath();
     ctx.beginPath();
-    ctx.rect(2, 2, window.innerWidth-21, gameUI.getHeight()-4);
+    ctx.rect(2, 2, window.innerWidth-2, gameUI.getHeight()-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
     ctx.closePath();
     //Stamina Bars for non-destructible entities (players/AI)
-    //PLAYER
-    ctx.font = "20px Elephant";
-    ctx.fillStyle = "#000000";
-    ctx.fillText("PLAYER STAMINA", 20, 23+yOffset);
+    ctx.globalAlpha = 1;
     //Empty bar
     ctx.beginPath();
-    ctx.rect(gameUI.getX()+20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
+    ctx.rect(gameUI.getX()+20, (gameUI.getHeight()/4)+1, (gameUI.getWidth()/3)-20, gameUI.getHeight()/2);
     ctx.fillStyle = "#000000";
     ctx.fill();
     ctx.closePath();
     //Stamina bar
     ctx.beginPath();
-    ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
+    ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/4)+3, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/2)-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
     ctx.closePath();
+    //PLAYER
+    ctx.font = "15px Helvetica";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("PLAYER STAMINA", 25, (gameUI.getHeight()/4)+yOffset+8);
 
-
-    ctx.font = "20px Elephant";
+    //Timer
+    ctx.font = "20px Helvetica";
     ctx.fillStyle = "#000000";
-    ctx.fillText(currTime, gameUI.getWidth()/2, 23+yOffset);
+    ctx.fillText(currTime, gameUI.getWidth()/2-20, 23+yOffset);
 
     //ctx.font = "20px Elephant";
     //ctx.fillstyle = "#000000";
     //ctx.fillText("WHY DON'T YOU SHOW JESUS CRUST", 20, 60 + yOffset);
 
-    //OPPONENT
-    ctx.font = "20px Elephant";
-    ctx.fillStyle = "#000000";
-    ctx.fillText("OPPONENT STAMINA", (gameUI.getWidth()/3)*2-20, 23+yOffset);
     //Empty bar
     ctx.beginPath();
-    ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
+    ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/4)+1, (gameUI.getWidth()/3)-20, gameUI.getHeight()/2);
     ctx.fillStyle = "#000000";
     ctx.fill();
     ctx.closePath();
     //Stamina bar
     ctx.beginPath();
-    ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
+    ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/4)+3, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/2)-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
     ctx.closePath();
+    //OPPONENT
+    ctx.font = "15px Helvetica";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("OPPONENT STAMINA", (gameUI.getWidth()/3)*2-15, (gameUI.getHeight()/4)+yOffset+8);
   }
 
   //Show Debug information
