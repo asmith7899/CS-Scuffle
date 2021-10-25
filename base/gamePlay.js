@@ -32,6 +32,7 @@
   var MAX_STAMINA = 100;                  //max stamina for players or AI
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
+  var CANVAS_OFFSET = 40;                 //The amount of offset the canvas has to the webpage. Defined in the arena css file
 
 
 //game timer count down to 0 starting at startTime
@@ -306,7 +307,7 @@ function endGame() {
   for (var i = 0; i < arenaElementIds.length; i++) {
     var genElement = document.getElementById(arenaElementIds[i]);
     const tempEntity = new Entity(genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true);
-    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top);
+    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top-CANVAS_OFFSET);
     tempEntity.setEntityID(arenaElementIds[i]);
     nonDesEntityNumber++;
     entities.push(tempEntity);
@@ -360,10 +361,12 @@ function endGame() {
   /       the html element moves the destructible entity overlayed ontop of it.
   */
   function moveElement(elementID, x, y) {
+      var tempY = y - CANVAS_OFFSET - 290;
+      var tempX = x + 16;
       var genE = document.getElementById(elementID);
       genE.style.position = "absolute";
-      genE.style.left = x + 'px';
-      genE.style.top = y + 'px';
+      genE.style.left = tempX + 'px';
+      genE.style.top = tempY + 'px';
   }
 
   /*
@@ -609,9 +612,9 @@ function endGame() {
   / Notes: Will crash for non-entities
   */
   function drawEntity(genEnt) {
-    //HTML Element Reposition elementBox
+    //HTML Element Reposition overlayed destructible entity to match current element location.
     if (genEnt.getDestructibleObject() && genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
-      genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left,document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top);
+      genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left,document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top-CANVAS_OFFSET);
     }
 
     //BUMPING_STATE highlight animation
@@ -646,15 +649,20 @@ function endGame() {
       var genEntMaxStam = MAX_STAMINA;
       if (genEnt.getDestructibleObject()) {
         genEntMaxStam = DESTRUCTIBLE_MAX_STAMINA;
-        ctx.font = "13px Elephant";
+        ctx.font = "10px Helvetica";
         ctx.fillStyle = "#000000";
-        /* Show coordinates of html element and distructible entity overlay.
+        // Show coordinates of html element and distructible entity overlay.
         if (genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
-          ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY()-10);
-          ctx.fillText(genEnt.getY(), genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
-          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY()-20);
-          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-20);
-        }*/
+          ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY()-60);
+          ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY()-50);
+          ctx.fillText(player1.getY(), genEnt.getX() + genEnt.getWidth()-20, genEnt.getY()-50);
+          ctx.fillText("Destructible Overlay:", genEnt.getX(), genEnt.getY()-40);
+          ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY()-30);
+          ctx.fillText(genEnt.getY(), genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-30);
+          ctx.fillText("HTML Element:", genEnt.getX(), genEnt.getY()-20);
+          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY()-10);
+          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
+        }
       }
       //Empty bar
       ctx.beginPath();
