@@ -109,9 +109,9 @@ function endGame() {
     stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
     holdingEnt = null;            /*
                                   / For destructible entities this is null when not being held
-                                  / When held this is a pointer to the entity holding them
+                                  / When held this is the entity holding them
                                   / for non-destructible entities this is null when not holding another entity
-                                  / and when they are holding an entity it is a pointer to the entity they are holding
+                                  / and when they are holding an entity it is the entity they are holding
                                   */
     score = 0;
 
@@ -266,7 +266,7 @@ function endGame() {
       this.width = width;
     }
 
-    //Takes a boolean
+    //Takes an entity
     setHoldingEnt(holdingEnt) {
       this.holdingEnt = holdingEnt;
     }
