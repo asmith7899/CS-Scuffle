@@ -3,8 +3,10 @@
 /       -arrow keys to move Player1
 /       -e key for Player1 to perform bump actions
 /             Note: a bump action is performed in the direction the entity was last facing when the key is pressed
+/       -f key for Player1 to pickup the html element behind them. If they are holding a html element
 /       -l key to bring up debug overlay*
 /       -h key to hide entities (useful if you want to see what's behind them)*
+/       -n key to hide the html elements.
 /       -v key to decrease current stamina for player1 and opp1 by 10 points*
 /       -z key to increase current stamina for player1 and opp1 by 10 points*
 /       -t key to increase time by 3000 seconds
@@ -22,6 +24,7 @@
   //Constants
   var NORMAL_STATE = "normal";
   var BUMPING_STATE = "bumping";
+  var PICKUP_STATE = "pickup";
   var HIT_STATE = "hit";
   var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
   var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
@@ -104,6 +107,12 @@ function endGame() {
     animationCounter = 0;         //animationaCounter: Current animation frame for an action
     entityID = 0;                 //An entities unique ID set before putting in entity list
     stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
+    holdingEnt = null;            /*
+                                  / For destructible entities this is null when not being held
+                                  / When held this is a pointer to the entity holding them
+                                  / for non-destructible entities this is null when not holding another entity
+                                  / and when they are holding an entity it is a pointer to the entity they are holding
+                                  */
     score = 0;
 
 
@@ -195,6 +204,10 @@ function endGame() {
       return this.destructibleObject;
     }
 
+    getHoldingEnt() {
+      return this.holdingEnt;
+    }
+
     setActionState(actionState) {
       this.actionState = actionState;
     }
@@ -244,12 +257,18 @@ function endGame() {
       this.stamina = stamina;
     }
 
+    //takes a boolean
     setDestructibleObject(destructibleObject) {
       this.destructibleObject = destructibleObject;
     }
 
     setWidth(width) {
       this.width = width;
+    }
+
+    //Takes a boolean
+    setHoldingEnt(holdingEnt) {
+      this.holdingEnt = holdingEnt;
     }
 
     //Used to decrease or increase statmina by a set amount from the current total
@@ -347,6 +366,7 @@ function endGame() {
   var bumpAniFrames = 14;         //Length of bump animation in frames
   var bumpDistance = 80;          //How far the bump animation takes you forward
   var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
+  var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function)
 
   /*
   / Purpose: Changes the x/y position of an html element
@@ -361,7 +381,7 @@ function endGame() {
   /       the html element moves the destructible entity overlayed ontop of it.
   */
   function moveElement(elementID, x, y) {
-      var tempY = y - CANVAS_OFFSET - 290;
+      var tempY = y - CANVAS_OFFSET - 210;
       var tempX = x + 16;
       var genE = document.getElementById(elementID);
       genE.style.position = "absolute";
@@ -556,7 +576,7 @@ function endGame() {
   /
   / Params: bumpEntity - the entity that is performing the bump action
   /
-  / Notes: the function does not check to make sure the given parameter is an entityID
+  / Notes: the function does not check to make sure the given parameter is an entity
   /         make sure to only give this function entity objects.
   /
   */
@@ -602,6 +622,45 @@ function endGame() {
     }
   }
 
+  /*
+  / Purpose: this function generically takes any entity checks to see if they are ontop of a destructible entity
+  /           that can be picked up, if so they pick it up. It also checks to see if they are already holding
+  /           an html element, if so they drop the element
+  /
+  /
+  / Params: pickupEntity - the entity that is performing the pickup/drop action
+  /
+  / Notes: the function does not check to make sure the given parameter is an entity
+  /         make sure to only give this function entity objects.
+  /
+  */
+  function entityPickup(pickupEntity) {
+    if (pickupEntity.getAnimationCounter() == 0) {
+      //Holding a html element, drop the element.
+      if (pickupEntity.getHoldingEnt() != null) {
+          pickupEntity.getHoldingEnt().setHoldingEnt(null);
+          pickupEntity.setHoldingEnt(null);
+      }
+      //Not holding a html element, pickup object if one is under the entity
+      else {
+        //check to see if any entities were collided with and can be picked up
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getHoldingEnt() == null ) {
+            entities[i].setHoldingEnt(pickupEntity);
+            pickupEntity.setHoldingEnt(entities[i]);
+          }
+        }
+      }
+    }
+
+    pickupEntity.setAnimationCounter(pickupEntity.getAnimationCounter() + 1);
+    if (pickupEntity.getAnimationCounter() >= pickupAniFrames) {
+      pickupEntity.setAnimationCounter(0);
+      pickupEntity.setActionState(NORMAL_STATE);
+      pickupEntity.setActionCooldown(ACTION_COOLDOWN);
+    }
+  }
+
   //Animation/Action Functions End
 
   /*
@@ -612,6 +671,11 @@ function endGame() {
   / Notes: Will crash for non-entities
   */
   function drawEntity(genEnt) {
+    //Update HTML element to follow the entity that is holding it.
+    if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
+      moveElement(genEnt.getEntityID(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10 );
+    }
+
     //HTML Element Reposition overlayed destructible entity to match current element location.
     if (genEnt.getDestructibleObject() && genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
       genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left,document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top-CANVAS_OFFSET);
@@ -890,6 +954,11 @@ function endGame() {
           entityBump(player1);
       }
 
+      //When player1 is attempting to pickup an object1
+      else if (player1.getActionState() == PICKUP_STATE) {
+          entityPickup(player1);
+      }
+
       //AI takes its actions after the player
       AILogic();
 
@@ -937,7 +1006,7 @@ function endGame() {
       else if (e.key == p1BumpKey) {
         if (player1.getActionCooldown() == 0) {
           p1BumpPressed = true;
-          player1.setActionState("bumping");
+          player1.setActionState(BUMPING_STATE);
         }
       }
       else if (e.key == "l") {
@@ -954,11 +1023,16 @@ function endGame() {
         player1.decreaseStamina(-10);
         opp1.decreaseStamina(-10);
       }
-      else if (e.key == "w") {
+      else if (e.key == "n") {
         hideArena = !hideArena;
       }
       else if (e.key == "t") {
         currTime = 3000;
+      }
+      else if (e.key == "f") {
+        if (player1.getActionCooldown() == 0) {
+          player1.setActionState(PICKUP_STATE);
+        }
       }
 	}
 
