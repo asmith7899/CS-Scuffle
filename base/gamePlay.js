@@ -6,13 +6,16 @@
 /       -f key for Player1 to pickup the html element behind them. If they are holding a html element
 /       -l key to bring up debug overlay*
 /       -h key to hide entities (useful if you want to see what's behind them)*
-/       -n key to hide the html elements.
+/       -n key to hide the html elements.*
 /       -v key to decrease current stamina for player1 and opp1 by 10 points*
 /       -z key to increase current stamina for player1 and opp1 by 10 points*
-/       -t key to increase time by 3000 seconds
+/       -t key to increase time by 3000 seconds*
 /       -Destructible objects can be moved over without collision, non-destructible objects have collision
 /             Note: during a bump action the entity will collide and be stopped by any Destructible objects
 /                   Also, destructible objects are entities that have a TRUE destructibleObject flag.
+/
+/       -Changing Arenas: Change the Offset constance and arenaElementsIds array to match the map you are wanting to load.
+/           Offset Constants: CANVAS_OFFSET, MOVE_OFFSET_X, MOVE_OFFSET_Y
 /
 /       *debug feature that will be disabled or removed for final version.
 */
@@ -35,8 +38,14 @@
   var MAX_STAMINA = 100;                  //max stamina for players or AI
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
-  var CANVAS_OFFSET = 40;                 //The amount of offset the canvas has to the webpage. Defined in the arena css file
 
+  //The amount of offset the canvas has to the webpage. Defined in the arena css file
+  var CANVAS_OFFSET = 40;                 //Use for map-arena
+  var MOVE_OFFSET_X = 16;
+  var MOVE_OFFSET_Y = 210;
+  //var CANVAS_OFFSET = 0;                  //Use for test-arena
+  //var MOVE_OFFSET_X = 0;
+  //var MOVE_OFFSET_Y = 0;
 
 //game timer count down to 0 starting at startTime
 var startTime = 30;
@@ -321,7 +330,8 @@ function endGame() {
   var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
   //html ElementID Array
-  var arenaElementIds = new Array('map_layer0_tile_17_1_0');
+  var arenaElementIds = new Array('map_layer0_tile_17_1_0');  //Use for map-arena
+  //var arenaElementIds = new Array('div1','div2');   //Use for test-arena
 
   for (var i = 0; i < arenaElementIds.length; i++) {
     var genElement = document.getElementById(arenaElementIds[i]);
@@ -381,8 +391,8 @@ function endGame() {
   /       the html element moves the destructible entity overlayed ontop of it.
   */
   function moveElement(elementID, x, y) {
-      var tempY = y - CANVAS_OFFSET - 210;
-      var tempX = x + 16;
+      var tempY = y - CANVAS_OFFSET - MOVE_OFFSET_Y;
+      var tempX = x + MOVE_OFFSET_X;
       var genE = document.getElementById(elementID);
       genE.style.position = "absolute";
       genE.style.left = tempX + 'px';
