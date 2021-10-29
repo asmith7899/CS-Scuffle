@@ -10,6 +10,7 @@
 /       -v key to decrease current stamina for player1 and opp1 by 10 points*
 /       -z key to increase current stamina for player1 and opp1 by 10 points*
 /       -t key to increase time by 3000 seconds
+/       -r key for Player1 to perform block actions
 /       -Destructible objects can be moved over without collision, non-destructible objects have collision
 /             Note: during a bump action the entity will collide and be stopped by any Destructible objects
 /                   Also, destructible objects are entities that have a TRUE destructibleObject flag.
@@ -24,6 +25,7 @@
   //Constants
   var NORMAL_STATE = "normal";
   var BUMPING_STATE = "bumping";
+  var BLOCKING_STATE = "blocking";
   var PICKUP_STATE = "pickup";
   var HIT_STATE = "hit";
   var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
@@ -346,6 +348,7 @@ function endGame() {
   //Default Keyboard controls
   //update these variables to allow for control changes in options menu
   var p1BumpKey = "e";            //Player1 default bump key
+  var p1BlockKey = "r";           //Player1 default block key
 
 	// booleans for keyboard press
 	var rightPressed = false;
@@ -353,6 +356,7 @@ function endGame() {
 	var upPressed = false;
 	var downPressed = false;
   var p1BumpPressed = false;      //Player1 has pressed the bump key?
+  var p1BlockPressed = false;     //Player1 has pressed the block key
 
   //Debug variables
   var showDebug = false;          //Show the debug overlay?
@@ -367,6 +371,8 @@ function endGame() {
   var bumpDistance = 80;          //How far the bump animation takes you forward
   var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
   var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function)
+
+  var blockAniFrames = 60;
 
   /*
   / Purpose: Changes the x/y position of an html element
@@ -622,6 +628,15 @@ function endGame() {
     }
   }
 
+  function entityBlock(blockEntity) {
+    blockEntity.setAnimationCounter(blockEntity.getAnimationCounter() + 1);
+    if (blockEntity.getAnimationCounter() >= blockAniFrames) {
+      blockEntity.setAnimationCounter(0);
+      blockEntity.setActionState(NORMAL_STATE);
+      blockEntity.setActionCooldown(ACTION_COOLDOWN);
+    }
+  }
+
   /*
   / Purpose: this function generically takes any entity checks to see if they are ontop of a destructible entity
   /           that can be picked up, if so they pick it up. It also checks to see if they are already holding
@@ -701,6 +716,15 @@ function endGame() {
           genEnt.setActionState(NORMAL_STATE);
           genEnt.setHitCooldown(0);
         }
+    }
+
+    //BLOCKING_STATE animation
+    else if (genEnt.getActionState() == BLOCKING_STATE) {
+        ctx.beginPath();
+        ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
+        ctx.fillStyle = '#FFA500';
+        ctx.fill();
+        ctx.closePath();
     }
 
     ctx.beginPath();
@@ -959,6 +983,11 @@ function endGame() {
           entityPickup(player1);
       }
 
+      //When player1 is performing a block action
+      else if (player1.getActionState() == BLOCKING_STATE) {
+          entityBlock(player1);
+      }
+
       //AI takes its actions after the player
       AILogic();
 
@@ -1008,6 +1037,11 @@ function endGame() {
           p1BumpPressed = true;
           player1.setActionState(BUMPING_STATE);
         }
+      } else if (e.key == p1BlockKey) {
+        if (player1.getActionCooldown() == 0) {
+          p1BlockPressed = true;
+          player1.setActionState(BLOCKING_STATE);
+        }
       }
       else if (e.key == "l") {
         showDebug = !showDebug;
@@ -1055,6 +1089,9 @@ function endGame() {
 	    }
       else if (e.key == p1BumpKey) {
         p1BumpPressed = false;
+      }
+      else if (e.key == p1BlockKey) {
+        p1BlockPressed = false;
       }
 	}
 
