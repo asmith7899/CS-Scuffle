@@ -2,14 +2,20 @@
 /   Notes on useful debug features/gameplay elements currently implemented:
 /       -arrow keys to move Player1
 /       -e key for Player1 to perform bump actions
-              Note: a bump action is performed in the direction the entity was last facing when the key is pressed
+/             Note: a bump action is performed in the direction the entity was last facing when the key is pressed
+/       -f key for Player1 to pickup the html element behind them. If they are holding a html element
 /       -l key to bring up debug overlay*
 /       -h key to hide entities (useful if you want to see what's behind them)*
+/       -n key to hide the html elements.*
 /       -v key to decrease current stamina for player1 and opp1 by 10 points*
 /       -z key to increase current stamina for player1 and opp1 by 10 points*
+/       -t key to increase time by 3000 seconds*
 /       -Destructible objects can be moved over without collision, non-destructible objects have collision
 /             Note: during a bump action the entity will collide and be stopped by any Destructible objects
 /                   Also, destructible objects are entities that have a TRUE destructibleObject flag.
+/
+/       -Changing Arenas: Change the Offset constance and arenaElementsIds array to match the map you are wanting to load.
+/           Offset Constants: CANVAS_OFFSET, MOVE_OFFSET_X, MOVE_OFFSET_Y
 /
 /       *debug feature that will be disabled or removed for final version.
 */
@@ -24,6 +30,7 @@
   //Constants
   var NORMAL_STATE = "normal";
   var BUMPING_STATE = "bumping";
+  var PICKUP_STATE = "pickup";
   var HIT_STATE = "hit";
   var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
   var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
@@ -35,6 +42,13 @@
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
 
+  //The amount of offset the canvas has to the webpage. Defined in the arena css file
+  var CANVAS_OFFSET = 40;                 //Use for map-arena
+  var MOVE_OFFSET_X = 16;
+  var MOVE_OFFSET_Y = 210;
+  //var CANVAS_OFFSET = 0;                  //Use for test-arena
+  //var MOVE_OFFSET_X = 0;
+  //var MOVE_OFFSET_Y = 0;
 
 //game timer count down to 0 starting at startTime
 var startTime = 30;
@@ -61,7 +75,7 @@ var timerInterval = setInterval(function() {
   // end game if timer has run to 0
   if (currTime == 0) {
     endGame();
-  }  
+  }
   currTime--;
 }, 1000); // update about every second
 
@@ -74,7 +88,7 @@ function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
   clearInterval(timerInterval); //stop the timer
   var maxScore = 0;
-  
+
   for (i = 0; i < entities.length; i++) {
     if (entities[i].isACharacter() == true) {
       if (entities[i].getScore() >= maxScore) {
@@ -96,7 +110,6 @@ function endGame() {
   //display basic game over window. Will replace with actual ending screen, this is just a placeholder
   alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
 }
-
 
   /*
   / Purpose: This class is to be used for all entities, those being player and
@@ -129,6 +142,12 @@ function endGame() {
     animationCounter = 0;         //animationaCounter: Current animation frame for an action
     entityID = 0;                 //An entities unique ID set before putting in entity list
     stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
+    holdingEnt = null;            /*
+                                  / For destructible entities this is null when not being held
+                                  / When held this is the entity holding them
+                                  / for non-destructible entities this is null when not holding another entity
+                                  / and when they are holding an entity it is the entity they are holding
+                                  */
     score = 0;
 
 
@@ -220,6 +239,10 @@ function endGame() {
       return this.destructibleObject;
     }
 
+    getHoldingEnt() {
+      return this.holdingEnt;
+    }
+
     setActionState(actionState) {
       this.actionState = actionState;
     }
@@ -237,6 +260,11 @@ function endGame() {
     }
 
     setY(y) {
+      this.y = y;
+    }
+
+    setPosition(x,y) {
+      this.x = x;
       this.y = y;
     }
 
@@ -264,12 +292,18 @@ function endGame() {
       this.stamina = stamina;
     }
 
+    //takes a boolean
     setDestructibleObject(destructibleObject) {
       this.destructibleObject = destructibleObject;
     }
 
     setWidth(width) {
       this.width = width;
+    }
+
+    //Takes an entity
+    setHoldingEnt(holdingEnt) {
+      this.holdingEnt = holdingEnt;
     }
 
     //Used to decrease or increase statmina by a set amount from the current total
@@ -306,20 +340,45 @@ function endGame() {
   opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
   opp1.setStamina(oppStamina);
   //initialize UI
-  const gameUI = new Entity(100, window.innerWidth, 'https://teamcolorcodes.com/wp-content/uploads/2017/10/Purdue-Boilermakers-Color-Palette-Image.png', true );
+  const gameUI = new Entity(50, window.innerWidth, '', true );
   gameUI.setStartingPosition(0,0);
 
   //initialize testEntity
-  const testDestructible = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg', true);
-  testDestructible.setStartingPosition(300, 300);
+  //const testDestructible = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg', true);
+  //testDestructible.setStartingPosition(300, 300);
 
   //initialize entity list (EntityID must be unique)
-  gameUI.setEntityID(1);
-  testDestructible.setEntityID(2);
-  opp1.setEntityID(3);
-  player1.setEntityID(4);
-  var entities = new Array(gameUI, testDestructible, opp1, player1);
+  gameUI.setEntityID('1');
+  //testDestructible.setEntityID('2')
+  opp1.setEntityID('2');
+  player1.setEntityID('3');
+  var playerNumber = 3
+  var entities = new Array(gameUI);
   var nonDesEntityNumber = 2;   //Number of non-destructible entities
+
+  //html ElementID Array
+  var arenaElementIds = new Array('map_layer0_tile_17_1_0');  //Use for map-arena
+  //var arenaElementIds = new Array('div1','div2');   //Use for test-arena
+
+  for (var i = 0; i < arenaElementIds.length; i++) {
+    var genElement = document.getElementById(arenaElementIds[i]);
+    const tempEntity = new Entity(genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true);
+    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top-CANVAS_OFFSET);
+    tempEntity.setEntityID(arenaElementIds[i]);
+    nonDesEntityNumber++;
+    entities.push(tempEntity);
+  }
+
+  entities.push(opp1);
+  entities.push(player1);
+
+  //Test Code to set starting positions of test divs (Will need to be commented out once a working arena is made)
+  //moveElement('div1', player1.getX() + 100, player1.getY()+100);
+  //moveElement('div2', opp1.getX() + 100, opp1.getY()+100);
+
+  //var genElement = document.getElementById(elementID);
+  //div.style.left = posx + 'px';
+  //div.style.top = posy + 'px';
 
   //Default Keyboard controls
   //update these variables to allow for control changes in options menu
@@ -344,6 +403,28 @@ function endGame() {
   var bumpAniFrames = 14;         //Length of bump animation in frames
   var bumpDistance = 80;          //How far the bump animation takes you forward
   var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
+  var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function)
+
+  /*
+  / Purpose: Changes the x/y position of an html element
+  /
+  / Params:
+  /         elementID: the id assigned to the html element used to identify it.
+  /         x: the x position you want the element moved to
+  /         y: the y position you want the element moved to
+  /
+  / Note: The destructible entity overlayed ontop of any html elements with an ID moves to the current location
+  /       of the html element it's connected to whenever the draw() function is called so moving
+  /       the html element moves the destructible entity overlayed ontop of it.
+  */
+  function moveElement(elementID, x, y) {
+      var tempY = y - CANVAS_OFFSET - MOVE_OFFSET_Y;
+      var tempX = x + MOVE_OFFSET_X;
+      var genE = document.getElementById(elementID);
+      genE.style.position = "absolute";
+      genE.style.left = tempX + 'px';
+      genE.style.top = tempY + 'px';
+  }
 
   /*
   / Purpose: Checks whether or not two objects are currently colliding with each
@@ -408,7 +489,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -443,7 +524,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -478,7 +559,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -513,7 +594,7 @@ function endGame() {
             }
           }
         }
-        
+
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
       }
@@ -532,7 +613,7 @@ function endGame() {
   /
   / Params: bumpEntity - the entity that is performing the bump action
   /
-  / Notes: the function does not check to make sure the given parameter is an entityID
+  / Notes: the function does not check to make sure the given parameter is an entity
   /         make sure to only give this function entity objects.
   /
   */
@@ -578,6 +659,45 @@ function endGame() {
     }
   }
 
+  /*
+  / Purpose: this function generically takes any entity checks to see if they are ontop of a destructible entity
+  /           that can be picked up, if so they pick it up. It also checks to see if they are already holding
+  /           an html element, if so they drop the element
+  /
+  /
+  / Params: pickupEntity - the entity that is performing the pickup/drop action
+  /
+  / Notes: the function does not check to make sure the given parameter is an entity
+  /         make sure to only give this function entity objects.
+  /
+  */
+  function entityPickup(pickupEntity) {
+    if (pickupEntity.getAnimationCounter() == 0) {
+      //Holding a html element, drop the element.
+      if (pickupEntity.getHoldingEnt() != null) {
+          pickupEntity.getHoldingEnt().setHoldingEnt(null);
+          pickupEntity.setHoldingEnt(null);
+      }
+      //Not holding a html element, pickup object if one is under the entity
+      else {
+        //check to see if any entities were collided with and can be picked up
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getHoldingEnt() == null ) {
+            entities[i].setHoldingEnt(pickupEntity);
+            pickupEntity.setHoldingEnt(entities[i]);
+          }
+        }
+      }
+    }
+
+    pickupEntity.setAnimationCounter(pickupEntity.getAnimationCounter() + 1);
+    if (pickupEntity.getAnimationCounter() >= pickupAniFrames) {
+      pickupEntity.setAnimationCounter(0);
+      pickupEntity.setActionState(NORMAL_STATE);
+      pickupEntity.setActionCooldown(ACTION_COOLDOWN);
+    }
+  }
+
   //Animation/Action Functions End
 
   /*
@@ -588,6 +708,16 @@ function endGame() {
   / Notes: Will crash for non-entities
   */
   function drawEntity(genEnt) {
+    //Update HTML element to follow the entity that is holding it.
+    if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
+      moveElement(genEnt.getEntityID(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10 );
+    }
+
+    //HTML Element Reposition overlayed destructible entity to match current element location.
+    if (genEnt.getDestructibleObject() && genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
+      genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left,document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top-CANVAS_OFFSET);
+    }
+
     //BUMPING_STATE highlight animation
     if (genEnt.getActionState() == BUMPING_STATE) {
         ctx.beginPath();
@@ -620,6 +750,20 @@ function endGame() {
       var genEntMaxStam = MAX_STAMINA;
       if (genEnt.getDestructibleObject()) {
         genEntMaxStam = DESTRUCTIBLE_MAX_STAMINA;
+        ctx.font = "10px Helvetica";
+        ctx.fillStyle = "#000000";
+        // Show coordinates of html element and distructible entity overlay.
+        if (genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
+          ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY()-60);
+          ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY()-50);
+          ctx.fillText(player1.getY(), genEnt.getX() + genEnt.getWidth()-20, genEnt.getY()-50);
+          ctx.fillText("Destructible Overlay:", genEnt.getX(), genEnt.getY()-40);
+          ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY()-30);
+          ctx.fillText(genEnt.getY(), genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-30);
+          ctx.fillText("HTML Element:", genEnt.getX(), genEnt.getY()-20);
+          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY()-10);
+          ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
+        }
       }
       //Empty bar
       ctx.beginPath();
@@ -652,53 +796,55 @@ function endGame() {
     //Base UI
     ctx.beginPath();
     ctx.rect(0, 0, window.innerWidth, gameUI.getHeight());
+    //ctx.globalAlpha = 0.3;
     ctx.fillStyle = "#000000";
     ctx.fill();
     ctx.closePath();
     ctx.beginPath();
-    ctx.rect(2, 2, window.innerWidth-21, gameUI.getHeight()-4);
+    ctx.rect(2, 2, window.innerWidth-2, gameUI.getHeight()-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
     ctx.closePath();
     //Stamina Bars for non-destructible entities (players/AI)
+    ctx.globalAlpha = 1;
+    //Empty bar
+    ctx.beginPath();
+    ctx.rect(gameUI.getX()+20, (gameUI.getHeight()/4)+1, (gameUI.getWidth()/3)-20, gameUI.getHeight()/2);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath();
+    //Stamina bar
+    ctx.beginPath();
+    ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/4)+3, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/2)-4);
+    ctx.fillStyle = "#ccbb91";
+    ctx.fill();
+    ctx.closePath();
     //PLAYER
-    ctx.font = "20px Elephant";
+    ctx.font = "15px Helvetica";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("PLAYER STAMINA", 25, (gameUI.getHeight()/4)+yOffset+8);
+
+    //Timer
+    ctx.font = "20px Helvetica";
     ctx.fillStyle = "#000000";
-    ctx.fillText("PLAYER STAMINA", 20, 23+yOffset);
+    ctx.fillText(currTime, gameUI.getWidth()/2-20, 23+yOffset);
+
     //Empty bar
     ctx.beginPath();
-    ctx.rect(gameUI.getX()+20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
+    ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/4)+1, (gameUI.getWidth()/3)-20, gameUI.getHeight()/2);
     ctx.fillStyle = "#000000";
     ctx.fill();
     ctx.closePath();
     //Stamina bar
     ctx.beginPath();
-    ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
+    ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/4)+3, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/2)-4);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
     ctx.closePath();
-
-
-    ctx.font = "20px Elephant";
-    ctx.fillStyle = "#000000";
-    ctx.fillText(currTime, gameUI.getWidth()/2, 23+yOffset);
-
     //OPPONENT
-    ctx.font = "20px Elephant";
-    ctx.fillStyle = "#000000";
-    ctx.fillText("OPPONENT STAMINA", (gameUI.getWidth()/3)*2-20, 23+yOffset);
-    //Empty bar
-    ctx.beginPath();
-    ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/3)+yOffset, (gameUI.getWidth()/3)-20, gameUI.getHeight()/3);
-    ctx.fillStyle = "#000000";
-    ctx.fill();
-    ctx.closePath();
-    //Stamina bar
-    ctx.beginPath();
-    ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/3)+2+yOffset, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/3)-4);
-    ctx.fillStyle = "#ccbb91";
-    ctx.fill();
-    ctx.closePath();
+    ctx.font = "15px Helvetica";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("OPPONENT STAMINA", (gameUI.getWidth()/3)*2-15, (gameUI.getHeight()/4)+yOffset+8);
   }
 
   //Show Debug information
@@ -841,6 +987,11 @@ function endGame() {
           entityBump(player1);
       }
 
+      //When player1 is attempting to pickup an object1
+      else if (player1.getActionState() == PICKUP_STATE) {
+          entityPickup(player1);
+      }
+
       //AI takes its actions after the player
       AILogic();
 
@@ -888,7 +1039,7 @@ function endGame() {
       else if (e.key == p1BumpKey) {
         if (player1.getActionCooldown() == 0) {
           p1BumpPressed = true;
-          player1.setActionState("bumping");
+          player1.setActionState(BUMPING_STATE);
         }
       }
       else if (e.key == "l") {
@@ -905,8 +1056,16 @@ function endGame() {
         player1.decreaseStamina(-10);
         opp1.decreaseStamina(-10);
       }
-      else if (e.key == "w") {
+      else if (e.key == "n") {
         hideArena = !hideArena;
+      }
+      else if (e.key == "t") {
+        currTime = 3000;
+      }
+      else if (e.key == "f") {
+        if (player1.getActionCooldown() == 0) {
+          player1.setActionState(PICKUP_STATE);
+        }
       }
 	}
 

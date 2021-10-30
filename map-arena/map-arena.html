@@ -1149,7 +1149,7 @@
                 enableInfoWindow: true,
                 infoWindow: popup,
                 slider: true
-                //sliderStyle: "small" 
+                //sliderStyle: "small"
             };
 
 
@@ -1166,7 +1166,7 @@
                 /* toggle maps layer */
                 var operationalLayers = response.itemInfo.itemData.operationalLayers;
                 array.forEach(operationalLayers, function (layer) {
-                    //create a checkbox and label for each layer in the map  
+                    //create a checkbox and label for each layer in the map
 
                     var cbox_label = domConstruct.create("li", {
                         htmlFor: layer.title,
@@ -1180,9 +1180,9 @@
                         checked: layer.visibility
                     }, "layerList");
 
-                    //When the checkbox is clicked change the layer visibility              
+                    //When the checkbox is clicked change the layer visibility
                     on(cbox, "click", function (evt) {
-                        //Find the layer based on the layer id   
+                        //Find the layer based on the layer id
                         var layerid = evt.target.value;
                         console.log(layerid);
                         var layer = map.getLayer(layerid);
@@ -1201,7 +1201,7 @@
                     zoomScale: 300000 // still figuring this out. Doesn't do what I thought it did
                 }, "search");
 
-                // sets the sources to the source.search 
+                // sets the sources to the source.search
                 var sources = search.sources;
 
                 // sources, can be multiple, if needed, please see below
