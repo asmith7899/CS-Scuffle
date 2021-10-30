@@ -16,6 +16,9 @@
 
 // initialize canvas
   var canvas = document.getElementById("myCanvas");
+  if (canvas == null) {
+    canvas = document.getElementById("myCanvas2");
+  }
 	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
 
   //Constants
@@ -36,21 +39,22 @@
 //game timer count down to 0 starting at startTime
 var startTime = 30;
 var transitionTime = 15;
-var currTime = startTime;
 playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
-// var pageURL = window.location.search.substring(1)
-/* if (pageURL) {
-  var URLVars = PageURL.split('&');
-  startTime = URLVars[0].split('=')[1];
-  playerStamina = URLVars[1].split('=')[1];
-  oppStamina = URLVars[2].split('=')[1];
-} */
+var pageURL = window.location.search.substring(1)
+if (pageURL) {
+  var URLArray = pageURL.split('&');
+  //alert("test to see if script called, pageURL is: " + pageURL);
+  startTime = URLArray[0].split('=')[1];
+  playerStamina = URLArray[1].split('=')[1];
+  oppStamina = URLArray[2].split('=')[1];
+}
+var currTime = startTime;
 var timerInterval = setInterval(function() {
 //initialize vars using passed in url to enable passing of arguments
 
   // move to new arena page if a certain amount of time has passed
-  if (currTime == transitionTime) {
+  if (currTime == transitionTime && startTime != currTime) {
     transitionStage();
   }
 
