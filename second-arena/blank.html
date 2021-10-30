@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html class="dj_gecko dj_ff92 dj_contentbox" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description"
+        content="Map and building information for Purdue's Main Campus in West Lafayette, Indiana.">
+    <meta name="author" content="Purdue University">
+
+    <title>Purdue Campus Map - West Lafayette Campus</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <!--  <link href="bootstrap-switch.css" rel="stylesheet"> -->
+
+    <!-- Custom styles for this map -->
+    <link rel="stylesheet" href="https://js.arcgis.com/3.15/dijit/themes/soria/soria.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css">
+    <!-- <link href="/purdue/css/2015/home.css" rel="stylesheet"/> -->
+
+    <!-- Bootstrap-map-js -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrapmap.css">
+
+    <!-- google tag manager GTM-WWGM6Z -->
+    <script type="text/javascript" async=""
+        src="https://www.google-analytics.com/gtm/js?id=GTM-M42NKXL&amp;t=gtm5&amp;cid=1156996463.1619156552"></script>
+    <script type="text/javascript" async="" src="//siteimproveanalytics.com/js/siteanalyze_6044943.js"></script>
+    <script async="" src="https://cdn.oribi.io/Xy03NjIyMTQyMjc/oribi.js" id="ORIBIscript"></script>
+    <script src="https://connect.facebook.net/signals/config/870989679998130?v=2.9.47&amp;r=stable" async=""></script>
+    <script src="https://connect.facebook.net/signals/config/1290758077759811?v=2.9.47&amp;r=stable" async=""></script>
+    <script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script>
+    <script src="https://s.yimg.com/wi/ytc.js" async=""></script>
+    <script type="text/javascript" async="" src="https://static.ads-twitter.com/uwt.js"></script>
+    <script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script>
+    <script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script>
+    <script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/nls/jsapi_en-us.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/dojox/gfx/svg.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/dijit/Scalebar.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/dijit/PopupMobile.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/dijit/InfoWindow.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/dijit/Search.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/dojox/gfx/filters.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/dojox/gfx/svgext.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/dijit/InfoView.js"></script>
+    <script type="text/javascript" charset="utf-8"
+        src="https://js.arcgis.com/3.15/esri/dijit/NavigationBar.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/promiseList.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/tasks/locator.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/styles/basic.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/dijit/_TouchBase.js"></script>
+    <script type="text/javascript" charset="utf-8"
+        src="https://js.arcgis.com/3.15/esri/tasks/AddressCandidate.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/layers/KMLLayer.js"></script>
+    <script type="text/javascript" charset="utf-8" src="https://js.arcgis.com/3.15/esri/layers/LabelLayer.js"></script>
+    <script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-WWGMN6Z"></script>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-WWGMN6Z');</script>
+
+
+    <link rel="stylesheet" href="blank.css">
+    <style type="text/css">
+        /* all css here is just amends to outsourced css files */
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            z-index: -20;
+            padding-top: 71px;
+        }
+
+        #search {
+            display: block;
+            position: absolute;
+            z-index: 2;
+            top: 20px;
+            left: 74px;
+            padding-top: 71px;
+        }
+
+        /*  Layer List Dropdown  */
+
+        #layerList {
+            background-color: #000000;
+            color: #fff;
+            position: absolute !important;
+            z-index: 99;
+            padding: 10px;
+        }
+
+        #layerList input,
+        #layerList li {
+            display: inline-block;
+        }
+
+        #layerList li {
+            width: 120px;
+        }
+
+        /* Change color of icons to match bar chart and selection symbol */
+
+        .esriViewPopup .gallery {
+            margin: 0 auto;
+        }
+
+        div.bottom {
+            position: absolute;
+            bottom: 0px;
+            width: 100%;
+            height: 85px;
+            z-index: 60;
+            color: #eeeeee;
+            background-color: #000000;
+            font-size: .8em;
+        }
+
+        div.bottom a {
+            color: #eeeeee;
+        }
+
+        div.esriControlsBR {
+            visibility: hidden;
+        }
+
+        .esriPopup.light .titlePane {
+            height: inherit;
+        }
+
+        .esriPopup.light .titlePane .title {
+            margin-right: 30px;
+        }
+
+        .esriPopup .contentPane img {
+            width: 90%;
+        }
+
+        .mainSection,
+        .esriPopup .contentPane {
+            line-height: 20px;
+        }
+
+        /* purdue logo */
+        .logo {
+            width: 130px;
+            margin-top: -10px;
+        }
+
+        /* nav bar */
+        .navbar-inverse {
+            background-color: #000000;
+            border-color: #090909;
+            height: 71px;
+        }
+
+        .navbar-inverse .navbar-nav>.active>a,
+        .navbar-inverse .navbar-nav>.active>a:hover,
+        .navbar-inverse .navbar-nav>.active>a:focus,
+        a:visited,
+        a:link {
+            text-decoration: none;
+        }
+
+        /* Start of mobile */
+        @media (max-width:800px) {
+
+            #map {
+                height: 100%;
+                width: 100%;
+                margin: 0px;
+                z-index: 4;
+                padding-top: 51px;
+            }
+
+            #search {
+                padding-top: 51px;
+            }
+
+            .arcgisSearch .searchGroup .searchInput {
+                width: 160px;
+            }
+
+            .logo {
+                width: 100px;
+                margin-top: -15px;
+            }
+
+            #layerList ul {
+                width: 98%;
+                height: 50px;
+            }
+
+            #layerList li {
+                width: 380px;
+                height: 100%;
+            }
+
+            div.bottom {
+                height: 130px;
+            }
+
+        }
+    </style>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../bootstrap_v3/docs-assets/js/html5shiv.js"></script>
+      <script src="../bootstrap_v3/docs-assets/js/respond.min.js"></script>
+    <![endif]-->
+    <meta http-equiv="origin-trial"
+        content="A7pIQvxLYo3CR+raAuUI8Rfr81qhL4u1c7JIHkL6Clt5Jq0Xi/EH8+lTm0ZzKyi+618U2BxGlpKmCTclb793+AUAAACKeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ21hbmFnZXIuY29tOjQ0MyIsImZlYXR1cmUiOiJDb252ZXJzaW9uTWVhc3VyZW1lbnQiLCJleHBpcnkiOjE2MzQwODMxOTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9">
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-WWGMN6Z"
+            style="display:none;visibility:hidden" width="0"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="https://www.purdue.edu/"><img
+                        src="https://www.purdue.edu/campus_map/graphics/logo_black_background.jpg"
+                        alt="Purdue University" class="logo"></a>
+            </div>
+            <div style="overflow:visible;" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active dropdown" id="mapfeatures" aria-expanded="true">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Map Features <b
+                                class="caret"></b></a>
+
+                        <ul id="layerList" class="dropdown-menu">
+                            <li for="Handicap">Handicap</li><input type="checkbox" name="Handicap" value="kml_3945">
+                            <li for="Street Map">Street Map</li><input type="checkbox" name="Street Map"
+                                value="World_Street_Map_4287">
+                            <li for="Parking">Parking</li><input type="checkbox" name="Parking"
+                                value="Parking2020_2260">
+                            <li for="Campus Map">Campus Map</li><input type="checkbox" name="Campus Map"
+                                value="BuildingShapesZip4_4385">
+                            <li for="Accessible Entry">Accessible Entry</li><input type="checkbox"
+                                name="Accessible Entry" value="BldgAccessibleEntry_6885">
+                        </ul>
+                    </li>
+                    <li><a href="graphics/campusmap.pdf">Printable Map</a></li>
+                    <li><a href="https://arcg.is/0uXKSG" target="_blank">Construction Map</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+
+    <!-- Bootstrap-map-js -->
+    <div role="presentation" class="arcgisSearch" id="search" widgetid="search" style="display: block;">
+        <div role="presentation" class="searchGroup" data-dojo-attach-point="containerNode">
+            <div data-dojo-attach-point="expandNode" class="searchExpandContainer">
+                <div class="searchAnimate">
+                    <div role="button" title="Search in" id="search_menu_button" class="searchBtn searchToggle"
+                        tabindex="0" data-dojo-attach-point="sourcesBtnNode">
+                        <span aria-hidden="true" role="presentation"
+                            class="searchIcon esri-icon-down-arrow"></span><span class="sourceName"
+                            data-dojo-attach-point="sourceNameNode">Campus Buildings</span>
+                    </div>
+                    <div class="searchInputGroup">
+                        <form data-dojo-attach-point="formNode">
+                            <input maxlength="128" autocomplete="off" type="text" tabindex="0" class="searchInput"
+                                value="" aria-haspopup="true" id="search_input" data-dojo-attach-point="inputNode"
+                                role="textbox" placeholder="Search Campus" title="Search Campus">
+                        </form>
+                        <div role="button" class="searchClear" tabindex="0" data-dojo-attach-point="clearNode"><span
+                                aria-hidden="true" class="searchIcon esri-icon-close searchClose"></span><span
+                                aria-hidden="true" class="searchIcon esri-icon-loading-indicator searchSpinner"></span>
+                        </div>
+                        <div aria-labelledby="search_input" data-dojo-attach-point="suggestionsNode"
+                            class="searchMenu suggestionsMenu" role="menu"></div>
+                    </div>
+                </div>
+            </div>
+            <div role="button" title="Search" class="searchBtn searchSubmit" tabindex="0"
+                data-dojo-attach-point="submitNode">
+                <span aria-hidden="true" role="presentation" class="searchIcon esri-icon-search"></span>
+                <span class="searchButtonText">Search</span>
+            </div>
+            <div aria-labelledby="search_menu_button" data-dojo-attach-point="sourcesNode"
+                class="searchMenu sourcesMenu" role="menu"></div>
+            <div data-dojo-attach-point="noResultsMenuNode" class="searchMenu noResultsMenu"></div>
+            <div class="searchClearFloat"></div>
+        </div>
+    </div>
+    <div id="map" class="map" data-basemap="topo" data-zoom="17" data-scale="4513.988705" data-loaded="">
+
+        <div id="map_root" style=" direction: ltr;" class="esriMapContainer">
+            <div id="map_container" style="position: absolute; cursor: default; user-select: none; clip: auto;"
+                class="esriMapContainer">
+                <div id="map_layers" class="esriMapLayers">
+                    <div style="position: absolute; overflow: visible; transform: translate3d(0px, 0px, 0px); display: block;"
+                        id="map_layer0">
+                        <div
+                            style="position: absolute;  overflow: visible; transition: transform 500ms ease 0s;">
+                            <img id="map_layer0_tile_17_0_0" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(-16px, -37px, 0px);"
+                                src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49416/33888">
+                            <img id="map_layer0_tile_17_1_0" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(-16px, 219px, 0px);"
+                                src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49417/33888">
+                            <img id="map_layer0_tile_17_0_1" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(240px, -37px, 0px);"
+                                src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49416/33889">
+                            <img id="map_layer0_tile_17_1_1" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(240px, 219px, 0px);"
+                                src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49417/33889">
+                            <img id="map_layer0_tile_17_0_2" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(496px, -37px, 0px);"
+                                src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49416/33890">
+                            <img id="map_layer0_tile_17_1_2" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(496px, 219px, 0px);"
+                                src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49417/33890">
+                            <img id="map_layer0_tile_17_0_3" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(752px, -37px, 0px);"
+                                src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49416/33891">
+                            <img id="map_layer0_tile_17_1_3" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(752px, 219px, 0px);"
+                                src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49417/33891">
+                            <img id="map_layer0_tile_17_0_4" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1008px, -37px, 0px);"
+                                src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49416/33892">
+                            <img id="map_layer0_tile_17_1_4" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1008px, 219px, 0px);"
+                                src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49417/33892">
+                            <img id="map_layer0_tile_17_0_5" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1264px, -37px, 0px);"
+                                src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49416/33893">
+                            <img id="map_layer0_tile_17_1_5" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1264px, 219px, 0px);"
+                                src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/17/49417/33893">
+                        </div>
+                    </div>
+                    <div style="position: absolute;  overflow: visible; transform: translate3d(0px, 0px, 0px); display: block;"
+                        id="map_OpenStreetMap">
+                        <div
+                            style="position: absolute;  overflow: visible; transition: transform 500ms ease 0s;">
+                            <img id="map_OpenStreetMap_tile_17_0_0" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(-16px, -37px, 0px); opacity: 0.51;"
+                                src="http://a.tile.openstreetmap.org/17/33888/49416.png">
+                            <img id="map_OpenStreetMap_tile_17_1_0" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(-16px, 219px, 0px); opacity: 0.51;"
+                                src="http://b.tile.openstreetmap.org/17/33888/49417.png">
+                            <img id="map_OpenStreetMap_tile_17_0_1" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(240px, -37px, 0px); opacity: 0.51;"
+                                src="http://a.tile.openstreetmap.org/17/33889/49416.png">
+                            <img id="map_OpenStreetMap_tile_17_1_1" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(240px, 219px, 0px); opacity: 0.51;"
+                                src="http://b.tile.openstreetmap.org/17/33889/49417.png">
+                            <img id="map_OpenStreetMap_tile_17_0_2" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(496px, -37px, 0px); opacity: 0.51;"
+                                src="http://a.tile.openstreetmap.org/17/33890/49416.png"><img
+                                id="map_OpenStreetMap_tile_17_1_2" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(496px, 219px, 0px); opacity: 0.51;"
+                                src="http://b.tile.openstreetmap.org/17/33890/49417.png"><img
+                                id="map_OpenStreetMap_tile_17_0_3" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(752px, -37px, 0px); opacity: 0.51;"
+                                src="http://a.tile.openstreetmap.org/17/33891/49416.png"><img
+                                id="map_OpenStreetMap_tile_17_1_3" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(752px, 219px, 0px); opacity: 0.51;"
+                                src="http://b.tile.openstreetmap.org/17/33891/49417.png"><img
+                                id="map_OpenStreetMap_tile_17_0_4" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1008px, -37px, 0px); opacity: 0.51;"
+                                src="http://a.tile.openstreetmap.org/17/33892/49416.png"><img
+                                id="map_OpenStreetMap_tile_17_1_4" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1008px, 219px, 0px); opacity: 0.51;"
+                                src="http://b.tile.openstreetmap.org/17/33892/49417.png">
+                            <img id="map_OpenStreetMap_tile_17_0_5" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1264px, -37px, 0px); opacity: 0.51;"
+                                src="http://a.tile.openstreetmap.org/17/33893/49416.png"><img
+                                id="map_OpenStreetMap_tile_17_1_5" alt="" class="layerTile"
+                                style=" visibility: visible; transform: translate3d(1264px, 219px, 0px)ute; opacity: 0.51;"
+                                src="http://b.tile.openstreetmap.org/17/33893/49417.png">
+                        </div>
+                    </div>
+                    <div style="position: absolute; overflow: visible; transform: translate3d(0px, 0px, 0px);"
+                        id="map_World_Street_Map_4287">
+                        <div
+                            style="position: absolute;  overflow: visible; transition: transform 500ms ease 0s;">
+
+                        </div>
+                    </div>
+                    <svg overflow="hidden"
+                        style="overflow: visible; position: absolute;" id="map_gc">
+                        <g id="Parking2020_2260_layer" opacity="0.76" data-geometry-type="polygon">
+                            <g></g>
+                        </g>
+                        <g id="BuildingShapesZip4_4385_layer" data-geometry-type="polygon"
+                            transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                            style="display: block;">
+                            <g></g>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 6,243 6,242 6,240 6,233 6,231 7,225 6,225 7,221 7,216 7,212 7,206 7,202 7,197 7,194 8,194 8,188 8,185 8,180 7,180 7,175 8,175 8,164 18,165 19,165 19,166 31,164 31,163 37,163 37,164 43,164 43,163 46,163 56,163 56,178 63,178 63,181 66,181 63,253 72,253 71,272 63,272 43,272 43,276 39,276 39,274 33,274 20,274 14,274 14,275 10,275 10,272 6,272 7,243 6,243"
+                                d="M 6 243 6 242 6 240 6 233 6 231 7 225 6 225 7 221 7 216 7 212 7 206 7 202 7 197 7 194 8 194 8 188 8 185 8 180 7 180 7 175 8 175 8 164 18 165 19 165 19 166 31 164 31 163 37 163 37 164 43 164 43 163 46 163 56 163 56 178 63 178 63 181 66 181 63 253 72 253 71 272 63 272 43 272 43 276 39 276 39 274 33 274 20 274 14 274 14 275 10 275 10 272 6 272 7 243 6 243"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 82,80 84,80 86,80 153,82 153,78 161,78 159,136 157,136 157,140 161,140 161,141 158,141 158,145 159,145 159,146 158,146 158,153 158,154 158,161 158,162 158,164 164,164 167,173 161,174 160,174 158,175 157,177 158,177 158,178 157,184 158,184 158,185 157,185 157,190 157,191 157,197 157,198 157,204 157,205 157,210 157,211 156,218 157,218 157,218 156,218 156,222 157,222 157,223 152,223 152,227 154,227 153,271 139,270 139,275 140,275 139,278 144,278 144,280 141,280 141,286 140,287 140,287 132,287 132,287 124,287 124,288 123,288 123,287 114,288 113,288 106,288 106,288 105,288 105,288 99,288 98,288 97,288 97,277 99,277 99,275 94,275 94,277 87,277 87,274 80,274 81,249 86,249 86,240 74,239 76,186 65,186 66,181 63,181 63,178 56,178 56,165 64,165 66,163 64,162 64,161 66,162 69,153 67,152 66,151 59,118 73,116 74,76 82,77 82,80"
+                                d="M 82 80 84 80 86 80 153 82 153 78 161 78 159 136 157 136 157 140 161 140 161 141 158 141 158 145 159 145 159 146 158 146 158 153 158 154 158 161 158 162 158 164 164 164 167 173 161 174 160 174 158 175 157 177 158 177 158 178 157 184 158 184 158 185 157 185 157 190 157 191 157 197 157 198 157 204 157 205 157 210 157 211 156 218 157 218 157 218 156 218 156 222 157 222 157 223 152 223 152 227 154 227 153 271 139 270 139 275 140 275 139 278 144 278 144 280 141 280 141 286 140 287 140 287 132 287 132 287 124 287 124 288 123 288 123 287 114 288 113 288 106 288 106 288 105 288 105 288 99 288 98 288 97 288 97 277 99 277 99 275 94 275 94 277 87 277 87 274 80 274 81 249 86 249 86 240 74 239 76 186 65 186 66 181 63 181 63 178 56 178 56 165 64 165 66 163 64 162 64 161 66 162 69 153 67 152 66 151 59 118 73 116 74 76 82 77 82 80"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd">
+
+                            </path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 218,276 238,277 239,277 256,277 263,277 263,287 262,287 261,287 258,287 259,287 258,293 258,295 258,296 258,297 258,299 257,299 255,299 253,299 249,299 249,299 245,299 244,299 241,299 239,299 235,299 234,299 231,299 230,299 226,299 226,299 226,297 225,297 222,298 221,298 220,298 217,298 216,298 212,298 211,298 208,298 207,299 206,299 206,298 205,298 203,298 186,298 186,294 186,291 187,288 187,286 188,284 189,281 189,280 191,277 191,276 191,272 192,272 193,272 194,272 195,272 196,272 197,272 197,267 201,267 202,267 205,267 207,267 211,267 213,267 216,267 218,267 218,273 218,276"
+                                d="M 218 276 238 277 239 277 256 277 263 277 263 287 262 287 261 287 258 287 259 287 258 293 258 295 258 296 258 297 258 299 257 299 255 299 253 299 249 299 249 299 245 299 244 299 241 299 239 299 235 299 234 299 231 299 230 299 226 299 226 299 226 297 225 297 222 298 221 298 220 298 217 298 216 298 212 298 211 298 208 298 207 299 206 299 206 298 205 298 203 298 186 298 186 294 186 291 187 288 187 286 188 284 189 281 189 280 191 277 191 276 191 272 192 272 193 272 194 272 195 272 196 272 197 272 197 267 201 267 202 267 205 267 207 267 211 267 213 267 216 267 218 267 218 273 218 276"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 397,340 398,425 393,425 393,431 392,431 392,432 391,432 391,431 389,431 389,432 389,432 389,431 385,431 385,432 384,432 384,431 382,431 382,432 381,432 381,431 381,431 381,425 375,425 375,418 372,418 372,421 347,421 339,413 335,417 327,410 331,406 331,405 334,402 331,400 337,393 340,396 342,395 353,406 371,405 372,409 375,409 375,400 374,400 374,399 374,395 374,394 374,393 374,387 374,386 374,379 374,378 374,377 374,371 374,370 374,365 374,364 375,364 375,358 352,358 341,371 340,369 337,372 331,365 334,363 330,359 346,343 371,343 371,344 375,344 375,340 379,340 380,340 382,340 383,340 383,337 382,337 382,336 383,336 383,337 384,337 389,337 389,336 389,336 389,337 389,340 397,340"
+                                d="M 397 340 398 425 393 425 393 431 392 431 392 432 391 432 391 431 389 431 389 432 389 432 389 431 385 431 385 432 384 432 384 431 382 431 382 432 381 432 381 431 381 431 381 425 375 425 375 418 372 418 372 421 347 421 339 413 335 417 327 410 331 406 331 405 334 402 331 400 337 393 340 396 342 395 353 406 371 405 372 409 375 409 375 400 374 400 374 399 374 395 374 394 374 393 374 387 374 386 374 379 374 378 374 377 374 371 374 370 374 365 374 364 375 364 375 358 352 358 341 371 340 369 337 372 331 365 334 363 330 359 346 343 371 343 371 344 375 344 375 340 379 340 380 340 382 340 383 340 383 337 382 337 382 336 383 336 383 337 384 337 389 337 389 336 389 336 389 337 389 340 397 340"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 948,358 942,353 941,353 941,329 948,329 948,325 946,325 946,324 948,324 948,319 946,319 946,318 948,318 948,313 946,313 946,312 948,312 948,308 946,308 946,307 948,307 948,303 946,303 946,301 948,301 948,296 946,296 946,295 948,295 948,291 943,291 943,283 941,283 941,262 941,258 947,258 947,262 955,262 955,258 963,258 963,261 965,261 987,261 987,262 1002,262 1002,281 1004,281 1004,290 1002,290 1002,295 1004,295 1004,297 999,297 999,318 1005,318 1005,323 1004,323 1004,325 1002,325 1002,329 1004,329 1004,338 1002,338 1002,340 1002,342 1001,342 1001,348 1002,348 1002,353 964,353 958,358 948,358"
+                                d="M 948 358 942 353 941 353 941 329 948 329 948 325 946 325 946 324 948 324 948 319 946 319 946 318 948 318 948 313 946 313 946 312 948 312 948 308 946 308 946 307 948 307 948 303 946 303 946 301 948 301 948 296 946 296 946 295 948 295 948 291 943 291 943 283 941 283 941 262 941 258 947 258 947 262 955 262 955 258 963 258 963 261 965 261 987 261 987 262 1002 262 1002 281 1004 281 1004 290 1002 290 1002 295 1004 295 1004 297 999 297 999 318 1005 318 1005 323 1004 323 1004 325 1002 325 1002 329 1004 329 1004 338 1002 338 1002 340 1002 342 1001 342 1001 348 1002 348 1002 353 964 353 958 358 948 358"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 43,295 31,295 31,288 35,288 35,287 39,287 39,288 44,288 43,295"
+                                d="M 43 295 31 295 31 288 35 288 35 287 39 287 39 288 44 288 43 295"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd">
+
+                            </path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 434,301 434,280 435,280 435,274 473,274 473,310 468,310 468,311 467,311 467,309 456,309 456,311 455,311 455,309 439,307 439,308 439,311 434,311 434,303 433,303 433,303 434,303 434,301"
+                                d="M 434 301 434 280 435 280 435 274 473 274 473 310 468 310 468 311 467 311 467 309 456 309 456 311 455 311 455 309 439 307 439 308 439 311 434 311 434 303 433 303 433 303 434 303 434 301"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 553,116 551,116 551,107 553,107 553,106 568,106 568,107 570,107 570,110 568,110 568,116 553,116 553,116"
+                                d="M 553 116 551 116 551 107 553 107 553 106 568 106 568 107 570 107 570 110 568 110 568 116 553 116 553 116"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 555,92 555,91 558,91 558,90 561,90 561,91 566,91 566,101 565,101 565,101 560,101 560,100 560,100 557,100 555,100 555,98 553,98 553,92 555,92"
+                                d="M 555 92 555 91 558 91 558 90 561 90 561 91 566 91 566 101 565 101 565 101 560 101 560 100 560 100 557 100 555 100 555 98 553 98 553 92 555 92"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 616,101 612,101 612,96 616,96 616,93 617,93 617,92 620,92 620,93 626,93 626,95 630,95 630,101 626,101 626,103 622,103 622,104 619,104 619,103 616,103 616,101"
+                                d="M 616 101 612 101 612 96 616 96 616 93 617 93 617 92 620 92 620 93 626 93 626 95 630 95 630 101 626 101 626 103 622 103 622 104 619 104 619 103 616 103 616 101"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 454,103 454,132 437,132 437,103 454,103"
+                                d="M 454 103 454 132 437 132 437 103 454 103" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 727,179 717,168 723,163 722,163 732,154 732,153 732,154 738,149 734,145 752,130 755,134 760,130 770,141 768,142 785,162 786,162 791,168 792,169 793,170 794,171 794,171 800,178 799,179 794,182 796,185 786,194 765,171 764,170 762,173 738,194 732,188 732,186 728,183 730,182 729,181 727,179"
+                                d="M 727 179 717 168 723 163 722 163 732 154 732 153 732 154 738 149 734 145 752 130 755 134 760 130 770 141 768 142 785 162 786 162 791 168 792 169 793 170 794 171 794 171 800 178 799 179 794 182 796 185 786 194 765 171 764 170 762 173 738 194 732 188 732 186 728 183 730 182 729 181 727 179"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 350,194 350,196 340,196 340,187 339,187 339,184 340,184 340,175 384,175 384,157 381,157 381,146 390,146 390,147 390,146 394,146 394,147 394,146 403,146 403,186 403,186 405,186 404,195 396,194 396,205 403,205 403,254 390,254 390,252 384,252 384,218 383,218 383,205 389,205 389,194 350,194"
+                                d="M 350 194 350 196 340 196 340 187 339 187 339 184 340 184 340 175 384 175 384 157 381 157 381 146 390 146 390 147 390 146 394 146 394 147 394 146 403 146 403 186 403 186 405 186 404 195 396 194 396 205 403 205 403 254 390 254 390 252 384 252 384 218 383 218 383 205 389 205 389 194 350 194"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1269,312 1275,312 1275,326 1281,326 1282,351 1270,351 1270,350 1268,350 1268,351 1267,351 1267,350 1264,350 1264,351 1253,351 1253,326 1253,326 1253,322 1253,322 1253,312 1261,312 1269,312"
+                                d="M 1269 312 1275 312 1275 326 1281 326 1282 351 1270 351 1270 350 1268 350 1268 351 1267 351 1267 350 1264 350 1264 351 1253 351 1253 326 1253 326 1253 322 1253 322 1253 312 1261 312 1269 312"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1105,325 1105,319 1131,319 1131,325 1167,325 1183,325 1184,325 1209,325 1209,345 1197,345 1197,347 1198,347 1196,352 1195,352 1195,354 1187,352 1187,355 1186,355 1186,354 1180,352 1179,355 1178,355 1179,354 1172,352 1171,355 1171,354 1165,352 1164,355 1163,355 1163,354 1157,352 1156,355 1156,354 1149,352 1149,355 1148,355 1148,354 1142,352 1141,355 1140,355 1141,354 1134,352 1133,355 1133,354 1127,352 1126,355 1125,355 1125,354 1119,352 1118,355 1118,354 1111,352 1111,355 1110,355 1110,354 1103,352 1105,342 1105,336 1105,325"
+                                d="M 1105 325 1105 319 1131 319 1131 325 1167 325 1183 325 1184 325 1209 325 1209 345 1197 345 1197 347 1198 347 1196 352 1195 352 1195 354 1187 352 1187 355 1186 355 1186 354 1180 352 1179 355 1178 355 1179 354 1172 352 1171 355 1171 354 1165 352 1164 355 1163 355 1163 354 1157 352 1156 355 1156 354 1149 352 1149 355 1148 355 1148 354 1142 352 1141 355 1140 355 1141 354 1134 352 1133 355 1133 354 1127 352 1126 355 1125 355 1125 354 1119 352 1118 355 1118 354 1111 352 1111 355 1110 355 1110 354 1103 352 1105 342 1105 336 1105 325"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1105,242 1106,242 1106,243 1111,243 1116,243 1117,243 1117,242 1118,242 1118,246 1131,246 1131,256 1131,267 1128,267 1128,272 1132,272 1132,294 1129,294 1129,298 1132,298 1132,312 1132,319 1131,319 1105,319 1104,319 1104,298 1105,298 1105,294 1104,294 1104,272 1105,272 1105,267 1104,267 1104,253 1104,246 1105,246 1105,242"
+                                d="M 1105 242 1106 242 1106 243 1111 243 1116 243 1117 243 1117 242 1118 242 1118 246 1131 246 1131 256 1131 267 1128 267 1128 272 1132 272 1132 294 1129 294 1129 298 1132 298 1132 312 1132 319 1131 319 1105 319 1104 319 1104 298 1105 298 1105 294 1104 294 1104 272 1105 272 1105 267 1104 267 1104 253 1104 246 1105 246 1105 242"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1100,-26 1117,-5 1220,-4 1222,-4 1222,2 1220,2 1220,76 1218,76 1218,78 1213,78 1213,76 1123,76 1123,51 1121,51 1121,45 1123,45 1123,40 1114,40 1114,34 1090,34 1082,25 1082,24 1079,19 1082,15 1069,0 1100,-26"
+                                d="M 1100-26 1117-5 1220-4 1222-4 1222 2 1220 2 1220 76 1218 76 1218 78 1213 78 1213 76 1123 76 1123 51 1121 51 1121 45 1123 45 1123 40 1114 40 1114 34 1090 34 1082 25 1082 24 1079 19 1082 15 1069 0 1100-26"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 689,7 689,6 704,6 706,5 732,-16 755,12 722,39 724,41 716,47 716,48 710,54 705,58 704,58 704,57 703,56 702,56 702,55 701,55 700,59 699,59 699,58 698,58 697,58 696,58 682,58 682,46 677,46 677,29 675,29 675,24 675,23 677,23 677,7 689,7"
+                                d="M 689 7 689 6 704 6 706 5 732-16 755 12 722 39 724 41 716 47 716 48 710 54 705 58 704 58 704 57 703 56 702 56 702 55 701 55 700 59 699 59 699 58 698 58 697 58 696 58 682 58 682 46 677 46 677 29 675 29 675 24 675 23 677 23 677 7 689 7"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 755,272 755,270 755,269 755,268 755,267 755,266 755,265 755,264 756,264 756,262 757,261 757,260 758,259 759,258 759,257 760,256 761,256 762,255 762,254 765,252 769,249 771,247 769,245 770,244 769,243 769,244 765,240 771,234 772,233 773,234 775,233 774,233 775,232 775,233 777,232 776,231 777,230 778,231 778,230 778,229 778,228 783,225 782,225 786,222 786,223 788,222 787,221 788,220 788,221 790,220 790,219 791,218 791,219 793,218 792,218 795,215 800,211 807,206 813,201 817,206 821,202 828,210 830,210 837,218 848,210 848,210 853,215 852,216 845,222 842,224 849,233 848,234 854,242 849,246 854,250 848,256 841,262 836,265 837,265 833,268 833,267 832,269 832,270 831,270 829,271 830,272 829,272 828,272 826,272 827,273 820,280 819,279 819,280 818,279 817,280 817,281 817,280 815,281 816,282 815,283 815,282 813,283 814,284 812,285 806,289 803,286 802,285 801,283 796,287 793,289 792,290 791,291 790,291 789,292 787,293 786,293 786,294 785,294 782,295 781,295 780,295 779,295 778,295 776,295 775,295 774,295 772,295 771,294 771,294 770,294 768,293 767,292 766,292 766,291 764,291 764,290 763,290 763,289 762,288 761,288 761,288 761,288 761,287 759,285 759,286 758,285 758,284 757,283 757,282 756,281 756,280 755,280 755,279 755,276 755,274 755,273 755,272 755,272"
+                                d="M 755 272 755 270 755 269 755 268 755 267 755 266 755 265 755 264 756 264 756 262 757 261 757 260 758 259 759 258 759 257 760 256 761 256 762 255 762 254 765 252 769 249 771 247 769 245 770 244 769 243 769 244 765 240 771 234 772 233 773 234 775 233 774 233 775 232 775 233 777 232 776 231 777 230 778 231 778 230 778 229 778 228 783 225 782 225 786 222 786 223 788 222 787 221 788 220 788 221 790 220 790 219 791 218 791 219 793 218 792 218 795 215 800 211 807 206 813 201 817 206 821 202 828 210 830 210 837 218 848 210 848 210 853 215 852 216 845 222 842 224 849 233 848 234 854 242 849 246 854 250 848 256 841 262 836 265 837 265 833 268 833 267 832 269 832 270 831 270 829 271 830 272 829 272 828 272 826 272 827 273 820 280 819 279 819 280 818 279 817 280 817 281 817 280 815 281 816 282 815 283 815 282 813 283 814 284 812 285 806 289 803 286 802 285 801 283 796 287 793 289 792 290 791 291 790 291 789 292 787 293 786 293 786 294 785 294 782 295 781 295 780 295 779 295 778 295 776 295 775 295 774 295 772 295 771 294 771 294 770 294 768 293 767 292 766 292 766 291 764 291 764 290 763 290 763 289 762 288 761 288 761 288 761 288 761 287 759 285 759 286 758 285 758 284 757 283 757 282 756 281 756 280 755 280 755 279 755 276 755 274 755 273 755 272 755 272"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 825,183 829,179 830,179 832,178 833,177 834,176 834,175 835,175 837,173 836,173 837,173 839,171 840,171 840,171 843,168 844,170 845,170 847,171 847,172 848,174 848,175 852,179 851,179 862,192 865,189 876,202 872,205 883,218 884,218 885,218 886,219 887,221 887,222 888,224 889,224 890,225 891,225 891,226 892,228 888,231 887,232 886,233 886,233 884,235 883,235 881,237 880,238 880,237 879,239 878,240 874,242 873,241 872,241 870,236 869,236 867,234 867,233 866,232 866,231 865,230 856,218 856,218 855,218 854,216 854,217 853,216 852,216 853,215 848,210 848,210 847,209 848,209 846,207 846,206 834,193 833,192 833,191 831,189 830,189 831,188 829,187 828,186 827,185 826,184 825,183"
+                                d="M 825 183 829 179 830 179 832 178 833 177 834 176 834 175 835 175 837 173 836 173 837 173 839 171 840 171 840 171 843 168 844 170 845 170 847 171 847 172 848 174 848 175 852 179 851 179 862 192 865 189 876 202 872 205 883 218 884 218 885 218 886 219 887 221 887 222 888 224 889 224 890 225 891 225 891 226 892 228 888 231 887 232 886 233 886 233 884 235 883 235 881 237 880 238 880 237 879 239 878 240 874 242 873 241 872 241 870 236 869 236 867 234 867 233 866 232 866 231 865 230 856 218 856 218 855 218 854 216 854 217 853 216 852 216 853 215 848 210 848 210 847 209 848 209 846 207 846 206 834 193 833 192 833 191 831 189 830 189 831 188 829 187 828 186 827 185 826 184 825 183"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 366,298 366,293 366,293 367,277 382,278 382,276 388,276 388,279 391,279 391,278 405,278 404,293 402,293 399,298 400,297 401,298 400,299 401,300 401,301 402,301 402,302 401,302 402,303 401,303 402,303 402,304 401,304 401,305 400,306 401,306 400,307 399,307 398,307 397,308 398,308 397,309 397,308 396,308 395,308 395,309 394,308 393,307 392,307 391,306 391,304 390,303 387,303 387,308 377,308 377,307 376,307 376,308 366,307 366,298 366,298"
+                                d="M 366 298 366 293 366 293 367 277 382 278 382 276 388 276 388 279 391 279 391 278 405 278 404 293 402 293 399 298 400 297 401 298 400 299 401 300 401 301 402 301 402 302 401 302 402 303 401 303 402 303 402 304 401 304 401 305 400 306 401 306 400 307 399 307 398 307 397 308 398 308 397 309 397 308 396 308 395 308 395 309 394 308 393 307 392 307 391 306 391 304 390 303 387 303 387 308 377 308 377 307 376 307 376 308 366 307 366 298 366 298"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 983,50 1012,25 1065,90 1035,114 983,50"
+                                d="M 983 50 1012 25 1065 90 1035 114 983 50" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 234,156 234,150 239,150 239,147 241,147 243,147 245,147 248,147 248,145 248,144 249,144 251,144 251,143 254,143 256,143 257,143 259,143 261,143 264,143 265,143 266,143 269,143 269,144 272,144 272,144 272,145 272,147 276,147 277,147 280,147 281,147 281,148 281,150 288,150 288,150 295,150 296,150 302,150 303,150 303,148 309,148 309,150 310,150 310,151 310,155 310,156 310,160 311,160 311,181 316,181 316,187 315,187 315,194 299,194 299,192 291,192 291,187 288,187 288,192 281,192 281,190 280,190 277,190 275,190 272,190 272,194 272,194 272,194 269,194 266,194 265,194 264,194 261,194 259,194 257,194 256,194 253,194 251,194 249,194 248,194 248,194 248,190 244,190 243,190 241,190 239,190 239,188 234,188 234,184 230,184 230,185 229,185 229,184 230,184 230,180 227,180 227,179 227,178 227,177 227,176 226,175 226,174 226,173 226,171 226,171 226,170 226,169 226,168 226,167 226,166 226,165 226,164 227,164 227,163 227,163 227,162 227,161 230,161 230,156 229,156 229,155 230,155 230,156 234,156"
+                                d="M 234 156 234 150 239 150 239 147 241 147 243 147 245 147 248 147 248 145 248 144 249 144 251 144 251 143 254 143 256 143 257 143 259 143 261 143 264 143 265 143 266 143 269 143 269 144 272 144 272 144 272 145 272 147 276 147 277 147 280 147 281 147 281 148 281 150 288 150 288 150 295 150 296 150 302 150 303 150 303 148 309 148 309 150 310 150 310 151 310 155 310 156 310 160 311 160 311 181 316 181 316 187 315 187 315 194 299 194 299 192 291 192 291 187 288 187 288 192 281 192 281 190 280 190 277 190 275 190 272 190 272 194 272 194 272 194 269 194 266 194 265 194 264 194 261 194 259 194 257 194 256 194 253 194 251 194 249 194 248 194 248 194 248 190 244 190 243 190 241 190 239 190 239 188 234 188 234 184 230 184 230 185 229 185 229 184 230 184 230 180 227 180 227 179 227 178 227 177 227 176 226 175 226 174 226 173 226 171 226 171 226 170 226 169 226 168 226 167 226 166 226 165 226 164 227 164 227 163 227 163 227 162 227 161 230 161 230 156 229 156 229 155 230 155 230 156 234 156"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 225,9 225,5 226,5 226,-3 225,-3 225,-12 224,-12 224,-16 241,-16 241,-3 239,-3 239,13 240,13 240,37 254,37 254,29 269,29 269,27 280,27 280,24 285,24 285,29 295,29 295,37 308,38 308,13 309,13 309,-3 322,-3 322,5 323,5 323,9 322,9 322,18 321,18 321,54 322,54 322,58 321,58 321,94 322,94 322,102 323,102 323,108 322,108 322,116 309,116 309,99 308,99 308,76 295,76 295,82 253,82 253,76 240,76 240,99 239,99 239,116 226,116 226,107 225,107 225,102 226,102 226,94 226,94 226,58 226,58 226,54 226,54 226,17 226,17 226,9 225,9"
+                                d="M 225 9 225 5 226 5 226-3 225-3 225-12 224-12 224-16 241-16 241-3 239-3 239 13 240 13 240 37 254 37 254 29 269 29 269 27 280 27 280 24 285 24 285 29 295 29 295 37 308 38 308 13 309 13 309-3 322-3 322 5 323 5 323 9 322 9 322 18 321 18 321 54 322 54 322 58 321 58 321 94 322 94 322 102 323 102 323 108 322 108 322 116 309 116 309 99 308 99 308 76 295 76 295 82 253 82 253 76 240 76 240 99 239 99 239 116 226 116 226 107 225 107 225 102 226 102 226 94 226 94 226 58 226 58 226 54 226 54 226 17 226 17 226 9 225 9"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1022,148 1036,165 1069,206 1056,217 1023,176 1018,180 1051,221 1042,229 1040,231 1038,232 1035,234 1033,236 1024,225 1020,228 1020,227 1016,230 1019,232 1016,234 1013,232 1011,234 1012,236 1010,239 1008,236 1007,241 1006,241 1007,240 1002,239 1002,240 997,239 996,249 979,247 980,245 972,244 971,246 961,244 961,241 957,241 957,240 954,239 954,240 954,241 951,240 949,240 948,240 948,239 946,239 945,239 942,238 942,239 941,238 941,235 941,233 941,232 941,229 941,228 941,225 941,225 941,222 941,219 942,218 943,218 944,218 949,215 948,214 949,212 951,210 952,210 954,209 954,208 955,208 957,206 957,205 960,204 959,203 962,202 963,203 964,204 966,202 964,197 1022,148"
+                                d="M 1022 148 1036 165 1069 206 1056 217 1023 176 1018 180 1051 221 1042 229 1040 231 1038 232 1035 234 1033 236 1024 225 1020 228 1020 227 1016 230 1019 232 1016 234 1013 232 1011 234 1012 236 1010 239 1008 236 1007 241 1006 241 1007 240 1002 239 1002 240 997 239 996 249 979 247 980 245 972 244 971 246 961 244 961 241 957 241 957 240 954 239 954 240 954 241 951 240 949 240 948 240 948 239 946 239 945 239 942 238 942 239 941 238 941 235 941 233 941 232 941 229 941 228 941 225 941 225 941 222 941 219 942 218 943 218 944 218 949 215 948 214 949 212 951 210 952 210 954 209 954 208 955 208 957 206 957 205 960 204 959 203 962 202 963 203 964 204 966 202 964 197 1022 148"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1033,267 1033,262 1033,258 1037,258 1037,262 1040,262 1041,262 1043,262 1044,262 1047,262 1048,262 1051,262 1051,262 1054,262 1055,262 1058,262 1062,262 1066,262 1066,256 1066,255 1066,255 1066,254 1067,254 1067,253 1068,253 1069,254 1070,254 1070,255 1071,256 1071,260 1070,260 1070,262 1071,262 1071,263 1071,262 1072,262 1072,263 1074,263 1074,262 1075,262 1077,262 1077,263 1077,265 1077,266 1076,269 1077,269 1077,270 1076,270 1076,272 1077,272 1077,273 1076,273 1076,276 1077,276 1077,277 1076,277 1076,280 1077,280 1077,280 1076,280 1076,283 1077,283 1077,284 1076,284 1076,287 1077,287 1077,288 1076,288 1076,290 1077,290 1077,291 1076,291 1076,295 1077,295 1076,295 1076,298 1077,298 1076,298 1076,302 1077,302 1076,302 1076,305 1077,305 1076,305 1076,309 1077,309 1076,309 1076,312 1077,312 1076,312 1076,316 1077,316 1077,317 1075,317 1075,316 1074,316 1072,316 1071,316 1070,316 1070,317 1070,319 1070,322 1070,323 1070,324 1069,325 1068,325 1067,325 1066,325 1066,324 1066,324 1066,323 1066,322 1066,320 1066,319 1066,319 1066,317 1065,317 1062,317 1061,317 1058,317 1058,317 1055,317 1054,317 1051,317 1051,317 1048,317 1047,317 1044,317 1043,317 1041,317 1041,327 1037,327 1036,327 1034,327 1033,327 1022,327 1022,324 1021,324 1021,323 1022,323 1022,322 1022,319 1018,319 1017,319 1017,319 1016,319 1016,318 1016,317 1017,317 1017,316 1018,316 1022,316 1022,312 1022,309 1022,305 1022,302 1022,301 1022,298 1021,298 1021,297 1013,297 1013,269 1020,269 1020,267 1024,267 1033,267"
+                                d="M 1033 267 1033 262 1033 258 1037 258 1037 262 1040 262 1041 262 1043 262 1044 262 1047 262 1048 262 1051 262 1051 262 1054 262 1055 262 1058 262 1062 262 1066 262 1066 256 1066 255 1066 255 1066 254 1067 254 1067 253 1068 253 1069 254 1070 254 1070 255 1071 256 1071 260 1070 260 1070 262 1071 262 1071 263 1071 262 1072 262 1072 263 1074 263 1074 262 1075 262 1077 262 1077 263 1077 265 1077 266 1076 269 1077 269 1077 270 1076 270 1076 272 1077 272 1077 273 1076 273 1076 276 1077 276 1077 277 1076 277 1076 280 1077 280 1077 280 1076 280 1076 283 1077 283 1077 284 1076 284 1076 287 1077 287 1077 288 1076 288 1076 290 1077 290 1077 291 1076 291 1076 295 1077 295 1076 295 1076 298 1077 298 1076 298 1076 302 1077 302 1076 302 1076 305 1077 305 1076 305 1076 309 1077 309 1076 309 1076 312 1077 312 1076 312 1076 316 1077 316 1077 317 1075 317 1075 316 1074 316 1072 316 1071 316 1070 316 1070 317 1070 319 1070 322 1070 323 1070 324 1069 325 1068 325 1067 325 1066 325 1066 324 1066 324 1066 323 1066 322 1066 320 1066 319 1066 319 1066 317 1065 317 1062 317 1061 317 1058 317 1058 317 1055 317 1054 317 1051 317 1051 317 1048 317 1047 317 1044 317 1043 317 1041 317 1041 327 1037 327 1036 327 1034 327 1033 327 1022 327 1022 324 1021 324 1021 323 1022 323 1022 322 1022 319 1018 319 1017 319 1017 319 1016 319 1016 318 1016 317 1017 317 1017 316 1018 316 1022 316 1022 312 1022 309 1022 305 1022 302 1022 301 1022 298 1021 298 1021 297 1013 297 1013 269 1020 269 1020 267 1024 267 1033 267"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 283,294 283,292 283,285 280,285 280,277 293,277 296,277 326,277 326,260 319,260 306,260 306,252 306,251 306,243 311,243 319,243 326,243 326,226 319,226 312,226 306,226 306,218 306,209 310,209 317,209 327,209 332,209 332,218 332,220 336,220 336,262 333,262 333,263 333,264 333,275 336,275 336,291 331,291 331,292 332,292 332,296 324,295 323,294 320,294 319,294 314,294 311,294 306,294 304,294 297,294 295,294 288,294 283,294"
+                                d="M 283 294 283 292 283 285 280 285 280 277 293 277 296 277 326 277 326 260 319 260 306 260 306 252 306 251 306 243 311 243 319 243 326 243 326 226 319 226 312 226 306 226 306 218 306 209 310 209 317 209 327 209 332 209 332 218 332 220 336 220 336 262 333 262 333 263 333 264 333 275 336 275 336 291 331 291 331 292 332 292 332 296 324 295 323 294 320 294 319 294 314 294 311 294 306 294 304 294 297 294 295 294 288 294 283 294"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 989,20 992,18 1004,32 1002,34 989,20"
+                                d="M 989 20 992 18 1004 32 1002 34 989 20" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 1057,96 1059,93 1071,109 1068,110 1057,96"
+                                d="M 1057 96 1059 93 1071 109 1068 110 1057 96" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 873,65 873,64 872,64 870,61 851,38 865,26 877,39 879,38 872,28 890,12 886,6 892,0 897,7 901,10 905,7 907,7 908,8 910,9 911,10 911,11 912,11 913,12 914,13 914,14 915,15 916,15 917,16 918,18 919,19 920,21 921,22 921,23 922,23 923,25 923,26 924,27 924,29 925,30 925,31 934,41 934,40 946,54 898,94 879,71 879,72 876,69 876,68 876,67 874,65 873,65"
+                                d="M 873 65 873 64 872 64 870 61 851 38 865 26 877 39 879 38 872 28 890 12 886 6 892 0 897 7 901 10 905 7 907 7 908 8 910 9 911 10 911 11 912 11 913 12 914 13 914 14 915 15 916 15 917 16 918 18 919 19 920 21 921 22 921 23 922 23 923 25 923 26 924 27 924 29 925 30 925 31 934 41 934 40 946 54 898 94 879 71 879 72 876 69 876 68 876 67 874 65 873 65"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 599,306 600,280 602,280 602,271 602,215 614,215 614,213 618,213 618,215 633,215 633,220 633,260 634,261 634,262 635,263 635,264 635,264 635,265 635,266 636,267 636,268 636,269 636,270 636,271 636,272 636,273 635,274 635,275 635,277 635,278 634,279 634,280 633,280 633,295 633,296 632,295 630,298 632,300 628,304 625,303 623,305 623,306 622,306 599,306"
+                                d="M 599 306 600 280 602 280 602 271 602 215 614 215 614 213 618 213 618 215 633 215 633 220 633 260 634 261 634 262 635 263 635 264 635 264 635 265 635 266 636 267 636 268 636 269 636 270 636 271 636 272 636 273 635 274 635 275 635 277 635 278 634 279 634 280 633 280 633 295 633 296 632 295 630 298 632 300 628 304 625 303 623 305 623 306 622 306 599 306"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 235,365 239,363 238,362 241,359 240,358 241,358 237,354 241,350 245,353 246,352 247,353 260,340 260,338 262,336 263,336 263,337 264,336 265,336 280,336 281,336 294,348 295,349 296,349 298,350 298,352 299,352 305,358 304,359 307,361 306,362 310,365 301,374 297,371 297,372 295,369 288,363 288,363 276,350 270,350 263,358 257,363 257,364 255,366 251,370 251,369 249,372 248,371 244,374 236,365 235,365"
+                                d="M 235 365 239 363 238 362 241 359 240 358 241 358 237 354 241 350 245 353 246 352 247 353 260 340 260 338 262 336 263 336 263 337 264 336 265 336 280 336 281 336 294 348 295 349 296 349 298 350 298 352 299 352 305 358 304 359 307 361 306 362 310 365 301 374 297 371 297 372 295 369 288 363 288 363 276 350 270 350 263 358 257 363 257 364 255 366 251 370 251 369 249 372 248 371 244 374 236 365 235 365"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 215,397 213,395 220,388 222,388 222,376 220,376 220,372 226,365 230,365 235,365 236,365 244,374 248,371 249,372 251,369 251,370 255,366 257,364 257,363 263,358 269,365 269,371 270,371 270,376 270,381 271,381 271,384 270,385 270,389 270,395 269,395 269,401 263,408 257,402 255,399 251,396 249,394 248,394 245,391 236,400 227,409 226,408 226,408 215,397"
+                                d="M 215 397 213 395 220 388 222 388 222 376 220 376 220 372 226 365 230 365 235 365 236 365 244 374 248 371 249 372 251 369 251 370 255 366 257 364 257 363 263 358 269 365 269 371 270 371 270 376 270 381 271 381 271 384 270 385 270 389 270 395 269 395 269 401 263 408 257 402 255 399 251 396 249 394 248 394 245 391 236 400 227 409 226 408 226 408 215 397"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 35,11 32,0 35,0 38,10 35,11"
+                                d="M 35 11 32 0 35 0 38 10 35 11" stroke-dasharray="none" dojoGfxStrokeStyle="solid"
+                                fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 14,3 7,2 7,-5 14,-4 14,3" d="M 14 3 7 2 7-5 14-4 14 3"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 116,62 98,62 98,55 99,55 99,54 112,54 112,56 116,56 116,62"
+                                d="M 116 62 98 62 98 55 99 55 99 54 112 54 112 56 116 56 116 62" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 1022,233 1027,241 1014,251 1009,244 1022,233"
+                                d="M 1022 233 1027 241 1014 251 1009 244 1022 233" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 812,154 785,122 794,114 794,115 808,103 809,104 817,96 817,95 818,94 812,86 825,75 839,91 840,92 839,92 841,94 841,93 842,94 841,94 845,99 850,104 853,108 855,110 851,114 841,122 834,113 830,116 835,124 829,129 833,134 833,135 832,134 827,139 828,140 827,140 826,140 820,145 821,146 812,154"
+                                d="M 812 154 785 122 794 114 794 115 808 103 809 104 817 96 817 95 818 94 812 86 825 75 839 91 840 92 839 92 841 94 841 93 842 94 841 94 845 99 850 104 853 108 855 110 851 114 841 122 834 113 830 116 835 124 829 129 833 134 833 135 832 134 827 139 828 140 827 140 826 140 820 145 821 146 812 154"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 754,83 733,58 740,53 739,50 753,39 757,43 760,41 780,66 773,71 775,74 761,85 757,81 754,83"
+                                d="M 754 83 733 58 740 53 739 50 753 39 757 43 760 41 780 66 773 71 775 74 761 85 757 81 754 83"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 41,365 15,365 16,334 42,334 42,340 44,340 44,335 62,335 62,350 63,350 63,370 53,370 53,368 47,368 47,364 41,364 41,365"
+                                d="M 41 365 15 365 16 334 42 334 42 340 44 340 44 335 62 335 62 350 63 350 63 370 53 370 53 368 47 368 47 364 41 364 41 365"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 693,349 693,368 694,368 694,365 706,365 706,391 695,391 695,388 693,388 693,407 663,407 662,349 693,349"
+                                d="M 693 349 693 368 694 368 694 365 706 365 706 391 695 391 695 388 693 388 693 407 663 407 662 349 693 349"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 768,360 771,360 771,338 797,338 797,337 798,337 798,334 845,334 846,334 846,338 853,338 853,342 849,342 849,365 806,365 806,368 806,379 809,379 809,385 806,385 806,388 796,388 796,385 793,385 793,379 796,379 796,368 794,368 776,368 775,368 775,365 768,365 768,360"
+                                d="M 768 360 771 360 771 338 797 338 797 337 798 337 798 334 845 334 846 334 846 338 853 338 853 342 849 342 849 365 806 365 806 368 806 379 809 379 809 385 806 385 806 388 796 388 796 385 793 385 793 379 796 379 796 368 794 368 776 368 775 368 775 365 768 365 768 360"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1143,292 1151,291 1151,275 1149,275 1149,256 1144,256 1144,252 1144,252 1150,244 1150,232 1154,227 1152,225 1154,222 1157,225 1173,208 1181,215 1175,221 1183,227 1180,231 1188,237 1184,240 1192,247 1178,260 1179,275 1186,281 1186,310 1151,311 1151,295 1143,296 1143,292"
+                                d="M 1143 292 1151 291 1151 275 1149 275 1149 256 1144 256 1144 252 1144 252 1150 244 1150 232 1154 227 1152 225 1154 222 1157 225 1173 208 1181 215 1175 221 1183 227 1180 231 1188 237 1184 240 1192 247 1178 260 1179 275 1186 281 1186 310 1151 311 1151 295 1143 296 1143 292"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 715,183 716,280 660,281 660,184 715,183"
+                                d="M 715 183 716 280 660 281 660 184 715 183" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 553,377 548,377 549,338 556,338 556,335 560,335 560,338 628,340 628,337 632,337 632,341 638,341 638,380 634,380 634,387 637,387 636,434 634,434 634,436 636,438 633,441 631,438 629,438 629,440 556,438 556,436 553,436 552,438 549,435 551,434 551,431 550,431 551,384 553,384 553,377"
+                                d="M 553 377 548 377 549 338 556 338 556 335 560 335 560 338 628 340 628 337 632 337 632 341 638 341 638 380 634 380 634 387 637 387 636 434 634 434 634 436 636 438 633 441 631 438 629 438 629 440 556 438 556 436 553 436 552 438 549 435 551 434 551 431 550 431 551 384 553 384 553 377"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 794,-101 808,-85 821,-96 834,-80 829,-76 836,-67 841,-61 842,-62 844,-59 854,-67 864,-53 856,-46 860,-40 841,-25 839,-30 837,-29 836,-30 831,-25 843,-10 857,-22 872,-34 879,-26 885,-18 862,1 838,21 829,10 825,6 812,-10 811,-9 799,-25 800,-26 786,-41 778,-52 774,-57 785,-65 771,-81 794,-101"
+                                d="M 794-101 808-85 821-96 834-80 829-76 836-67 841-61 842-62 844-59 854-67 864-53 856-46 860-40 841-25 839-30 837-29 836-30 831-25 843-10 857-22 872-34 879-26 885-18 862 1 838 21 829 10 825 6 812-10 811-9 799-25 800-26 786-41 778-52 774-57 785-65 771-81 794-101"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 892,-57 912,-73 932,-90 937,-83 943,-76 955,-62 951,-59 948,-55 954,-47 962,-54 979,-32 985,-24 1009,4 992,18 989,20 962,43 935,11 967,-15 956,-30 951,-27 946,-24 955,-13 945,-5 941,-10 938,-8 935,-10 935,-11 929,-6 927,-8 926,-7 913,-21 918,-24 892,-57"
+                                d="M 892-57 912-73 932-90 937-83 943-76 955-62 951-59 948-55 954-47 962-54 979-32 985-24 1009 4 992 18 989 20 962 43 935 11 967-15 956-30 951-27 946-24 955-13 945-5 941-10 938-8 935-10 935-11 929-6 927-8 926-7 913-21 918-24 892-57"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" path="M 897,323 893,326 889,322 894,318 897,323"
+                                d="M 897 323 893 326 889 322 894 318 897 323" stroke-dasharray="none"
+                                dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                            <path fill="rgb(207, 185, 145)" fill-opacity="0.7490196078431373" stroke="rgb(0, 0, 0)"
+                                stroke-opacity="1" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4"
+                                path="M 1038,136 1061,116 1071,109 1085,97 1132,155 1101,180 1110,190 1129,173 1143,189 1111,216 1097,199 1090,189 1085,194 1074,179 1073,180 1069,176 1068,178 1066,175 1065,177 1060,171 1065,168 1038,136"
+                                d="M 1038 136 1061 116 1071 109 1085 97 1132 155 1101 180 1110 190 1129 173 1143 189 1111 216 1097 199 1090 189 1085 194 1074 179 1073 180 1069 176 1068 178 1066 175 1065 177 1060 171 1065 168 1038 136"
+                                stroke-dasharray="none" dojoGfxStrokeStyle="solid" fill-rule="evenodd"></path>
+                        </g>
+                        <g id="BldgAccessibleEntry_6885_layer" data-geometry-type="point">
+                            <g></g>
+                        </g>
+                        <g id="labels_layer"
+                            transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                            style="display: block;">
+                            <g></g><text fill="rgb(51, 51, 51)" fill-opacity="1" stroke="none" stroke-opacity="0"
+                                stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                                x="1091" y="159" text-anchor="middle" text-decoration="none" rotate="0" kerning="auto"
+                                text-rendering="optimizeLegibility" font-style="normal" font-variant="normal"
+                                font-weight="bold" font-size="13" font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">EE</text><text fill="rgb(51, 51, 51)" fill-opacity="1" stroke="none"
+                                stroke-opacity="0" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" x="950" y="7" text-anchor="middle" text-decoration="none"
+                                rotate="0" kerning="auto" text-rendering="optimizeLegibility" font-style="normal"
+                                font-variant="normal" font-weight="bold" font-size="13" font-family="Arial"
+                                dominant-baseline="alphabetic" filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">PHYS</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="593" y="373" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">PGU</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="687" y="237" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">AR</text><text fill="rgb(51, 51, 51)" fill-opacity="1" stroke="none"
+                                stroke-opacity="0" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" x="1167" y="269" text-anchor="middle" text-decoration="none"
+                                rotate="0" kerning="auto" text-rendering="optimizeLegibility" font-style="normal"
+                                font-variant="normal" font-weight="bold" font-size="13" font-family="Arial"
+                                dominant-baseline="alphabetic" filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">KNOY</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="809" y="358" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">PSYC</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="40" y="355" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">SMLY</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="757" y="66" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">JNSN</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="820" y="119" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">SCHL</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1018" y="247" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">RAIL</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="272" y="352" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">VAWT</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="617" y="265" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">LWSN</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="899" y="52" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">FRNY</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="317" y="262" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">PKRW</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1046" y="295" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">POTR</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1003" y="210" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">ME</text><text fill="rgb(51, 51, 51)" fill-opacity="1" stroke="none"
+                                stroke-opacity="0" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" x="273" y="58" text-anchor="middle" text-decoration="none"
+                                rotate="0" kerning="auto" text-rendering="optimizeLegibility" font-style="normal"
+                                font-variant="normal" font-weight="bold" font-size="13" font-family="Arial"
+                                dominant-baseline="alphabetic" filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">WILY</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="271" y="174" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">WDCT</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1024" y="74" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">MSEE</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="384" y="296" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">BCC</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="859" y="209" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">HOVD</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="804" y="254" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">ELLT</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="710" y="27" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">RHPH</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1156" y="34" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">PGNW</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1118" y="287" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">LMBS</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1154" y="342" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">DUDL</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="1266" y="337" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">BALY</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="383" y="199" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">PKRF</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="757" y="168" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">CHAS</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="446" y="122" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">414R</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="453" y="296" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">BIDC</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="972" y="312" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">WALC</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="372" y="362" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">HCRN</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="222" y="290" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">KRCH</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="114" y="181" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">CREC</text><text fill="rgb(51, 51, 51)" fill-opacity="1"
+                                stroke="none" stroke-opacity="0" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="4" x="36" y="225" text-anchor="middle"
+                                text-decoration="none" rotate="0" kerning="auto" text-rendering="optimizeLegibility"
+                                font-style="normal" font-variant="normal" font-weight="bold" font-size="13"
+                                font-family="Arial" dominant-baseline="alphabetic"
+                                filter="url(#halo_map_labels_255_255_255_1_3)"
+                                transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd">AQUA</text>
+                        </g>
+                        <defs>
+                            <filter filterUnits="userSpaceOnUse" x="0" y="0" width="1504" height="375"
+                                id="halo_map_labels_255_255_255_1_3">
+                                <feMorphology operator="dilate" radius="3" result="dilated"></feMorphology>
+                                <feFlood flood-color="rgba(255, 255, 255, 1)"></feFlood>
+                                <feComposite in2="dilated" operator="in" result="composite"></feComposite>
+                                <feMerge>
+                                    <feMergeNode in="composite"></feMergeNode>
+                                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <g id="map_graphics_layer"
+                            transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                            style="display: block;">
+                            <g></g>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            <div class="esriControlsBR"><span class="esriAttribution" style="max-width: 676px; cursor: default;"><span
+                        class="esriAttributionList"><span class="esriAttributionItem" style="display: inline;">Map data
+                            © OpenStreetMap contributors, CC-BY-SA<span class="esriAttributionDelim"> |
+                            </span></span><span class="esriAttributionLastItem" style="display: inline;">Esri, HERE,
+                            Garmin, INCREMENT P, USGS, EPA, USDA<span class="esriAttributionDelim"> |
+                            </span></span><span class="esriAttributionItem" style="display: none;">Esri, HERE, Garmin,
+                            INCREMENT P, NGA, USGS<span class="esriAttributionDelim"> | </span></span></span></span>
+                <div class="logo-med"></div>
+            </div>
+            <div class="esriPopup light" style="visibility: hidden;">
+                <div class="esriPopupWrapper" style="position: absolute;">
+                    <div class="sizer">
+                        <div class="titlePane" style="user-select: none;">
+                            <div class="spinner hidden" title="Searching..."></div>
+                            <div class="title"></div>
+                            <div class="titleButton prev hidden" title="Previous feature"></div>
+                            <div class="titleButton next hidden" title="Next feature"></div>
+                            <div class="titleButton maximize" title="Maximize"></div>
+                            <div class="titleButton close" title="Close"></div>
+                        </div>
+                    </div>
+                    <div class="sizer content">
+                        <div class="contentPane"></div>
+                    </div>
+                    <div class="sizer">
+                        <div class="actionsPane">
+                            <div class="actionList hidden"><a title="Zoom" to="" class="action zoomTo"
+                                    href="javascript:void(0);"><span>Zoom to</span></a></div>
+                        </div>
+                    </div>
+                    <div class="pointer hidden"></div>
+                </div>
+                <div class="outerPointer hidden"></div>
+            </div>
+            <div id="map_zoom_slider" class="esriSimpleSlider esriSimpleSliderVertical esriSimpleSliderTL"
+                style="z-index: 30;">
+                <div class="esriSimpleSliderIncrementButton" title="Zoom In"><span>+</span></div>
+                <div class="esriSimpleSliderDecrementButton" title="Zoom Out"><span>–</span></div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <p>Purdue University, 610 Purdue Mall, West Lafayette, IN 47907, 765-494-4600</p>
+                        <p><a href="https://www.purdue.edu/purdue/disclaimer.html"> © 2021 Purdue University</a> | <a
+                                href="https://www.purdue.edu/purdue/ea_eou_statement.php">An equal access/equal
+                                opportunity university</a> | <a
+                                href="https://www.purdue.edu/purdue/about/integrity_statement.php">Integrity
+                                Statement</a> | <a
+                                href="https://www.purdue.edu/securepurdue/SecurityPrograms/copyright_infringement.php">Copyright
+                                Complaints</a> | <a href="https://www.purdue.edu/marketing/">Maintained by Marketing and
+                                Communications</a></p>
+                        <p>Trouble with this page? Disability-related <a
+                                href="https://www.purdue.edu/disabilityresources/">accessibility</a> issue? Please
+                            contact us at <a href="mailto:online@purdue.edu">online@purdue.edu</a> so we can help.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <script type="text/javascript">
+
+        var dojoConfig = {
+            parseOnLoad: true
+        };
+    </script>
+    <script src="https://js.arcgis.com/3.15/"></script>
+    <script>
+        var map;
+
+
+        require([
+            "esri/dijit/Scalebar", "esri/map", "esri/dijit/Popup", "esri/dijit/PopupTemplate", "esri/dijit/PopupMobile", "esri/dijit/InfoWindow", "esri/tasks/query", "esri/tasks/QueryTask", "esri/arcgis/utils", "esri/layers/FeatureLayer", "esri/symbols/SimpleFillSymbol", "esri/Color", "esri/dijit/Search", "esri/InfoTemplate", "dojo/dom-class", "dojo/_base/array", "dojo/dom-construct", "dojo/on", "dojo/dom-style", "dojo/domReady!"
+            // these modules must be in line with what is called in the function (map with map, etc)
+        ], function (Map, Scalebar, Popup, PopupTemplate, PopupMobile, InfoWindow, query, queryTask, arcgisUtils, FeatureLayer, SimpleFillSymbol, Color, Search, InfoTemplate, domClass, array, domConstruct, on, domStyle) {
+
+
+            /* EDIT THIS FOR MAP UPDATE */
+
+            // this is the ID from the the Purdue Campus Buildings (incomplete) on ArcGIS online
+            //allows you to have many layers on one map - can toggle
+            //Found at the end of the URL in ArcGIS
+            var webMapItemID = "f2974db522f2494396e8a7095cdf2809";
+
+
+            //infotemplate for popups
+            //change image url when published
+            //This shows up as the search popup (Can be different than the online popup)
+            infoTemplate = new InfoTemplate("${BUILDING_N} (${BLDG_ABBR})", "<img src='https://www.purdue.edu/campus-map/campus-buildings/${BLDG_ABBR}.jpg' />" + "<br/> ${ADDRESS}<br/>West Lafayette, IN ${Zip} - ${Plus4}<br/><a href='https://www.google.com/maps/dir//${BUILDING_N} ${ADDRESS}' target=_blank ;'>Get Directions (Google Maps)</a> <br/> "
+            );
+
+            //this is the Feature Layer from Oct4_16
+            //this is used for the search function (also)
+            var layer = new FeatureLayer("https://services1.arcgis.com/mLNdQKiKsj5Z5YMN/arcgis/rest/services/BuildingShapesZip4/FeatureServer/0", {
+                infoTemplate: template,
+                outFields: ["BUILDING_N", "BLDG_ABBR", "ADDRESS", "Zip", "Plus4"],
+                enableInfoWindow: true // makes the pop ups happen
+            });
+
+
+
+
+            /* END EDIT FOR MAP UPDATE*/
+
+
+            /* popup */
+            var fill = new SimpleFillSymbol("solid", null, new Color("#B1810B"));
+            var popup = new Popup({
+                fillSymbol: fill,
+                titleInBody: false
+            }, domConstruct.create("div"));
+            //Add the dark theme which is customized further in the <style> tag at the top of this page
+            domClass.add(popup.domNode, "light");
+
+            var template = new PopupTemplate({
+                title: "{BUILDING_N}",
+                description: "{description}"
+            });
+            // for adding different things to popups - https://developers.arcgis.com/javascript/sandbox/sandbox.html?sample=popup_chart
+
+            /* Map setup */
+            var mapOptions = {
+                basemap: "topo",  // Many options
+                autoResize: true,
+                center: [-86.914161, 40.426951], // lon, lat (Beering)
+                minZoom: 15,
+                maxZoom: 18,
+                enableInfoWindow: true,
+                infoWindow: popup,
+                slider: true
+                //sliderStyle: "small" 
+            };
+
+
+            // this allows the map, the map options, and the web ID to be loaded within the same frame without complications
+            //VERY IMPORTANT
+            deferred = arcgisUtils.createMap(webMapItemID, "map", { mapOptions: mapOptions });
+
+            //Allows async Search  widgets
+            // (response) is used for autocomplete in search
+            deferred.then(function (response) {
+                map = response.map;
+
+
+                /* toggle maps layer */
+                var operationalLayers = response.itemInfo.itemData.operationalLayers;
+                array.forEach(operationalLayers, function (layer) {
+                    //create a checkbox and label for each layer in the map  
+
+                    var cbox_label = domConstruct.create("li", {
+                        htmlFor: layer.title,
+                        innerHTML: layer.title
+                    }, "layerList");
+
+                    var cbox = domConstruct.create("input", {
+                        type: "checkbox",
+                        name: layer.title,
+                        value: layer.id,
+                        checked: layer.visibility
+                    }, "layerList");
+
+                    //When the checkbox is clicked change the layer visibility              
+                    on(cbox, "click", function (evt) {
+                        //Find the layer based on the layer id   
+                        var layerid = evt.target.value;
+                        console.log(layerid);
+                        var layer = map.getLayer(layerid);
+                        console.log(layer.name);
+                        layer.setVisibility(evt.target.checked);
+                    });
+                })
+
+                /* end toggle */
+
+                /* search function */
+                // map = response.map;
+                var search = new Search({
+                    map: response.map,
+                    sources: [],
+                    zoomScale: 300000 // still figuring this out. Doesn't do what I thought it did
+                }, "search");
+
+                // sets the sources to the source.search 
+                var sources = search.sources;
+
+                // sources, can be multiple, if needed, please see below
+                // https://developers.arcgis.com/javascript/jssamples/search_multiplesources.html
+                sources.push({
+                    featureLayer: layer,
+                    placeholder: "Search Campus",
+                    enableLabel: false,
+                    searchFields: ["BUILDING_N", "BLDG_ABBR"],
+                    suggestionTemplate: "${BUILDING_N} (${BLDG_ABBR}), ${ADDRESS}, West Lafayette IN ${Zip} - ${Plus4}",
+                    displayField: "BUILDING_N",
+                    name: "Campus Buildings",
+                    exactMatch: false,
+                    outFields: ["BUILDING_N", "BLDG_ABBR", "ADDRESS", "Zip", "Plus4"],
+                    maxResults: 6,
+                    maxSuggestions: 6,
+                    infoTemplate: infoTemplate, // var infoTemplate information goes here
+                    enableSuggestions: true,
+                    minCharacters: 0
+                });
+                //Set the sources above to the search widget
+                search.set("sources", sources);
+                // starts the widget
+                search.startup();
+
+            }, function (error) {
+                console.log("Error: ", error.code, " Message: ", error.message);
+                deferred.cancel();
+            }); //end of deferred
+
+        }); // end of require and modules
+    </script>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- <script src="bootstrap-switch.js"></script> -->
+    <!-- switch is the next thing to impliment on the checkboxes in the menu --><iframe
+        style="display: none; visibility: hidden;"
+        src="//8141015.fls.doubleclick.net/activityi;src=8141015;type=purd;cat=purdu0;ord=4805880159866;gtm=2wga40;auiddc=1952208438.1628630620;~oref=https%3A%2F%2Fwww.purdue.edu%2Fcampus-map%2F%3F_ga%3D2.173646880.220339797.1633582008-1156996463.1619156552?"
+        width="0" height="0"></iframe>
+
+
+
+
+    <script type="text/javascript"
+        id="">(function (a, c, e, k, b) { a[b] = a[b] || []; a[b].push({ projectId: "10000", properties: { pixelId: "10095996" } }); var d = c.createElement(e); d.src = k; d.async = !0; d.onload = d.onreadystatechange = function () { var f = this.readyState, l = a[b]; if (!f || "complete" == f || "loaded" == f) try { var g = YAHOO.ywa.I13N.fireBeacon; a[b] = []; a[b].push = function (h) { g([h]) }; g(l) } catch (h) { } }; c = c.getElementsByTagName(e)[0]; e = c.parentNode; e.insertBefore(d, c) })(window, document, "script", "https://s.yimg.com/wi/ytc.js", "dotq");</script>
+    <script type="text/javascript" id="">!function (b, e, f, g, a, c, d) { b.fbq || (a = b.fbq = function () { a.callMethod ? a.callMethod.apply(a, arguments) : a.queue.push(arguments) }, b._fbq || (b._fbq = a), a.push = a, a.loaded = !0, a.version = "2.0", a.queue = [], c = e.createElement(f), c.async = !0, c.src = g, d = e.getElementsByTagName(f)[0], d.parentNode.insertBefore(c, d)) }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js"); fbq("init", "1290758077759811"); fbq("init", "870989679998130"); fbq("init", "none"); fbq("init", "none");
+        fbq("init", "none"); fbq("track", "PageView");</script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=1290758077759811&amp;ev=PageView&amp;noscript=1">
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=870989679998130&amp;ev=PageView&amp;noscript=1">
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=none&amp;ev=PageView&amp;noscript=1">
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=none&amp;ev=PageView&amp;noscript=1">
+    </noscript>
+    <script type="text/javascript"
+        id="">(function (b, f, d, g, a, c, e) { b[a] || (b[a] = {}, b[a].scriptToken = "Xy03NjIyMTQyMjc", b[a].callsQueue = [], b[a].api = function () { b[a].callsQueue.push(arguments) }, c = f.createElement(d), e = f.getElementsByTagName(d)[0], c.async = 1, c.src = g, c.id = a + d, e.parentNode.insertBefore(c, e)) })(window, document, "script", "https://cdn.oribi.io/Xy03NjIyMTQyMjc/oribi.js", "ORIBI");</script>
+    <script type="text/javascript"
+        id="">(function () { var a = document.createElement("script"); a.type = "text/javascript"; a.async = !0; a.src = "//siteimproveanalytics.com/js/siteanalyze_6044943.js"; var b = document.getElementsByTagName("script")[0]; b.parentNode.insertBefore(a, b) })();</script>
+    <img class="ywa-10000" style="display: none;"
+        src="https://sp.analytics.yahoo.com/sp.pl?a=10000&amp;d=Thu%2C%2007%20Oct%202021%2005%3A35%3A09%20GMT&amp;n=4d&amp;b=Purdue%20Campus%20Map%20-%20West%20Lafayette%20Campus&amp;.yp=10095996&amp;f=https%3A%2F%2Fwww.purdue.edu%2Fcampus-map%2F%3F_ga%3D2.173646880.220339797.1633582008-1156996463.1619156552&amp;enc=UTF-8&amp;yv=1.10.1&amp;tagmgr=gtm"
+        alt="dot image pixel">
+    <script
+        src="https://analytics.twitter.com/i/adsct?type=javascript&amp;version=2.0.4&amp;p_id=Twitter&amp;p_user_id=0&amp;txn_id=o17jh&amp;events=%5B%5B%22pageview%22%2Cnull%5D%5D&amp;tw_sale_amount=0&amp;tw_order_quantity=0&amp;tw_iframe_status=0&amp;event_id=ae0b25f8-2722-426a-a741-c4cd1da5b20e&amp;tw_document_href=https%3A%2F%2Fwww.purdue.edu%2Fcampus-map%2F%3F_ga%3D2.173646880.220339797.1633582008-1156996463.1619156552&amp;tpx_cb=twttr.conversion.loadPixels"
+        type="text/javascript"></script>
+</body>
+<canvas id="myCanvas2" width="960" height="640"></canvas>
+<script src ="../base/gamePlay.js"></script>
+<script src ="../base/AILogic.js"></script>
+</html>

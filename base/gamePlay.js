@@ -22,6 +22,9 @@
 
 // initialize canvas
   var canvas = document.getElementById("myCanvas");
+  if (canvas == null) {
+    canvas = document.getElementById("myCanvas2");
+  }
 	var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
 
   //Constants
@@ -49,14 +52,37 @@
 
 //game timer count down to 0 starting at startTime
 var startTime = 30;
+var transitionTime = 15;
+playerStamina = MAX_STAMINA;
+oppStamina = MAX_STAMINA;
+var pageURL = window.location.search.substring(1)
+if (pageURL) {
+  var URLArray = pageURL.split('&');
+  //alert("test to see if script called, pageURL is: " + pageURL);
+  startTime = URLArray[0].split('=')[1];
+  playerStamina = URLArray[1].split('=')[1];
+  oppStamina = URLArray[2].split('=')[1];
+}
 var currTime = startTime;
 var timerInterval = setInterval(function() {
+//initialize vars using passed in url to enable passing of arguments
+
+  // move to new arena page if a certain amount of time has passed
+  if (currTime == transitionTime && startTime != currTime) {
+    transitionStage();
+  }
+
+  // end game if timer has run to 0
   if (currTime == 0) {
     endGame();
   }
   currTime--;
 }, 1000); // update about every second
 
+function transitionStage() {
+  window.location.href = '../second-arena/blank.html?startTime=' + transitionTime + '&playerStamina=' 
+    + player1.getStamina() + "&opponentStamina=" + opp1.getStamina();
+}
 
 function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
@@ -305,13 +331,14 @@ function endGame() {
 
 	//initialize player1
   const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true);
-	var vborderBounce = 20;
+  player1.setStamina(playerStamina);
+  var vborderBounce = 20;
   var borderBounce = 10;
 
   //initialize opponent1
   const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true);
   opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
-
+  opp1.setStamina(oppStamina);
   //initialize UI
   const gameUI = new Entity(50, window.innerWidth, '', true );
   gameUI.setStartingPosition(0,0);
@@ -801,10 +828,6 @@ function endGame() {
     ctx.font = "20px Helvetica";
     ctx.fillStyle = "#000000";
     ctx.fillText(currTime, gameUI.getWidth()/2-20, 23+yOffset);
-
-    //ctx.font = "20px Elephant";
-    //ctx.fillstyle = "#000000";
-    //ctx.fillText("WHY DON'T YOU SHOW JESUS CRUST", 20, 60 + yOffset);
 
     //Empty bar
     ctx.beginPath();
