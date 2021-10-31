@@ -11,6 +11,13 @@
     top: 50%;
     position: static;
 }
+.c {
+    width: 500px;
+    height: 50px;
+    background-color: green;
+    top: 50%;
+    position: fixed;
+}
 #myCanvas {
   position: absolute;
   top: 0px;
