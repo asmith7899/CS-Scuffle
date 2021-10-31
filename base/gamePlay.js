@@ -470,11 +470,12 @@ function endGame() {
   /
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
-  function entBumpRight(bumpEnt) {
-    if (bumpEnt.getX() + bumpMovPerFrame  > canvas.width - bumpEnt.getWidth()) {
-      bumpEnt.setX(canvas.width - bumpEnt.getWidth() - bumpMovPerFrame);
+  function entBumpRight(bumpEnt, multiplier = 1) {
+    multipliedBumpMov = bumpMovPerFrame * multiplier;
+    if (bumpEnt.getX() + multipliedBumpMov  > canvas.width - bumpEnt.getWidth()) {
+      bumpEnt.setX(canvas.width - bumpEnt.getWidth() - multipliedBumpMov);
     }
-    bumpEnt.setX(bumpEnt.getX() + bumpMovPerFrame);
+    bumpEnt.setX(bumpEnt.getX() + multipliedBumpMov);
 
     //check to see if any entities were collided with
     var hitSomething = false;
@@ -484,7 +485,7 @@ function endGame() {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
             //if character is bumped, move them backwards
-            entBumpRight(entities[i]);
+            entBumpRight(entities[i], 2);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -507,11 +508,12 @@ function endGame() {
   /
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
-  function entBumpLeft(bumpEnt) {
-    if(bumpEnt.getX() - bumpMovPerFrame  < 0){
-        bumpEnt.setX(bumpMovPerFrame);
+  function entBumpLeft(bumpEnt, multiplier = 1) {
+    multipliedBumpMov = bumpMovPerFrame * multiplier;
+    if(bumpEnt.getX() - multipliedBumpMov  < 0){
+        bumpEnt.setX(multipliedBumpMov);
     }
-    bumpEnt.setX(bumpEnt.getX() - bumpMovPerFrame);
+    bumpEnt.setX(bumpEnt.getX() - multipliedBumpMov);
 
     //check to see if any entities were collided with
     var hitSomething = false;
@@ -520,7 +522,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpLeft(entities[i]);
+            entBumpLeft(entities[i], 2);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -543,11 +545,12 @@ function endGame() {
   /
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
-  function entBumpUp(bumpEnt) {
-    if(bumpEnt.getY() + bumpMovPerFrame <  0) {
-      bumpEnt.setY(bumpMovPerFrame);
+  function entBumpUp(bumpEnt, multiplier = 1) {
+    multipliedBumpMov = bumpMovPerFrame * multiplier;
+    if(bumpEnt.getY() + multipliedBumpMov <  0) {
+      bumpEnt.setY(multipliedBumpMov);
     }
-    bumpEnt.setY(bumpEnt.getY() - bumpMovPerFrame);
+    bumpEnt.setY(bumpEnt.getY() - multipliedBumpMov);
 
     //check to see if any entities were collided with
     var hitSomething = false;
@@ -556,7 +559,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpUp(entities[i]);
+            entBumpUp(entities[i], 2);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -579,11 +582,12 @@ function endGame() {
   /
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
-  function entBumpDown(bumpEnt) {
-    if (bumpEnt.getY() - bumpMovPerFrame > canvas.height - bumpEnt.getHeight()) { // implement this in game
-      bumpEnt.setY(canvas.height- bumpEnt.getHeight() - bumpMovPerFrame);
+  function entBumpDown(bumpEnt, multiplier = 1) {
+    multipliedBumpMov = bumpMovPerFrame * multiplier;
+    if (bumpEnt.getY() - multipliedBumpMov > canvas.height - bumpEnt.getHeight()) { // implement this in game
+      bumpEnt.setY(canvas.height- bumpEnt.getHeight() - multipliedBumpMov);
     }
-    bumpEnt.setY(bumpEnt.getY() + bumpMovPerFrame);
+    bumpEnt.setY(bumpEnt.getY() + multipliedBumpMov);
 
     //check to see if any entities were collided with
     var hitSomething = false;
@@ -592,7 +596,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpDown(entities[i]);
+            entBumpDown(entities[i], 2);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
