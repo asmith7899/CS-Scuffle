@@ -483,6 +483,8 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
+            //if character is bumped, move them backwards
+            entBumpRight(entities[i]);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -518,6 +520,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
+            entBumpLeft(entities[i]);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -553,6 +556,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
+            entBumpUp(entities[i]);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -588,6 +592,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
+            entBumpDown(entities[i]);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
