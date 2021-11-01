@@ -43,6 +43,7 @@
   var MAX_STAMINA = 100;                  //max stamina for players or AI
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
+  var BUMP_KNOCKBACK = 2;
 
   //The amount of offset the canvas has to the webpage. Defined in the arena css file
   var CANVAS_OFFSET = 40;                 //Use for map-arena
@@ -502,7 +503,7 @@ function endGame() {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
             //if character is bumped, move them backwards
-            entBumpRight(entities[i], 2);
+            entBumpRight(entities[i], BUMP_KNOCKBACK);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -540,7 +541,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpLeft(entities[i], 2);
+            entBumpLeft(entities[i], BUMP_KNOCKBACK);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -578,7 +579,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpUp(entities[i], 2);
+            entBumpUp(entities[i], BUMP_KNOCKBACK);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -616,7 +617,7 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpDown(entities[i], 2);
+            entBumpDown(entities[i], BUMP_KNOCKBACK);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
