@@ -32,6 +32,8 @@
   var BUMPING_STATE = "bumping";
   var PICKUP_STATE = "pickup";
   var HIT_STATE = "hit";
+  var DROP_STATE = "dropping";            //Used for characters and AI
+  var FALLING_STATE = "falling";          //Used for destructible entities after they are dropped
   var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
   var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
   var UP_DIR = "up";
@@ -49,6 +51,13 @@
   //var CANVAS_OFFSET = 0;                  //Use for test-arena
   //var MOVE_OFFSET_X = 0;
   //var MOVE_OFFSET_Y = 0;
+
+  //Sound Effects
+  var shater = new Audio("../SoundEffects/Glass-Shatering.mp3");  //Sound of Destructible Entities breaking
+  var bumpMovement = new Audio("../SoundEffects/bumpMovement.wav"); //Sound of moving during a bumpaction
+  var playerHit = new Audio("../SoundEffects/playerHit.wav"); //sound of a player being hit by something
+  var itemPickup = new Audio("../SoundEffects/itempickup.wav"); //sound for picking up an object
+  var itemDrop = new Audio("../SoundEffects/itemdrop.wav"); //sound for item hitting the floor
 
 //game timer count down to 0 starting at startTime
 var startTime = 30;
@@ -80,7 +89,7 @@ var timerInterval = setInterval(function() {
 }, 1000); // update about every second
 
 function transitionStage() {
-  window.location.href = '../second-arena/blank.html?startTime=' + transitionTime + '&playerStamina=' 
+  window.location.href = '../second-arena/blank.html?startTime=' + transitionTime + '&playerStamina='
     + player1.getStamina() + "&opponentStamina=" + opp1.getStamina();
 }
 
@@ -255,6 +264,10 @@ function endGame() {
       this.animationCounter = animationCounter;
     }
 
+    setImageSrc(src) {
+      this.entityImg.src = src;
+    }
+
     setX(x) {
       this.x = x;
     }
@@ -309,7 +322,8 @@ function endGame() {
     //Used to decrease or increase statmina by a set amount from the current total
     //negative numbers add to stamina positive numbers lower stamina.
     decreaseStamina(amount) {
-      if (this.stamina < amount) {
+      playerHit.play();
+      if (this.stamina < amount && this.stamina != -1) {
         this.stamina = 0;
       } else if ( ( this.stamina - amount > MAX_STAMINA && !this.getDestructibleObject() ) || (this.stamina - amount > DESTRUCTIBLE_MAX_STAMINA && this.getDestructibleObject() ) ) {
         if (this.getDestructibleObject()) {
@@ -319,6 +333,26 @@ function endGame() {
         }
       } else {
         this.stamina = this.stamina - amount;
+      }
+
+      if (this.getDestructibleObject()) {
+        if (this.stamina < (DESTRUCTIBLE_MAX_STAMINA/3)*2 + 1 && this.stamina > DESTRUCTIBLE_MAX_STAMINA/3 ) {
+          this.setImageSrc("../Images/destroy_stage_2.png");
+        }
+        else if (this.stamina < DESTRUCTIBLE_MAX_STAMINA/3 + 1 && this.stamina >= 1) {
+          this.setImageSrc("../Images/destroy_stage_9.png");
+        }
+        else if (this.stamina == 0) {
+          shater.play();
+          if (this.getEntityID() != '1') {
+              document.getElementById(this.getEntityID()).remove();
+          }
+          const index = entities.indexOf(this);
+          if (index > -1) {
+            entities.splice(index, 1);
+          }
+          this.stamina = -1;
+        }
       }
     }
 
@@ -339,17 +373,13 @@ function endGame() {
   const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true);
   opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
   opp1.setStamina(oppStamina);
-  //initialize UI
-  const gameUI = new Entity(50, window.innerWidth, '', true );
-  gameUI.setStartingPosition(0,0);
 
-  //initialize testEntity
-  //const testDestructible = new Entity(100, 300, 'https://i.stack.imgur.com/d3Koo.jpg', true);
-  //testDestructible.setStartingPosition(300, 300);
+  //initialize UI
+  const gameUI = new Entity(50, window.innerWidth, '', true, false);
+  gameUI.setStartingPosition(0,0);
 
   //initialize entity list (EntityID must be unique)
   gameUI.setEntityID('1');
-  //testDestructible.setEntityID('2')
   opp1.setEntityID('2');
   player1.setEntityID('3');
   var playerNumber = 3
@@ -358,11 +388,11 @@ function endGame() {
 
   //html ElementID Array
   var arenaElementIds = new Array('map_layer0_tile_17_1_0');  //Use for map-arena
-  //var arenaElementIds = new Array('div1','div2');   //Use for test-arena
+  //var arenaElementIds = new Array('div1','div2','div3');   //Use for test-arena
 
   for (var i = 0; i < arenaElementIds.length; i++) {
     var genElement = document.getElementById(arenaElementIds[i]);
-    const tempEntity = new Entity(genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true);
+    const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true, false);
     tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top-CANVAS_OFFSET);
     tempEntity.setEntityID(arenaElementIds[i]);
     nonDesEntityNumber++;
@@ -371,14 +401,6 @@ function endGame() {
 
   entities.push(opp1);
   entities.push(player1);
-
-  //Test Code to set starting positions of test divs (Will need to be commented out once a working arena is made)
-  //moveElement('div1', player1.getX() + 100, player1.getY()+100);
-  //moveElement('div2', opp1.getX() + 100, opp1.getY()+100);
-
-  //var genElement = document.getElementById(elementID);
-  //div.style.left = posx + 'px';
-  //div.style.top = posy + 'px';
 
   //Default Keyboard controls
   //update these variables to allow for control changes in options menu
@@ -403,7 +425,8 @@ function endGame() {
   var bumpAniFrames = 14;         //Length of bump animation in frames
   var bumpDistance = 80;          //How far the bump animation takes you forward
   var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
-  var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function)
+  var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function) for players/AI
+  var fallingAniFrames = 60;     //Length of falling animation for destructible objects that have been dropped
 
   /*
   / Purpose: Changes the x/y position of an html element
@@ -428,9 +451,7 @@ function endGame() {
 
   /*
   / Purpose: Checks whether or not two objects are currently colliding with each
-  /          other. Specifically, it looks at the four corners of object1 (assumed
-  /          to be a rectangle) and check to see if any of those corners are
-  /          inside the area of object2 (Also assumed to be a rectangle).
+  /          other.
   /
   / Params:
   /         object1: Assumed to be an entity object and a rectangle in shape.
@@ -440,27 +461,22 @@ function endGame() {
   /         Returns true if the objects have collided, false otherwise.
   /
   / note:
-  /         Should be updated to account of non-entities being given as objects,
+  /         Does not account of non-entities being given as objects,
   /         at the moment the function will crash for non-entitise.
   */
-  function rectCollisionCheck(object1, object2) {
-      if (
-        //x + w, y
-        ( ( object1.getX() + object1.getWidth() >= object2.getX() && object1.getX() + object1.getWidth() <= object2.getX() + object2.getWidth() ) &&
-        ( object1.getY() >= object2.getY() && object1.getY() <= object2.getY() + object2.getHeight() ) ) ||
-        //x, y
-        ( ( object1.getX() >= object2.getX() && object1.getX() <= object2.getX() + object2.getWidth() ) &&
-        ( object1.getY() >= object2.getY() && object1.getY() <= object2.getY() + object2.getHeight() ) ) ||
-        //x + w, y + h
-        ( ( object1.getX() + object1.getWidth() >= object2.getX() && object1.getX() + object1.getWidth() <= object2.getX() + object2.getWidth() ) &&
-        ( object1.getY() + object1.getHeight() >= object2.getY() && object1.getY() + object1.getHeight() <= object2.getY() + object2.getHeight() ) ) ||
-        //x, y + h
-        ( ( object1.getX() >= object2.getX() && object1.getX() <= object2.getX() + object2.getWidth() ) &&
-        ( object1.getY() + object1.getHeight() >= object2.getY() && object1.getY() + object1.getHeight() <= object2.getY() + object2.getHeight() ) ) ) {
-          return true;
-      }
+  function rectCollisionCheck(entity1, entity2) {
+    //Checks if either entity is to the right of the other
+    if (entity1.getX() >= entity2.getX() + entity2.getWidth() || entity2.getX() >= entity1.getX() + entity1.getWidth()) {
       return false;
     }
+
+    //Checks if either entity is below the other
+    if (entity1.getY() >= entity2.getY() + entity2.getHeight() || entity2.getY() >= entity1.getY() + entity1.getHeight()) {
+      return false;
+    }
+
+    return true;
+  }
 
   //Animation/Action Functions Start
 
@@ -471,6 +487,7 @@ function endGame() {
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
   function entBumpRight(bumpEnt, multiplier = 1) {
+    bumpMovement.play();  //Play bump sound effect
     multipliedBumpMov = bumpMovPerFrame * multiplier;
     if (bumpEnt.getX() + multipliedBumpMov  > canvas.width - bumpEnt.getWidth()) {
       bumpEnt.setX(canvas.width - bumpEnt.getWidth() - multipliedBumpMov);
@@ -509,6 +526,7 @@ function endGame() {
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
   function entBumpLeft(bumpEnt, multiplier = 1) {
+    bumpMovement.play();  //Play bump sound effect
     multipliedBumpMov = bumpMovPerFrame * multiplier;
     if(bumpEnt.getX() - multipliedBumpMov  < 0){
         bumpEnt.setX(multipliedBumpMov);
@@ -546,6 +564,7 @@ function endGame() {
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
   function entBumpUp(bumpEnt, multiplier = 1) {
+    bumpMovement.play();  //Play bump sound effect
     multipliedBumpMov = bumpMovPerFrame * multiplier;
     if(bumpEnt.getY() + multipliedBumpMov <  0) {
       bumpEnt.setY(multipliedBumpMov);
@@ -583,6 +602,7 @@ function endGame() {
   / Note: Assumes an entity is given do not use non entities as it's parameter
   */
   function entBumpDown(bumpEnt, multiplier = 1) {
+    bumpMovement.play();  //Play bump sound effect
     multipliedBumpMov = bumpMovPerFrame * multiplier;
     if (bumpEnt.getY() - multipliedBumpMov > canvas.height - bumpEnt.getHeight()) { // implement this in game
       bumpEnt.setY(canvas.height- bumpEnt.getHeight() - multipliedBumpMov);
@@ -670,33 +690,33 @@ function endGame() {
 
   /*
   / Purpose: this function generically takes any entity checks to see if they are ontop of a destructible entity
-  /           that can be picked up, if so they pick it up. It also checks to see if they are already holding
-  /           an html element, if so they drop the element
+  /           that can be picked up, if so they pick it up.
   /
   /
-  / Params: pickupEntity - the entity that is performing the pickup/drop action
+  / Params: pickupEntity - the entity that is performing the pickup action
+  /
   /
   / Notes: the function does not check to make sure the given parameter is an entity
   /         make sure to only give this function entity objects.
   /
   */
   function entityPickup(pickupEntity) {
-    if (pickupEntity.getAnimationCounter() == 0) {
-      //Holding a html element, drop the element.
-      if (pickupEntity.getHoldingEnt() != null) {
-          pickupEntity.getHoldingEnt().setHoldingEnt(null);
-          pickupEntity.setHoldingEnt(null);
-      }
-      //Not holding a html element, pickup object if one is under the entity
-      else {
-        //check to see if any entities were collided with and can be picked up
-        for (var i = 0; i < entities.length; i++) {
-          if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getHoldingEnt() == null ) {
-            entities[i].setHoldingEnt(pickupEntity);
-            pickupEntity.setHoldingEnt(entities[i]);
-          }
+    if (pickupEntity.getAnimationCounter() == 0 && pickupEntity.getHoldingEnt() == null) {
+      itemPickup.play();
+      //check to see if any entities were collided with and can be picked up
+      for (var i = 0; i < entities.length; i++) {
+        if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getHoldingEnt() == null ) {
+          entities[i].setDx( ( (pickupEntity.getX() - entities[i].getWidth()/2 + pickupEntity.getWidth()/2) - entities[i].getX() ) / pickupAniFrames);
+          entities[i].setDy( ( (pickupEntity.getY() - entities[i].getHeight() + 10) - entities[i].getY() ) / pickupAniFrames);
+          entities[i].setHoldingEnt(pickupEntity);
+          pickupEntity.setHoldingEnt(entities[i]);
+          break;
         }
       }
+    }
+
+    if (pickupEntity.getHoldingEnt() != null) {
+      moveElement(pickupEntity.getHoldingEnt().getEntityID(), pickupEntity.getHoldingEnt().getX() + pickupEntity.getHoldingEnt().getDx(), pickupEntity.getHoldingEnt().getY() + pickupEntity.getHoldingEnt().getDy());
     }
 
     pickupEntity.setAnimationCounter(pickupEntity.getAnimationCounter() + 1);
@@ -704,6 +724,51 @@ function endGame() {
       pickupEntity.setAnimationCounter(0);
       pickupEntity.setActionState(NORMAL_STATE);
       pickupEntity.setActionCooldown(ACTION_COOLDOWN);
+      if (pickupEntity.getHoldingEnt() != null) {
+        pickupEntity.getHoldingEnt().setDx(0);
+        pickupEntity.getHoldingEnt().setDy(0);
+      }
+    }
+  }
+
+  /*
+  / Purpose: this function generically takes any entity checks to see if they are already holding
+  /           an html element, if so they drop the element
+  /
+  /
+  / Params: dropEntity - the entity that is performing the drop action
+  /
+  /
+  / Notes: the function does not check to make sure the given parameter is an entity
+  /         make sure to only give this function entity objects.
+  /
+  */
+  function entityDrop(dropEntity) {
+    if (dropEntity.getAnimationCounter() == 0 && dropEntity.getHoldingEnt() != null) {
+      //Holding a html element, drop the element.
+      dropEntity.getHoldingEnt().setDy(0);
+      dropEntity.getHoldingEnt().setDx(0);
+      if (dropEntity.getFacingDirection() == RIGHT_DIR) {
+        dropEntity.getHoldingEnt().setDx(5);
+      } else if (dropEntity.getFacingDirection() == LEFT_DIR) {
+        dropEntity.getHoldingEnt().setDx(-5);
+      }
+      /*else if (dropEntity.getFacingDirection() == UP_DIR) {
+        dropEntity.getHoldingEnt().setDy(-10);
+      } else {
+        dropEntity.getHoldingEnt().setDy(10);
+      }*/
+      dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
+      dropEntity.getHoldingEnt().setAnimationCounter(0);
+      dropEntity.getHoldingEnt().setHoldingEnt(null);
+      dropEntity.setHoldingEnt(null);
+    }
+
+    dropEntity.setAnimationCounter(dropEntity.getAnimationCounter() + 1);
+    if (dropEntity.getAnimationCounter() >= pickupAniFrames) {
+      dropEntity.setAnimationCounter(0);
+      dropEntity.setActionState(NORMAL_STATE);
+      dropEntity.setActionCooldown(ACTION_COOLDOWN);
     }
   }
 
@@ -717,9 +782,11 @@ function endGame() {
   / Notes: Will crash for non-entities
   */
   function drawEntity(genEnt) {
-    //Update HTML element to follow the entity that is holding it.
+    //Update HTML element to follow the entity that is holding it. Used when the entity that is being held up is being drawn.
     if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
-      moveElement(genEnt.getEntityID(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10 );
+      if (genEnt.getHoldingEnt().getActionState() != PICKUP_STATE) {
+        moveElement(genEnt.getEntityID(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10 );
+      }
     }
 
     //HTML Element Reposition overlayed destructible entity to match current element location.
@@ -748,20 +815,58 @@ function endGame() {
           genEnt.setHitCooldown(0);
         }
     }
+    //FALLING_STATE (only applies to destructible entities)
+    else if (genEnt.getActionState() == FALLING_STATE) {
+      var slowDown = 1;
+      //Initial fall
+      if (genEnt.getAnimationCounter() <= (4*fallingAniFrames)/10 ) {
+        genEnt.setDy((300 / fallingAniFrames) );
+        if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
+          itemDrop.play(); //dropped object sound
+          slowDown = slowDown*2;
+        }
+      }
+      //Bounce 1st time
+      else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
+        genEnt.setDy((-100 / fallingAniFrames));
+      } else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
+        genEnt.setDy((100 / fallingAniFrames));
+        if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
+          itemDrop.play(); //dropped object sound
+          slowDown = slowDown*2;
+        }
+      }
+      //Bounce 2nd time
+      else if (genEnt.getAnimationCounter() <= (9*fallingAniFrames)/10) {
+        genEnt.setDy((-25 / fallingAniFrames));
+      } else if (genEnt.getAnimationCounter() <= (fallingAniFrames)/10) {
+        genEnt.setDy((25 / fallingAniFrames));
+        if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
+          itemDrop.play(); //dropped object sound
+          slowDown = slowDown*2;
+        }
+      }
+      genEnt.setDx(genEnt.getDx()/slowDown );
+      moveElement(genEnt.getEntityID(), genEnt.getX() + genEnt.getDx(), genEnt.getY() + genEnt.getDy() );
+
+      genEnt.setAnimationCounter(genEnt.getAnimationCounter() + 1);
+      if (genEnt.getAnimationCounter() >= fallingAniFrames) {
+        itemDrop.play(); //dropped object sound
+        genEnt.setActionState(NORMAL_STATE);
+        genEnt.setAnimationCounter(0);
+      }
+    }
 
     ctx.beginPath();
     ctx.drawImage(genEnt.getImage(), genEnt.getX(), genEnt.getY(), genEnt.getWidth(), genEnt.getHeight());
     ctx.fill();
 	  ctx.closePath();
 
-    //Draw entity stamina bar when dubug overlay is active
+    //Show coordinates of html element and distructible entity overlay when dubug overlay is active
     if (showDebug) {
-      var genEntMaxStam = MAX_STAMINA;
       if (genEnt.getDestructibleObject()) {
-        genEntMaxStam = DESTRUCTIBLE_MAX_STAMINA;
         ctx.font = "10px Helvetica";
         ctx.fillStyle = "#000000";
-        // Show coordinates of html element and distructible entity overlay.
         if (genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
           ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY()-60);
           ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY()-50);
@@ -774,6 +879,14 @@ function endGame() {
           ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
         }
       }
+    }
+
+    //Draw entity stamina bar after taking stamina damage
+    var genEntMaxStam = MAX_STAMINA;
+    if (genEnt.getDestructibleObject()) {
+      genEntMaxStam = DESTRUCTIBLE_MAX_STAMINA;
+    }
+    if (genEnt.getStamina() < genEntMaxStam) {
       //Empty bar
       ctx.beginPath();
       ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), genEnt.getWidth(), 6);
@@ -996,9 +1109,14 @@ function endGame() {
           entityBump(player1);
       }
 
-      //When player1 is attempting to pickup an object1
+      //When player1 is attempting to pickup an object
       else if (player1.getActionState() == PICKUP_STATE) {
           entityPickup(player1);
+      }
+
+      //When player1 is attemptingto drop an object
+      else if (player1.getActionState() == DROP_STATE) {
+          entityDrop(player1);
       }
 
       //AI takes its actions after the player
@@ -1073,7 +1191,11 @@ function endGame() {
       }
       else if (e.key == "f") {
         if (player1.getActionCooldown() == 0) {
-          player1.setActionState(PICKUP_STATE);
+          if (player1.getHoldingEnt() != null) {
+            player1.setActionState(DROP_STATE);
+          } else {
+            player1.setActionState(PICKUP_STATE);
+          }
         }
       }
 	}
