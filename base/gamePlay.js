@@ -32,9 +32,11 @@
   var BUMPING_STATE = "bumping";
   var PICKUP_STATE = "pickup";
   var HIT_STATE = "hit";
+  var KNOCKBACK_STATE = "knocked";        //Used to implement knockback
   var DROP_STATE = "dropping";            //Used for characters and AI
   var FALLING_STATE = "falling";          //Used for destructible entities after they are dropped
   var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
+  var KNOCKBACK_COOLDOWN = 4;
   var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
   var UP_DIR = "up";
   var DOWN_DIR = "down";
@@ -148,6 +150,8 @@ function endGame() {
     actionState = NORMAL_STATE;   //actionState: What is going on with the entity, are they bumping, just got hit, ect.
     facingDirection = RIGHT_DIR;  //facingDirection: The direction the entity last moved in
     hitCooldown = 0;              //hitCooldown: counter after being hit to avoid multiple hits in the same timeframe
+    knockbackCooldown = 0;        //knockbackCooldown: counter after being hit to knock character backwards slowly
+    knockbackDirection = "";      //store knockback direction
     actionCooldown = 0;           //actionCooldown: counter after doing an action to stop the spamming of actions
     animationCounter = 0;         //animationaCounter: Current animation frame for an action
     entityID = 0;                 //An entities unique ID set before putting in entity list
@@ -233,6 +237,14 @@ function endGame() {
       return this.hitCooldown;
     }
 
+    getKnockbackCooldown(){
+      return this.knockbackCooldown;
+    }
+
+    getKnockbackDirection() {
+      return this.knockbackDirectionl
+    }
+
     getActionCooldown() {
       return this.actionCooldown;
     }
@@ -292,6 +304,14 @@ function endGame() {
 
     setHitCooldown(hitCooldown) {
       this.hitCooldown = hitCooldown;
+    }
+
+    setKnockbackCooldown(knockCooldown) {
+      this.knockbackCooldown = knockCooldown;
+    }
+
+    setKnockbackDirection(knockDirection){
+      this.knockbackDirection = knockDirection;
     }
 
     setActionCooldown(actionCooldown) {
@@ -503,7 +523,8 @@ function endGame() {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
             //if character is bumped, move them backwards
-            entBumpRight(entities[i], BUMP_KNOCKBACK);
+            entities[i].setActionState(KNOCKBACK_STATE);
+            entities[i].setKnockbackDirection(RIGHT_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -541,7 +562,8 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpLeft(entities[i], BUMP_KNOCKBACK);
+            entities[i].setActionState(KNOCKBACK_STATE);
+            entities[i].setKnockbackDirection(LEFT_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -579,7 +601,8 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpUp(entities[i], BUMP_KNOCKBACK);
+            entities[i].setActionState(KNOCKBACK_STATE);
+            entities[i].setKnockbackDirection(UP_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -617,7 +640,8 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entBumpDown(entities[i], BUMP_KNOCKBACK);
+            entities[i].setActionState(KNOCKBACK_STATE);
+            entities[i].setKnockbackDirection(DOWN_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -802,6 +826,25 @@ function endGame() {
         ctx.fillStyle = "#0095DD";
         ctx.fill();
         ctx.closePath();
+    }
+    else if (genEnt.getActionState == KNOCKBACK_STATE) {
+      genEnt.setKnockbackCooldown(genEnt.getKnockbackCooldown() + 1);
+      if (genEnt.getKnockbackDirection() == RIGHT_DIR){
+        entBumpRight(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+      if (genEnt.getKnockbackDirection() == LEFT_DIR) {
+        entBumpLeft(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+      if (genEnt.getKnockbackDirection() == UP_DIR) {
+        entBumpUp(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+      if (genEnt.getKnockbackDirection() == DOWN_DIR) {
+        entBumpDown(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+      if (genEnt.getKnockbackCooldown() > KNOCKBACK_COOLDOWN) {
+        genEnt.setActionState(NORMAL_STATE);
+        genEnt.setKnockbackCooldown(0);
+      }
     }
     //HIT_STATE highlight animation
     else if (genEnt.getActionState() == HIT_STATE) {
