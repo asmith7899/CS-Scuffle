@@ -1,0 +1,1275 @@
+#myCanvas {
+    position: fixed;
+    z-index: 6;
+    pointer-events: none;
+    top: 40px;
+    left: 0px;
+    background: transparent;
+  }
+html {
+    background-color: #3b3b3b;
+    font-size: 100%;
+}
+
+#menuButton {
+    position: fixed;
+    z-index: 4;
+    top: 20%;
+    left: 0px;
+    width: 10%;
+    height: 30px;
+    background-color: lightyellow;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+}
+
+ #menu {
+    position: fixed;
+    z-index: 4;
+    top:25%;
+    left: 0px;
+    background: lightyellow;
+    width: 20%;
+    height: 40%;
+}
+
+/* The menu background*/
+.overlay {
+    height: 40%;
+    width: 20%;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 25%;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0, 0.9);
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+  }
+  
+  /* Position links inside menu overlay */
+  .overlay-content {
+    position: relative;
+    top: 10%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  /* The navigation links inside the overlay */
+  .overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 20px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: black;
+    display: block; /* Display block instead of inline */
+    transition: 0.3s; /* Transition effects on hover (color) */
+  }
+  
+  /* When you mouse over the navigation links, change their color */
+  .overlay a:hover, .overlay a:focus {
+    color: #f3f3f3;
+  }
+  
+  /* Position the close button (top right corner) */
+  .overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 20px;
+  }
+  
+  /* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
+  @media screen and (max-height: 450px) {
+    .overlay a {font-size: 20px}
+    .overlay .closebtn {
+      font-size: 40px;
+      top: 15px;
+      right: 35px;
+    }
+  }
+
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #fff;
+}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        font-family: inherit;
+    vertical-align: baseline;
+}
+
+.footer {
+    padding: 3.125rem 0;
+}
+
+.footer {
+    width: 100%;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.footer #accordion {
+    margin: 0 -30px;
+    padding: 0 15px 0;
+}
+
+.footer #accordion .panel {
+    width: 20%;
+    padding: 0 15px;
+}
+
+.footer #accordion .panel {
+    float: left;
+    border: none;
+    font-size: .875em;
+    line-height: 1.6875em;
+}
+
+.footer #accordion .panel {
+    border: none;
+    background-color: transparent;
+    margin-top: 0;
+}
+.panel-group .panel {
+    margin-bottom: 0;
+    border-radius: 4px;
+}
+
+.panel-default {
+    border-color: #ddd;
+}
+
+.footer #accordion .panel .panel-heading {
+    display: block;
+    padding: 0;
+    background-color: transparent;
+    font-size: 1.3125em;
+    line-height: 1em;
+}
+.footer #accordion .panel .panel-heading {
+    padding: 0;
+    background-color: transparent;
+    font-size: 1.3125em;
+}
+.panel-default > .panel-heading {
+    color: #000;
+    background-color: #f5f5f5;
+    border-color: #6F727B;
+}
+.panel-group .panel-heading {
+    border-bottom: 0;
+        border-bottom-color: currentcolor;
+}
+.panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.footer #accordion .panel .panel-heading .panel-title {
+    font-family: acumin-pro-semi-condensed,"Franklin Gothic",sans-serif;
+    padding-top: 0;
+    padding-bottom: 0.625rem;
+    font-size: 1em;
+}
+.footer #accordion .panel .panel-heading .panel-title {
+    font-family: acumin-pro-semi-condensed,"Franklin Gothic",sans-serif !important;
+    font-size: 1em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.panel-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 16px;
+    color: inherit;
+}
+
+.footer #accordion .panel .panel-heading .panel-title a {
+    cursor: default;
+    color: #cfb991;
+    border-bottom: none;
+    font-weight: 700;
+}
+.footer #accordion .panel .panel-heading a:link, .footer #accordion .panel .panel-heading a:visited, .footer #accordion .panel .panel-heading a:hover, .footer #accordion .panel .panel-heading a:active {
+    color: #cfb991;
+    text-decoration: none;
+}
+.footer #accordion .panel .panel-heading a {
+    display: block;
+}
+.footer #accordion .panel a:link, .footer #accordion .panel a:visited {
+    color: #adadad;
+    font-weight: 400;
+    text-decoration: none;
+}
+.footer #accordion .panel a {
+    padding: 10px 0 2px;
+}
+.footer #accordion .panel a {
+    display: inline-block;
+    width: 100%;
+}
+
+.footer #accordion .panel .panel-heading .panel-title .fa {
+    display: none;
+}
+
+.footer #accordion .panel .panel-collapse {
+    display: block;
+    height: auto !important;
+}
+
+.footer #accordion .panel .panel-collapse .panel-body {
+    border: none;
+    padding: 0;
+}
+
+.footer #accordion .panel .panel-collapse .panel-body ul {
+    padding: 0;
+    list-style-type: none;
+    color:#adadad;
+}
+
+.footer #accordion .motto {
+    float: left;
+    width: 20%;
+    padding: 8px 15px 0 15px;
+    font-size: 1.35em;
+}
+.footer #accordion .motto {
+    clear: none;
+    padding: 32px 30px 0;
+    font-size: 1.85em;
+    text-align: center;
+}
+
+.footer #accordion .motto .taglineContainer {
+    width: auto;
+}
+.footer #accordion .motto .taglineContainer {
+    display: block;
+    width: auto;
+}
+.footer #accordion .motto .taglineContainer {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.footer #accordion .motto .taglineContainer .tagline {
+    margin-bottom: 10px;
+    padding-bottom: 20%;
+}
+.footer #accordion .motto .taglineContainer .tagline {
+    padding-bottom: 10%;
+}
+.footer #accordion .motto .tagline {
+    position: relative;
+    display: block;
+    padding-bottom: 13.95349%;
+}
+
+.footer #accordion .motto .taglineContainer .tagline .horizontal {
+    max-height: 48px;
+    width: 100%;
+}
+
+.footer #accordion .motto .horizontal {
+    display: none;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+
+.st0 {
+    fill: #FFFFFF;
+}
+
+.st1 {
+    fill: #CFB991;
+}
+
+.st2 {
+    fill: #9D9795;
+}
+
+footer #accordion .motto .vertical {
+    display: block;
+    height: 114px;
+    margin-left: auto;
+}
+
+.v-st0 {
+    fill: #CFB991;
+}
+
+.v-st1 {
+    fill: #9D9795;
+}
+
+.v-st2 {
+    fill: #FFFFFF;
+}
+
+
+
+.header {
+    font-family: acumin-pro,"Franklin Gothic",sans-serif;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+.navbar {
+    position: relative;
+}
+.goldbar {
+    min-height: 0 !important;
+    margin: 0;
+    padding: 3px 0;
+    border-radius: 0;
+    border: none;
+    background-color: #cfb991;
+    color: #000;
+    box-shadow: 0px 2px 10px #1e1e1e;
+    font-size: .875em;
+}
+
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.container {
+    width: 1170px;
+}
+
+.container-fluid > .navbar-collapse, .container-fluid > .navbar-header, .container > .navbar-collapse, .container > .navbar-header {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.navbar-header {
+    float: left;
+}
+
+.goldbar .navbar-header button.navbar-toggle {
+    padding: 2px 15px;
+    font-size: 1em;
+}
+.goldbar button.navbar-toggle {
+    position: relative;
+    overflow: hidden;
+}
+.navbar-inverse .navbar-toggle {
+    border-color: #333;
+}
+.goldbar button {
+    border: none;
+        border-top-color: currentcolor;
+        border-right-color: currentcolor;
+        border-bottom-color: currentcolor;
+        border-left-color: currentcolor;
+}
+.left {
+    float: left;
+}
+.navbar-toggle {
+    display: none;
+}
+.navbar-toggle {
+    position: relative;
+    float: right;
+    padding: 9px 10px;
+    margin-top: 8px;
+    margin-right: 15px;
+    margin-bottom: 8px;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+button, select {
+    text-transform: none;
+}
+
+button, input, optgroup, select, textarea {
+    margin: 0;
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+    font: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        font-family: inherit;
+    color: inherit;
+}
+
+.goldbar .navbar-header button.navbar-toggle > .icon-bar:first-child {
+    margin-top: 3px;
+}
+.goldbar .navbar-header button.navbar-toggle .icon-bar {
+    float: left;
+    clear: left;
+    margin-right: 10px;
+    background-color: #000;
+}
+.navbar-inverse .navbar-toggle .icon-bar {
+    background-color: #fff;
+}
+.navbar-toggle .icon-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    border-radius: 1px;
+}
+
+.right {
+    float: right;
+}
+
+.fa-lg {
+    font-size: 1.33333333em;
+    line-height: .75em;
+    vertical-align: -15%;
+}
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+        font-size: 14px;
+        line-height: 1;
+    font-size: inherit;
+    text-rendering: auto;
+}
+
+.goldbar #search {
+    border: none;
+}
+
+.navbar-collapse.collapse {
+    display: block !important;
+    height: auto !important;
+    padding-bottom: 0;
+    overflow: visible !important;
+}
+
+.navbar-collapse {
+    width: auto;
+    border-top: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.goldbar #search > ul {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.navbar-right {
+    float: right !important;
+    margin-right: -15px;
+}
+
+.navbar-nav {
+    flex-direction: row;
+
+}
+
+.nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+ul, ol {
+    padding: 10px 0 10px 35px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 35px;
+}
+
+.goldbar #search .dropdown {
+    padding-right: 16px;
+}
+.navbar-nav > li {
+    float: left;
+}
+
+.nav > li {
+    position: relative;
+    display: block;
+}
+
+.goldbar #search a.dropdown-toggle {
+    position: relative;
+    overflow: hidden;
+    padding: 4px 4px 4px 0 !important;
+}
+.navbar-inverse .navbar-nav > li > a {
+    color: black;
+}
+.goldbar a:link {
+    background-color: transparent !important;
+    color: #000 !important;
+    font-weight: 400;
+    text-decoration: none;
+}
+.navbar-nav > li > a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.navbar-nav > li > a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 20px;
+}
+.nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+a:link {
+    color: #000;
+    font-weight: 700;
+    text-decoration: none;
+}
+.goldbar #search .dropdown-menu {
+    border: none;
+    box-shadow: none;
+    background-color: #cfb991;
+    padding: 5px;
+}
+.navbar-nav > li > .dropdown-menu {
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.navbar-right .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+        margin-top: 2px;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.goldbar .gold {
+    left: -20px;
+}
+.goldbar .gold {
+    padding-left: 0px;
+    box-shadow: none;
+}
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+    border-color: #101010;
+}
+.goldbar .gold > ul {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.goldbar .gold .navbar-nav.information .dropdown-toggle {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+.goldbar .gold .navbar-nav > li > a {
+    padding: 4px 10px !important;
+        padding-right: 10px;
+        padding-left: 10px;
+}
+.goldbar a:link {
+   
+    color: #000 !important;
+    font-weight: 400;
+    text-decoration: none;
+}
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px dashed;
+    border-top: 4px solid\9;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+.blackbar .black > ul > li > a {
+    background-color: #fff;
+}
+
+.blackbar a:link {
+    color: inherit !important;
+    text-decoration: none !important;
+    font-weight: 400;
+    background-color: #fff;
+}
+
+strong, b {
+    font-weight: 700;
+}
+.hide {
+    display: none !important;
+}
+p {
+    padding: 7.5px 0;
+}
+
+.goldbar .gold .navbar-nav > li > a {
+    padding: 4px 10px !important;
+}
+
+.top {
+    width: 100%;
+    background-color: #000;
+}
+
+.top .row {
+    display: flex;
+    align-items: left;
+    flex-direction: row;
+}
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.top .logo {
+    padding: 1.75rem 25px 1.75rem 15px;
+    float: left;
+}
+
+.top .logo .svgLinkContainer {
+    display: block;
+    position: relative;
+    height: 1px;
+    width: 100%;
+    padding-bottom: 43.35px;
+    z-index: 2;
+}
+
+.top .logo .svgContainer {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    padding-right: 0px;
+}
+
+.top .department {
+    color: #fff;
+    font-family: "Franklin Gothic",sans-serif;
+    letter-spacing: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 1.4375em;
+    padding-left: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    padding-top: 35px;
+}
+
+.top .department > .top .department a:visited  {
+  
+    font-weight: 600;
+    text-decoration: none;
+}
+.top .department > a {
+    display: inline-block;
+    line-height: 1.2em;
+    border: none;
+    padding: 0;
+}
+.blackbar {
+    font-size: 1em;
+}
+.blackbar {
+    min-height: initial;
+    margin-bottom: 0;
+    border-radius: 0px;
+    background-color: #fff;
+    border: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);
+    text-transform: uppercase !important;
+    font-family: acumin-pro-semi-condensed,"Franklin Gothic",sans-serif;
+}
+.blackbar .navbar-header {
+    display: none;
+}
+
+.blackbar .navbar-header .navbar-toggle {
+    float: left;
+    border: none;
+    color: #000;
+}
+.blackbar .navbar-header .navbar-toggle > .icon-bar:first-child {
+    margin-top: 3px;
+}
+.blackbar .navbar-header .navbar-toggle .icon-bar {
+    float: left;
+    clear: left;
+    margin-right: 10px;
+    background-color: #000;
+}
+
+.blackbar .black {
+    padding-left: 0;
+    max-height: none;
+}
+
+.breadcrumb {
+    width: 100%;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: #f5f5f5;
+    color: #444;
+    font-size: .75em;
+    font-family: acumin-pro,"Franklin Gothic",sans-serif;
+    display: flex;
+    justify-content: center;
+}
+.breadcrumb {
+    padding: 8px 15px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    list-style: none;
+    border-radius: 4px;
+}
+.breadcrumb .row {
+    display: flex;
+}
+.breadcrumb ol {
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.breadcrumb ol li:not(:last-child)::after {
+    content: " > ";
+    display: inline-block;
+    margin: 0 0.625rem 0 0.625rem;
+}
+.col-lg-12 {
+    width: 100%;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.breadcrumb a:link {
+    color: inherit;
+    font-weight: 300;
+    text-decoration: none;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.sidenav {
+    clear: left;
+    overflow: hidden;
+    font-family: acumin-pro-semi-condensed,"Franklin Gothic",sans-serif;
+}
+
+.collegeContent {
+    background-image: url("images/home/background-campus.jpg");
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+.collegeContent {
+    padding: 50px 0 40px 0;
+}
+
+.collegeNews {
+    padding: 30px 0;
+    background-color: #f3f3f3;
+}
+
+.socialEvents {
+    margin: 2rem 0;
+}
+
+.container {
+    width: 1170px;
+}
+
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.collegeContent .grid {
+    height: 572px;
+}
+.collegeContent .grid {
+    margin: 0 -10px;
+}
+
+.collegeContent .grid .introContainer {
+    padding: 10px;
+}
+.collegeContent .grid .introContainer {
+    height: 100%;
+}
+.introContainer {
+    background-position: top center;
+}
+.col-lg-4 {
+    width: 33.33333333%;
+}
+
+.collegeContent .grid .tiles {
+    height: 100%;
+    padding: 0 10px;
+}
+
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9 {
+    float: left;
+}
+.col-lg-8 {
+    width: 66.66666667%;
+}
+
+.collegeContent .grid .introContainer .intro {
+    width: 100%;
+    margin: -10px 0;
+    padding: 20px;
+    background-color: #3b3b3b;
+}
+.collegeContent .grid .introContainer .intro {
+    height: 100%;
+}
+.collegeContent .grid .introContainer .intro h1 {
+    font-size: 2em;
+    padding-bottom: 0;
+    color: #CFB991;
+}
+.collegeContent .grid .introContainer .intro h1 {
+    font-size: 1.75em;
+    line-height: 1.07143em;
+}
+.collegeContent .grid .introContainer .intro h1 {
+    font-family: acumin-pro-condensed,"Franklin Gothic",sans-serif;
+    font-weight: 700;
+    font-size: 1.75rem;
+    margin-top: 0;
+    padding-top: 0; 
+    color: #98700d;
+}
+.introContainer .intro h1 {
+    font-family: United Sans Condensed;
+    font-style: normal;
+    text-transform: initial;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.collegeContent .grid .introContainer .intro a.featureLink:link {
+    background-color: #3b3b3b;
+    font-weight: normal;
+    text-decoration: none;
+}
+.collegeContent .grid .introContainer .intro a.featureLink {
+    display: block;
+    width: 100%;
+    margin: 15px 0 0;
+    padding: 7px 10px;
+    border: solid 2px #CFB991;
+    color: #fff;
+}
+
+.socialRow {
+    padding: 1rem 0;
+}
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.col-md-3 {
+    width: 25%;
+}
+.col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9 {
+    float: left;
+}
+a:link {
+    color: #000;
+    font-weight: 700;
+    text-decoration: underline;
+}
+a {
+    background-color: transparent;
+}
+.carousel-inner > .item > a > img, .carousel-inner > .item > img, .img-responsive, .thumbnail a > img, .thumbnail > img {
+    display: block;
+    max-width: 100%;
+}
+img {
+    border: 0;
+}
+.collegeContent .grid .tiles {
+    height: 100%;
+    padding: 0 10px;
+}
+.col-lg-8 {
+    width: 66.66666667%;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9 {
+    float: left;
+}
+.collegeContent .grid .tiles .row {
+    position: relative;
+}
+.collegeContent .grid .tiles .row {
+    height: 100%;
+    margin: -10px;
+}
+.collegeContent .grid .tiles .row .top-lg-1 {
+    top: 0%;
+}
+.collegeContent .grid .tiles .row .left-lg-a {
+    left: 0%;
+}
+.collegeContent .grid .tiles .row .row-lg-2 {
+    height: 50%;
+}
+.collegeContent .grid .tiles .row .tile {
+    position: absolute;
+}
+.collegeContent .grid .tiles .row .tile {
+    padding: 10px;
+}
+.col-lg-6 {
+    width: 50%;
+}
+col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9 {
+    float: left;
+}
+.col-md-6 {
+    width: 50%;
+}
+.col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9 {
+    float: left;
+}
+.col-sm-6 {
+    width: 50%;
+}
+.col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9 {
+    float: left;
+}
+.col-xs-12 {
+    width: 100%;
+}
+.col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    float: left;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+body {
+    font-family: acumin-pro,"Franklin Gothic",sans-serif;
+    font-size: 1em;
+    line-height: 1.5em;
+}
+body {
+    font-family: acumin-pro,"Franklin Gothic",sans-serif;
+}
+body {
+    line-height: 1;
+}
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+}
+#tile0 {
+    background-image: url('images/tiles/hiring-large-3.jpg');
+}
+#tile0 {
+    background-image: url('images/tiles/hiring-large-3.jpg');
+}
+.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-2 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-3 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-4 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-2 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-3 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-4 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-2 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-3 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-4 a.audience {
+    background-size: cover;
+    background-position: center center;
+    font-size: 2.375em;
+    line-height: 1em;
+}
+.collegeContent .grid .tiles .row .tile a {
+    font-family: acumin-pro-condensed,"Franklin Gothic",sans-serif;
+    background-color: #000;
+    color: #fff;
+}
+.collegeContent .grid .tiles .row .tile a {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+}
+.collegeContent .grid .tiles .row .tile a .caption {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+}
+
+.collegeContent .grid .tiles .row a.audience.academics .caption .fa {
+    color: #cfb991 !important;
+}
+.fa {
+    font: normal normal normal 14px/1 FontAwesome;
+        font-size: 14px;
+    font-size: inherit;
+}
+.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-2 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-3 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-4 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-2 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-3 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-4 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-2 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-3 a.audience .caption .divider, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-4 a.audience .caption .divider {
+    background-color: #fff !important;
+    display: block;
+    margin-bottom: 20px;
+    width: 60px;
+    height: 7px;
+}
+.collegeContent .grid .tiles .row .tile a {
+    color: #fff;
+}
+.collegeContent .grid .tiles .row .tile a .caption {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+}
+.collegeContent .grid .tiles .row .top-lg-2 {
+    top: 25%;
+}
+.collegeContent .grid .tiles .row .left-lg-c {
+    left: 50%;
+}
+.collegeContent .grid .tiles .row .row-lg-1 {
+    height: 25%;
+}
+.collegeContent .grid .tiles .row .tile {
+    position: absolute;
+}
+.collegeContent .grid .tiles .row .tile {
+    padding: 10px;
+}
+.col-lg-6 {
+    width: 50%;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9 {
+    float: left;
+}
+.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.news {
+    font-size: 1.75em;
+    line-height: 1em;
+}
+.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.audience {
+    background-color: #000;
+}
+.collegeContent .grid .tiles .row .tile a {
+    font-family: acumin-pro-condensed,"Franklin Gothic",sans-serif;
+    background-color: #000;
+    color: #fff;
+}
+.collegeContent .grid .tiles .row .tile a {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+}
+.collegeContent .grid .tiles .row .top-lg-3 {
+    top: 50%;
+}
+.collegeContent .grid .tiles .row .left-lg-a {
+    left: 0%;
+}
+.collegeContent .grid .tiles .row .row-lg-2 {
+    height: 50%;
+}
+.collegeContent .grid .tiles .row .tile {
+    position: absolute;
+}
+.collegeContent .grid .tiles .row .tile {
+    padding: 10px;
+}
+.col-lg-6 {
+    width: 50%;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9 {
+    float: left;
+}
+#tile2 {
+    background-image: url('images/tiles/entry.jpg');
+}
+.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-2 a.news, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-3 a.news, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-4 a.news, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-2 a.news, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-3 a.news, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-4 a.news, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-2 a.news, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-3 a.news, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-4 a.news {
+    background-size: cover;
+    background-position: center center;
+    font-size: 1.625em;
+    line-height: 1.2em;
+}
+.collegeContent .grid .tiles .row .tile a {
+    font-family: acumin-pro-condensed,"Franklin Gothic",sans-serif;
+    background-color: #000;
+    color: #fff;
+}
+.collegeContent .grid .tiles .row .tile a {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+}.collegeContent .grid .tiles .row .top-lg-1 {
+    top: 0%;
+}
+.collegeContent .grid .tiles .row .left-lg-c {
+    left: 50%;
+}
+.collegeContent .grid .tiles .row .row-lg-1 {
+    height: 25%;
+}
+.collegeContent .grid .tiles .row .tile {
+    position: absolute;
+}
+.collegeContent .grid .tiles .row .tile {
+    padding: 10px;
+}
+.col-lg-3 {
+    width: 25%;
+}
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9 {
+    float: left;
+}
+.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.news {
+
+    font-size: 1.75em;
+    line-height: 1em;
+
+}
+.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.audience, .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.audience {
+
+    background-color: #000;
+
+}
+.collegeContent .grid .tiles .row .tile a {
+
+    font-family: acumin-pro-condensed,"Franklin Gothic",sans-serif;
+    background-color: #000;
+    color: #fff;
+
+}
+.collegeContent .grid .tiles .row .tile a {
+
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+
+}
+
+.collegeNews {
+    padding: 30px 0;
+    background-color: #f3f3f3;
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.carousel-inner > .item > a > img, .carousel-inner > .item > img, .img-responsive, .thumbnail a > img, .thumbnail > img {
+    display: block;
+    max-width: 100%;
+}
+p {
+    margin: 0 !important;
+    padding: 7.5px 0;
+        padding-top: 7.5px;
+}
+.socialEvents {
+    margin: 2rem 0;
+}
+.social-header {
+    color: #555960;
+    text-transform: uppercase;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.collegeContent {
+    background-image: url("images/home/background-campus.jpg");
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
