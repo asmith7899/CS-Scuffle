@@ -32,11 +32,9 @@
   var BUMPING_STATE = "bumping";
   var PICKUP_STATE = "pickup";
   var HIT_STATE = "hit";
-  var KNOCKBACK_STATE = "knocked";        //Used to implement knockback
   var DROP_STATE = "dropping";            //Used for characters and AI
   var FALLING_STATE = "falling";          //Used for destructible entities after they are dropped
   var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
-  var KNOCKBACK_COOLDOWN = 4;
   var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
   var UP_DIR = "up";
   var DOWN_DIR = "down";
@@ -237,10 +235,6 @@ function endGame() {
       return this.hitCooldown;
     }
 
-    getKnockbackCooldown(){
-      return this.knockbackCooldown;
-    }
-
     getKnockbackDirection() {
       return this.knockbackDirectionl
     }
@@ -304,10 +298,6 @@ function endGame() {
 
     setHitCooldown(hitCooldown) {
       this.hitCooldown = hitCooldown;
-    }
-
-    setKnockbackCooldown(knockCooldown) {
-      this.knockbackCooldown = knockCooldown;
     }
 
     setKnockbackDirection(knockDirection){
@@ -523,7 +513,6 @@ function endGame() {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
             //if character is bumped, move them backwards
-            entities[i].setActionState(KNOCKBACK_STATE);
             entities[i].setKnockbackDirection(RIGHT_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
@@ -562,7 +551,6 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entities[i].setActionState(KNOCKBACK_STATE);
             entities[i].setKnockbackDirection(LEFT_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
@@ -601,7 +589,6 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entities[i].setActionState(KNOCKBACK_STATE);
             entities[i].setKnockbackDirection(UP_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
@@ -640,7 +627,6 @@ function endGame() {
         if (entities[i].getActionState() != HIT_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
           if (entities[i].isACharacter() == true) {
-            entities[i].setActionState(KNOCKBACK_STATE);
             entities[i].setKnockbackDirection(DOWN_DIR);
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
@@ -827,28 +813,23 @@ function endGame() {
         ctx.fill();
         ctx.closePath();
     }
-    else if (genEnt.getActionState == KNOCKBACK_STATE) {
-      genEnt.setKnockbackCooldown(genEnt.getKnockbackCooldown() + 1);
-      if (genEnt.getKnockbackDirection() == RIGHT_DIR){
-        entBumpRight(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
-      }
-      if (genEnt.getKnockbackDirection() == LEFT_DIR) {
-        entBumpLeft(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
-      }
-      if (genEnt.getKnockbackDirection() == UP_DIR) {
-        entBumpUp(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
-      }
-      if (genEnt.getKnockbackDirection() == DOWN_DIR) {
-        entBumpDown(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
-      }
-      if (genEnt.getKnockbackCooldown() > KNOCKBACK_COOLDOWN) {
-        genEnt.setActionState(NORMAL_STATE);
-        genEnt.setKnockbackCooldown(0);
-      }
-    }
     //HIT_STATE highlight animation
     else if (genEnt.getActionState() == HIT_STATE) {
-        genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
+      genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
+        if (entities[i].isACharacter() == true){ // knockback characters on impact
+          if (genEnt.getKnockbackDirection() == RIGHT_DIR){
+            entBumpRight(genEnt, BUMP_KNOCKBACK/HIT_COOLDOWN);
+          }
+          if (genEnt.getKnockbackDirection() == LEFT_DIR) {
+            entBumpLeft(genEnt, BUMP_KNOCKBACK/HIT_COOLDOWN);
+          }
+          if (genEnt.getKnockbackDirection() == UP_DIR) {
+            entBumpUp(genEnt, BUMP_KNOCKBACK/HIT_COOLDOWN);
+          }
+          if (genEnt.getKnockbackDirection() == DOWN_DIR) {
+            entBumpDown(genEnt, BUMP_KNOCKBACK/HIT_COOLDOWN);
+          }
+        }
         ctx.beginPath();
         ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
         ctx.fillStyle = "#FF0000";
