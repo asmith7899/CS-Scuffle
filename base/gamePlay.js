@@ -27,7 +27,7 @@ var HIT_STATE = "hit";
 var DROP_STATE = "dropping";            //Used for characters and AI
 var FALLING_STATE = "falling";          //Used for destructible entities after they are dropped
 var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
-var KNOCKBACK_COOLDOWN = 5;
+var KNOCKBACK_COOLDOWN = 10;
 var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
 var UP_DIR = "up";
 var DOWN_DIR = "down";
@@ -38,7 +38,7 @@ var SECOND_ARENA = "second arena page";
 var MAX_STAMINA = 100;                  //max stamina for players or AI
 var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
 var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
-var BUMP_KNOCKBACK = 2;
+var BUMP_KNOCKBACK = 10;
 
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
@@ -204,7 +204,7 @@ class Entity {
     return this.facingDirection;
   }
   
-  getKnockBackDirection() {
+  getKnockbackDirection() {
     return this.knockbackDirection;
   }
 
@@ -846,15 +846,19 @@ function drawEntity(genEnt) {
         entBumpDown(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
       }
     }
-    genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
+    
+    //Draw Red Highlight
     ctx.beginPath();
     ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
     ctx.fillStyle = "#FF0000";
     ctx.fill();
     ctx.closePath();
+    
+    genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
     if (genEnt.getHitCooldown() > HIT_COOLDOWN) {
       genEnt.setActionState(NORMAL_STATE);
       genEnt.setHitCooldown(0);
+      genEnt.setKnockbackCooldown(0);
     }
   }
   //FALLING_STATE (only applies to destructible entities)
