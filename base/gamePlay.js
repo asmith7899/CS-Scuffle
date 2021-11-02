@@ -38,6 +38,7 @@
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
   var CANVAS_OFFSET = 40;                 //The amount of offset the canvas has to the webpage. Defined in the arena css file
+  var SUCCESSFUL_BLOCK = false;
 
 
 //game timer count down to 0 starting at startTime
@@ -372,7 +373,7 @@ function endGame() {
   var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
   var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function)
 
-  var blockAniFrames = 60;
+  var blockAniFrames = 50;
 
   /*
   / Purpose: Changes the x/y position of an html element
@@ -449,15 +450,17 @@ function endGame() {
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
-        if (entities[i].getActionState() != HIT_STATE) {
+        if (entities[i].getActionState() != HIT_STATE && entities[i].getActionState != BLOCKING_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
-          if (entities[i].isACharacter() == true) {
+          if (entities[i].isACharacter() == true && entities[i].getActionState != BLOCKING_STATE) {
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
             }
           }
-        }
+        } //else if (entities[i].getActionState() == BLOCKING_STATE) {
+          //successfulBlock(entities[i]);
+        //}
 
         entities[i].setActionState(HIT_STATE);
         hitSomething = true;
@@ -484,9 +487,9 @@ function endGame() {
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
-        if (entities[i].getActionState() != HIT_STATE) {
+        if (entities[i].getActionState() != HIT_STATE && entities[i].getActionState != BLOCKING_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
-          if (entities[i].isACharacter() == true) {
+          if (entities[i].isACharacter() == true && entities[i].getActionState != BLOCKING_STATE) {
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -519,9 +522,9 @@ function endGame() {
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
-        if (entities[i].getActionState() != HIT_STATE) {
+        if (entities[i].getActionState() != HIT_STATE && entities[i].getActionState != BLOCKING_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
-          if (entities[i].isACharacter() == true) {
+          if (entities[i].isACharacter() == true && entities[i].getActionState != BLOCKING_STATE) {
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -554,9 +557,9 @@ function endGame() {
     var hitSomething = false;
     for (var i = 0; i < entities.length; i++) {
       if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
-        if (entities[i].getActionState() != HIT_STATE) {
+        if (entities[i].getActionState() != HIT_STATE && entities[i].getActionState != BLOCKING_STATE) {
           entities[i].decreaseStamina(BUMP_DAMAGE);
-          if (entities[i].isACharacter() == true) {
+          if (entities[i].isACharacter() == true && entities[i].getActionState != BLOCKING_STATE) {
             bumpEnt.addScore(100);
             if (entities[i].getStamina() == 0) {
               endGame();
@@ -636,6 +639,9 @@ function endGame() {
       blockEntity.setActionCooldown(ACTION_COOLDOWN);
     }
   }
+
+  //function successfulBlock(sbEntity)
+
 
   /*
   / Purpose: this function generically takes any entity checks to see if they are ontop of a destructible entity
@@ -726,6 +732,9 @@ function endGame() {
         ctx.fill();
         ctx.closePath();
     }
+
+    // ADD SUCCESSFUL BLOCK Animation
+
 
     ctx.beginPath();
     ctx.drawImage(genEnt.getImage(), genEnt.getX(), genEnt.getY(), genEnt.getWidth(), genEnt.getHeight());
