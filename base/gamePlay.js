@@ -696,7 +696,7 @@ function endGame() {
       itemPickup.play();
       //check to see if any entities were collided with and can be picked up
       for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getHoldingEnt() == null ) {
+        if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getEntityID() != '1' && entities[i].getHoldingEnt() == null ) {
           entities[i].setDx( ( (pickupEntity.getX() - entities[i].getWidth()/2 + pickupEntity.getWidth()/2) - entities[i].getX() ) / pickupAniFrames);
           entities[i].setDy( ( (pickupEntity.getY() - entities[i].getHeight() + 10) - entities[i].getY() ) / pickupAniFrames);
           entities[i].setHoldingEnt(pickupEntity);
@@ -744,11 +744,11 @@ function endGame() {
       } else if (dropEntity.getFacingDirection() == LEFT_DIR) {
         dropEntity.getHoldingEnt().setDx(-5);
       }
-      /*else if (dropEntity.getFacingDirection() == UP_DIR) {
-        dropEntity.getHoldingEnt().setDy(-10);
+      else if (dropEntity.getFacingDirection() == UP_DIR) {
+        dropEntity.getHoldingEnt().setDy(-5);
       } else {
-        dropEntity.getHoldingEnt().setDy(10);
-      }*/
+        dropEntity.getHoldingEnt().setDy(5);
+      }
       dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
       dropEntity.getHoldingEnt().setAnimationCounter(0);
       dropEntity.getHoldingEnt().setHoldingEnt(null);
@@ -809,35 +809,59 @@ function endGame() {
     //FALLING_STATE (only applies to destructible entities)
     else if (genEnt.getActionState() == FALLING_STATE) {
       var slowDown = 1;
-      //Initial fall
-      if (genEnt.getAnimationCounter() <= (4*fallingAniFrames)/10 ) {
-        genEnt.setDy((300 / fallingAniFrames) );
+      //Drop right or left
+      if (genEnt.getDx() != 0) {
+        //Initial fall
+        if (genEnt.getAnimationCounter() <= (4*fallingAniFrames)/10 ) {
+          genEnt.setDy((300 / fallingAniFrames) );
+          if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        //Bounce 1st time
+        else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
+          genEnt.setDy((-100 / fallingAniFrames));
+        } else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
+          genEnt.setDy((100 / fallingAniFrames));
+          if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        //Bounce 2nd time
+        else if (genEnt.getAnimationCounter() <= (9*fallingAniFrames)/10) {
+          genEnt.setDy((-25 / fallingAniFrames));
+        } else if (genEnt.getAnimationCounter() <= (fallingAniFrames)/10) {
+          genEnt.setDy((25 / fallingAniFrames));
+          if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        genEnt.setDx(genEnt.getDx()/slowDown );
+      }
+      //Drop Up or Down
+      else {
+        slowDown = 1;
+        //Initial fall
         if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown*2;
         }
-      }
-      //Bounce 1st time
-      else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
-        genEnt.setDy((-100 / fallingAniFrames));
-      } else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
-        genEnt.setDy((100 / fallingAniFrames));
+        //Bounce 1st time
         if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown*2;
         }
-      }
-      //Bounce 2nd time
-      else if (genEnt.getAnimationCounter() <= (9*fallingAniFrames)/10) {
-        genEnt.setDy((-25 / fallingAniFrames));
-      } else if (genEnt.getAnimationCounter() <= (fallingAniFrames)/10) {
-        genEnt.setDy((25 / fallingAniFrames));
+        //Bounce 2nd time
         if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown*2;
         }
+        genEnt.setDy(genEnt.getDy()/slowDown );
       }
-      genEnt.setDx(genEnt.getDx()/slowDown );
+
       moveElement(genEnt.getEntityID(), genEnt.getX() + genEnt.getDx(), genEnt.getY() + genEnt.getDy() );
 
       genEnt.setAnimationCounter(genEnt.getAnimationCounter() + 1);
