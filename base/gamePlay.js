@@ -27,6 +27,7 @@ var HIT_STATE = "hit";
 var DROP_STATE = "dropping";            //Used for characters and AI
 var FALLING_STATE = "falling";          //Used for destructible entities after they are dropped
 var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
+var KNOCKBACK_COOLDOWN = 10;
 var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
 var UP_DIR = "up";
 var DOWN_DIR = "down";
@@ -37,6 +38,7 @@ var SECOND_ARENA = "second arena page";
 var MAX_STAMINA = 100;                  //max stamina for players or AI
 var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
 var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
+var BUMP_KNOCKBACK = 10;
 
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
@@ -150,7 +152,9 @@ class Entity {
   dy = 10;                      //dy: the speed in which the entity moves in the y direction
   actionState = NORMAL_STATE;   //actionState: What is going on with the entity, are they bumping, just got hit, ect.
   facingDirection = RIGHT_DIR;  //facingDirection: The direction the entity last moved in
+  knockbackDirection = RIGHT_DIR;
   hitCooldown = 0;              //hitCooldown: counter after being hit to avoid multiple hits in the same timeframe
+  knockbackCooldown = 0;
   actionCooldown = 0;           //actionCooldown: counter after doing an action to stop the spamming of actions
   animationCounter = 0;         //animationaCounter: Current animation frame for an action
   entityID = 0;                 //An entities unique ID set before putting in entity list
@@ -200,6 +204,10 @@ class Entity {
     return this.facingDirection;
   }
   
+  getKnockbackDirection() {
+    return this.knockbackDirection;
+  }
+
   getAnimationCounter() {
     return this.animationCounter;
   }
@@ -236,6 +244,10 @@ class Entity {
     return this.hitCooldown;
   }
   
+  getKnockbackCooldown() {
+    return this.knockbackCooldown;
+  }
+
   getActionCooldown() {
     return this.actionCooldown;
   }
@@ -262,6 +274,10 @@ class Entity {
   
   setFacingDirection(facingDirection) {
     this.facingDirection = facingDirection;
+  }
+
+  setKnockbackDirection(knockbackDirection){
+    this.knockbackDirection = knockbackDirection;
   }
   
   setAnimationCounter(animationCounter) {
@@ -297,6 +313,10 @@ class Entity {
     this.hitCooldown = hitCooldown;
   }
   
+  setKnockbackCooldown(knockbackCooldown) {
+    this.knockbackCooldown = knockbackCooldown;
+  }
+
   setActionCooldown(actionCooldown) {
     this.actionCooldown = actionCooldown;
   }
@@ -494,12 +514,13 @@ function rectCollisionCheck(entity1, entity2) {
 /
 / Note: Assumes an entity is given do not use non entities as it's parameter
 */
-function entBumpRight(bumpEnt) {
+function entBumpRight(bumpEnt, multiplier = 1) {
   bumpMovement.play();  //Play bump sound effect
-  if (bumpEnt.getX() + bumpMovPerFrame  > canvas.width - bumpEnt.getWidth()) {
-    bumpEnt.setX(canvas.width - bumpEnt.getWidth() - bumpMovPerFrame);
+  multipliedBumpMov = bumpMovPerFrame * multiplier;
+  if (bumpEnt.getX() + multipliedBumpMov  > canvas.width - bumpEnt.getWidth()) {
+    bumpEnt.setX(canvas.width - bumpEnt.getWidth() - multipliedBumpMov);
   }
-  bumpEnt.setX(bumpEnt.getX() + bumpMovPerFrame);
+  bumpEnt.setX(bumpEnt.getX() + multipliedBumpMov);
   
   //check to see if any entities were collided with
   var hitSomething = false;
@@ -508,6 +529,7 @@ function entBumpRight(bumpEnt) {
       if (entities[i].getActionState() != HIT_STATE) {
         entities[i].decreaseStamina(BUMP_DAMAGE);
         if (entities[i].isACharacter() == true) {
+          entities[i].setKnockbackDirection(RIGHT_DIR);
           bumpEnt.addScore(100);
           if (entities[i].getStamina() == 0) {
             endGame();
@@ -530,12 +552,13 @@ function entBumpRight(bumpEnt) {
 /
 / Note: Assumes an entity is given do not use non entities as it's parameter
 */
-function entBumpLeft(bumpEnt) {
+function entBumpLeft(bumpEnt, multiplier=1) {
   bumpMovement.play();  //Play bump sound effect
-  if(bumpEnt.getX() - bumpMovPerFrame  < 0){
-    bumpEnt.setX(bumpMovPerFrame);
+  multipliedBumpMov = bumpMovPerFrame * multiplier;
+  if(bumpEnt.getX() - multipliedBumpMov  < 0){
+    bumpEnt.setX(multipliedBumpMov);
   }
-  bumpEnt.setX(bumpEnt.getX() - bumpMovPerFrame);
+  bumpEnt.setX(bumpEnt.getX() - multipliedBumpMov);
   
   //check to see if any entities were collided with
   var hitSomething = false;
@@ -544,6 +567,7 @@ function entBumpLeft(bumpEnt) {
       if (entities[i].getActionState() != HIT_STATE) {
         entities[i].decreaseStamina(BUMP_DAMAGE);
         if (entities[i].isACharacter() == true) {
+          entities[i].setKnockbackDirection(LEFT_DIR);
           bumpEnt.addScore(100);
           if (entities[i].getStamina() == 0) {
             endGame();
@@ -566,12 +590,13 @@ function entBumpLeft(bumpEnt) {
 /
 / Note: Assumes an entity is given do not use non entities as it's parameter
 */
-function entBumpUp(bumpEnt) {
+function entBumpUp(bumpEnt, multiplier=1) {
   bumpMovement.play();  //Play bump sound effect
-  if(bumpEnt.getY() + bumpMovPerFrame <  0) {
-    bumpEnt.setY(bumpMovPerFrame);
+  multipliedBumpMov = bumpMovPerFrame * multiplier;
+  if(bumpEnt.getY() + multipliedBumpMov <  0) {
+    bumpEnt.setY(multipliedBumpMov);
   }
-  bumpEnt.setY(bumpEnt.getY() - bumpMovPerFrame);
+  bumpEnt.setY(bumpEnt.getY() - multipliedBumpMov);
   
   //check to see if any entities were collided with
   var hitSomething = false;
@@ -580,6 +605,7 @@ function entBumpUp(bumpEnt) {
       if (entities[i].getActionState() != HIT_STATE) {
         entities[i].decreaseStamina(BUMP_DAMAGE);
         if (entities[i].isACharacter() == true) {
+          entities[i].setKnockbackDirection(UP_DIR);
           bumpEnt.addScore(100);
           if (entities[i].getStamina() == 0) {
             endGame();
@@ -602,12 +628,13 @@ function entBumpUp(bumpEnt) {
 /
 / Note: Assumes an entity is given do not use non entities as it's parameter
 */
-function entBumpDown(bumpEnt) {
+function entBumpDown(bumpEnt, multiplier=1) {
   bumpMovement.play();  //Play bump sound effect
-  if (bumpEnt.getY() - bumpMovPerFrame > canvas.height - bumpEnt.getHeight()) { // implement this in game
-    bumpEnt.setY(canvas.height- bumpEnt.getHeight() - bumpMovPerFrame);
+  multipliedBumpMov = bumpMovPerFrame * multiplier;
+  if (bumpEnt.getY() - multipliedBumpMov > canvas.height - bumpEnt.getHeight()) { // implement this in game
+    bumpEnt.setY(canvas.height- bumpEnt.getHeight() - multipliedBumpMov);
   }
-  bumpEnt.setY(bumpEnt.getY() + bumpMovPerFrame);
+  bumpEnt.setY(bumpEnt.getY() + multipliedBumpMov);
   
   //check to see if any entities were collided with
   var hitSomething = false;
@@ -616,6 +643,7 @@ function entBumpDown(bumpEnt) {
       if (entities[i].getActionState() != HIT_STATE) {
         entities[i].decreaseStamina(BUMP_DAMAGE);
         if (entities[i].isACharacter() == true) {
+          entities[i].setKnockbackDirection(DOWN_DIR);
           bumpEnt.addScore(100);
           if (entities[i].getStamina() == 0) {
             endGame();
@@ -803,15 +831,34 @@ function drawEntity(genEnt) {
   }
   //HIT_STATE highlight animation
   else if (genEnt.getActionState() == HIT_STATE) {
-    genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
+    if (genEnt.isACharacter() == true && genEnt.getKnockbackCooldown() <= KNOCKBACK_COOLDOWN) {
+      genEnt.setKnockbackCooldown(genEnt.getKnockbackCooldown() + 1);
+      if (genEnt.getKnockbackDirection() == RIGHT_DIR){
+        entBumpRight(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+      if (genEnt.getKnockbackDirection() == LEFT_DIR) {
+        entBumpLeft(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+      if (genEnt.getKnockbackDirection() == UP_DIR) {
+        entBumpUp(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+      if (genEnt.getKnockbackDirection() == DOWN_DIR) {
+        entBumpDown(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      }
+    }
+    
+    //Draw Red Highlight
     ctx.beginPath();
     ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
     ctx.fillStyle = "#FF0000";
     ctx.fill();
     ctx.closePath();
+    
+    genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
     if (genEnt.getHitCooldown() > HIT_COOLDOWN) {
       genEnt.setActionState(NORMAL_STATE);
       genEnt.setHitCooldown(0);
+      genEnt.setKnockbackCooldown(0);
     }
   }
   //FALLING_STATE (only applies to destructible entities)
