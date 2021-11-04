@@ -58,12 +58,14 @@
 
       <!-- Overlay content -->
       <div class="overlay-content">
-        <a href="#">Change Difficulty</a>
+        <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
+        <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
         <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
         <a href="#">Multiplayer </a>
-        <a href="#">Contact</a>
       </div>
     <script>
+        var difficulty = "EASY";
+        var username = "Player";
       /* Open */
       function openNav() {
         document.getElementById("menu").style.width = "20%";
@@ -73,17 +75,33 @@
         document.getElementById("menu").style.width = "0%";
       }
       function userPrompt() {
-          var username = prompt("Please Enter a username for the duration of the game:");
+          username = prompt("Please Enter a username for the duration of the game:");
           const d = new Date();
           d.setTime(d.getTime() + (1*24*60*60*1000));
           let expires = "expires="+ d.toUTCString();
           document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
       }
+      function setEasyDifficulty() {
+          difficulty = "EASY";
+      }
+      
+      function setHardDifficulty() {
+          difficulty = "HARD";
+      }
+
+      function getDifficulty() {
+          return difficulty;
+      }
+
+      function getUsername() {
+          return username;
+      }
+
     </script>
     </div>
 
     <!-- Use any element to open/show the overlay navigation menu -->
-      <span id="menuButton" onclick="openNav()">Open Start Menu</span>
+      <span id="menuButton" onclick="openNav()">Open Menu</span>
 
     <header class="header">
         <!-- Begin Gold Bar -->

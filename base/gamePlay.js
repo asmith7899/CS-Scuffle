@@ -81,10 +81,21 @@ oppStamina = MAX_STAMINA;
 var pageURL = window.location.search.substring(1);
 if (pageURL) {
   var URLArray = pageURL.split('&');
-  startTime = URLArray[0].split('=')[1];
-  transitioned = URLArray[1].split('=')[1];    //used to prevent infinitely looping transition after 5 second countdown
-  playerStamina = URLArray[2].split('=')[1];
-  oppStamina = URLArray[3].split('=')[1];
+  for (var i = 0; i < URLArray.length; i++){
+    var splitVals = URLArray[i].split('=');
+    if (splitVals[0] == "startTime") {
+      startTime = splitVals[1];
+    }
+    else if (splitVals[0] == "transitioned") { //used to prevent infinitely looping transition after 5 second countdown
+      transitioned = splitVals[1];
+    }
+    else if (splitVals[0] == "playerStamina") {
+      playerStamina = splitVals[1];
+    }
+    else if (splitVals[0] == "opponentStamina") {
+      oppStamina = splitVals[1];
+    }
+  }
 }
 var currTime = startTime;
 var timerInterval = setInterval(function() {
