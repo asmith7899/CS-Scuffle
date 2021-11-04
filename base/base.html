@@ -823,9 +823,12 @@
 
                 </div>
                 <script type="text/javascript">
-                    let username = prompt("Please enter your username!");
-                    if (username != null && username != "") {
-                        let password = prompt("Please enter your password!")
+                    var acc = confirm("Would you like to create an account?");
+                    if (acc == true) {
+                        let username = prompt("Please enter your username!");
+                        if (username != null && username != "") {
+                            let password = prompt("Please enter your password!")
+                        }
                     }
                 </script>
             </div>
