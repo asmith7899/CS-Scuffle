@@ -59,7 +59,7 @@
       <!-- Overlay content -->
       <div class="overlay-content">
         <a href="#">Change Difficulty</a>
-        <a href="#">Single Player </a>
+        <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
         <a href="#">Multiplayer </a>
         <a href="#">Contact</a>
       </div>
@@ -71,6 +71,13 @@
       /* Close */
       function closeNav() {
         document.getElementById("menu").style.width = "0%";
+      }
+      function userPrompt() {
+          var username = prompt("Please Enter a username for the duration of the game:");
+          const d = new Date();
+          d.setTime(d.getTime() + (1*24*60*60*1000));
+          let expires = "expires="+ d.toUTCString();
+          document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
       }
     </script>
     </div>
