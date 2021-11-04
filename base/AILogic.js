@@ -370,7 +370,7 @@ function easyAI() {
 
 function hardAI() {
     var bumped = false; //probably a redundant variable, but might as well test it
-    if (opp1.getActionState() == NORMAL_STATE || opp1.getActionState() == MOVING_STATE) {
+    if (opp1.getActionState() == NORMAL_STATE) {
         if (Math.abs(xDist(player1, opp1)) > Math.abs(yDist(player1, opp1)) && player1.getActionState() != BUMPING_STATE) {
             if (Math.abs(xDist(player1, opp1)) > bumpDistance * 1.75) {
                 horizontalMovement();
