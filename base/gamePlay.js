@@ -78,6 +78,8 @@ var startTime = 35; //first 5 seconds no actions can be taken by player or AI, p
 var transitionTime = 15;
 playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
+var playerScore = 0;
+var oppScore = 0;
 var pageURL = window.location.search.substring(1);
 if (pageURL) {
   var URLArray = pageURL.split('&');
@@ -94,6 +96,10 @@ if (pageURL) {
     }
     else if (splitVals[0] == "opponentStamina") {
       oppStamina = splitVals[1];
+    } else if (splitVals[0] == "playerScore") {
+      playerScore = splitVals[1];
+    } else if (splitVals[0] == "opponentScore") {
+      oppScore = splitVals[1];
     }
   }
 }
@@ -116,7 +122,7 @@ var timerInterval = setInterval(function() {
 function transitionStage() {
   transitioned = true;
   window.location.href = '../home-arena/home-arena.html?startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
-  + player1.getStamina() + "&opponentStamina=" + opp1.getStamina();
+  + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore();
 }
 
 function endGame() {
@@ -383,6 +389,10 @@ class Entity {
   setHoldingEnt(holdingEnt) {
     this.holdingEnt = holdingEnt;
   }
+
+  setScore(score) {
+    this.score = score;
+  }
   
   //Used to decrease or increase statmina by a set amount from the current total
   //negative numbers add to stamina positive numbers lower stamina.
@@ -435,6 +445,7 @@ if (p1User == "") {
 }
 const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User);
 player1.setStamina(playerStamina);
+player1.setScore(parseInt(playerScore));
 var vborderBounce = 20;
 var borderBounce = 10;
 
@@ -443,6 +454,7 @@ var borderBounce = 10;
 const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT");
 opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
+opp1.setScore(parseInt(oppScore));
 
 //initialize UI
 const gameUI = new Entity(50, window.innerWidth, '', true, false);
