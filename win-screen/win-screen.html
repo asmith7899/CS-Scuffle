@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="win-screen.css">
+    </head>
+    <body>
+        <script>
+            var pageURL = window.location.search.substring(1);
+            var URLArray = pageURL.split('&');
+            winner = URLArray[0].split('=')[1];
+            second = URLArray[1].split('=')[1];
+            winnerimg = URLArray[2].split('=')[1];
+            secondimg = URLArray[3].split('=')[1];
+            winnerUser = URLArray[4].split('=')[1];
+            secondUser = URLArray[5].split('=')[1];
+        </script>
+        <div class="container podium">
+            <div class="podium__item">
+                <div id="seconduser" class="podium__user"></div>
+                <script>
+                    document.getElementById("seconduser").innerHTML=secondUser;
+                </script>
+                <img id="secondimage" class="podium__image"></img>
+                <script>
+                    document.getElementById("secondimage").src = secondimg;
+                </script>
+                <div id="secondentity" class="podium__rank second"></div>
+                <script>
+                    document.getElementById("secondentity").innerHTML=second;
+                </script>
+            </div>
+            <div class="podium__item">
+                <div id="winneruser" class="podium__user"></div>
+                <script>
+                    document.getElementById("winneruser").innerHTML=winnerUser;
+                </script>
+                <img id="winnerimage" class="podium__image"></img>
+                <script>
+                    document.getElementById("winnerimage").src = winnerimg;
+                </script>
+                <div id = "winnerentity" class="podium__rank first"></div>
+                <script>
+                    document.getElementById("winnerentity").innerHTML=winner;
+                </script>
+            </div>
+            <div class="podium__item">
+                <img id="thirdimage" class="podium__image"></img>
+                <div class="podium__rank third"></div>
+            </div>
+        </div>
+    </body>
+</html>

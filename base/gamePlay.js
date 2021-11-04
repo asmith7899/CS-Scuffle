@@ -78,7 +78,7 @@ var startTime = 35; //first 5 seconds no actions can be taken by player or AI, p
 var transitionTime = 15;
 playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
-var pageURL = window.location.search.substring(1)
+var pageURL = window.location.search.substring(1);
 if (pageURL) {
   var URLArray = pageURL.split('&');
   startTime = URLArray[0].split('=')[1];
@@ -112,9 +112,14 @@ function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
   clearInterval(timerInterval); //stop the timer
   var maxScore = 0;
-  
+  var secondScore = 0;
+  var winner = null;
+  var second = null;
   for (i = 0; i < entities.length; i++) {
     if (entities[i].isACharacter() == true) {
+      if (winner == null) {
+        winner = entities[i];
+      }
       if (entities[i].getScore() >= maxScore) {
         winner = entities[i];
         maxScore = winner.getScore();
@@ -122,6 +127,18 @@ function endGame() {
     }
   }
   
+  for (i = 0; i < entities.length; i++) {
+    if (entities[i].isACharacter() == true) {
+      if (second == null) {
+        second = entities[i];
+      }
+      if (entities[i] != winner && entities[i].getScore() >= secondScore) {
+        second = entities[i];
+        secondScore = second.getScore();
+      }
+    }
+  }
+
   //calculate 5% score bonus for each second remaining
   timeBonus = maxScore * 0.05;
   maxScore = maxScore + (timeBonus * currTime);
@@ -131,8 +148,11 @@ function endGame() {
     maxScore += 50;
   }
   
+  window.location.href = '../win-screen/win-screen.html?winner=' + maxScore + "&2nd=" + second.getScore() + '&winnerimg='
+  + winner.getImage().src + "&2ndimg=" + second.getImage().src + "&winnerUser=" + winner.username + "&secondUser=" + second.username;
+
   //display basic game over window. Will replace with actual ending screen, this is just a placeholder
-  alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
+  //alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
 }
 
 /*
@@ -178,7 +198,7 @@ class Entity {
   
   
   //initializing function
-  constructor(height, width, src, destructibleObject, isCharacter) {
+  constructor(height, width, src, destructibleObject, isCharacter, username) {
     this.entityImg.src = src;        //src: The link to the source file
     this.entityImg.width = width;    //width: The Width of the image
     this.entityImg.height = height;  //height: The height of the image
@@ -187,6 +207,7 @@ class Entity {
       this.stamina = DESTRUCTIBLE_MAX_STAMINA;
     }
     this.isCharacter = isCharacter;
+    this.username = username;
   }
   
   setIsCharacter(isCharacter) {
@@ -397,17 +418,18 @@ class Entity {
 }
 
 //initialize player1
-const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true);
+var p1User = getCookie("username"); //get username from cookie. Username is set by selecting "Singleplayer" from base.html start page
+if (p1User == "") {
+  p1User = "PLAYER"; //username defaults to "PLAYER " if there is no username cookie
+}
+const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User);
 player1.setStamina(playerStamina);
 var vborderBounce = 20;
 var borderBounce = 10;
-var p1User = getCookie("username"); //get username from cookie. Username is set by selecting "Singleplayer" from base.html start page
-if (p1User == "") {
-  p1User = "PLAYER "; //username defaults to "PLAYER " if there is no username cookie
-}
+
 
 //initialize opponent1
-const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true);
+const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT");
 opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
 
