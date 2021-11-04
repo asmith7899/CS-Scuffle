@@ -39,6 +39,12 @@ var MAX_STAMINA = 100;                  //max stamina for players or AI
 var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
 var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
 var BUMP_KNOCKBACK = 10;
+var AI_DIFFICULTY = 1;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
+var transitioned = false;               //Added 5 additional seconds before the game starts for the user to get ready
+                                        //on stage transition this means the timer will start above the transition time
+                                        //this variable is used to prevent a transition loop when the timer gets back to the transition time
+                                        //likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
+                                        //countdown before the game starts but it felt right with the hard AI being more aggressive right away
 
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
@@ -68,7 +74,7 @@ var itemPickup = new Audio("../SoundEffects/itempickup.wav"); //sound for pickin
 var itemDrop = new Audio("../SoundEffects/itemdrop.wav"); //sound for item hitting the floor
 
 //game timer count down to 0 starting at startTime
-var startTime = 30;
+var startTime = 35; //first 5 seconds no actions can be taken by player or AI, player can "queue" an action to be taken though
 var transitionTime = 15;
 playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
@@ -76,15 +82,16 @@ var pageURL = window.location.search.substring(1)
 if (pageURL) {
   var URLArray = pageURL.split('&');
   startTime = URLArray[0].split('=')[1];
-  playerStamina = URLArray[1].split('=')[1];
-  oppStamina = URLArray[2].split('=')[1];
+  transitioned = URLArray[1].split('=')[1];    //used to prevent infinitely looping transition after 5 second countdown
+  playerStamina = URLArray[2].split('=')[1];
+  oppStamina = URLArray[3].split('=')[1];
 }
 var currTime = startTime;
 var timerInterval = setInterval(function() {
   //initialize vars using passed in url to enable passing of arguments
   
   // move to new arena page if a certain amount of time has passed
-  if (currTime == transitionTime && startTime != currTime) {
+  if (transitioned == false && currTime == transitionTime && startTime != currTime) {
     transitionStage();
   }
   
@@ -94,8 +101,10 @@ var timerInterval = setInterval(function() {
   }
   currTime--;
 }, 1000); // update about every second
+
 function transitionStage() {
-  window.location.href = '../home-arena/home-arena.html?startTime=' + transitionTime + '&playerStamina='
+  transitioned = true;
+  window.location.href = '../home-arena/home-arena.html?startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
   + player1.getStamina() + "&opponentStamina=" + opp1.getStamina();
 }
 
@@ -386,11 +395,16 @@ class Entity {
     this.y = y;
   }
 }
+
 //initialize player1
 const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true);
 player1.setStamina(playerStamina);
 var vborderBounce = 20;
 var borderBounce = 10;
+var p1User = getCookie("username"); //get username from cookie. Username is set by selecting "Singleplayer" from base.html start page
+if (p1User == "") {
+  p1User = "PLAYER "; //username defaults to "PLAYER " if there is no username cookie
+}
 
 //initialize opponent1
 const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true);
@@ -1014,7 +1028,7 @@ function drawGamePlayOverlay() {
   //PLAYER
   ctx.font = "15px Helvetica";
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("PLAYER STAMINA", 25, (gameUI.getHeight()/4)+yOffset+8);
+  ctx.fillText(p1User + " STAMINA", 25, (gameUI.getHeight()/4)+yOffset+8); //display player username
   
   //Timer
   ctx.font = "20px Helvetica";
@@ -1069,15 +1083,16 @@ function drawDebugInfo() {
   //Draw stats
   ctx.font = "16px Arial";
   ctx.fillStyle = "#FFFFFF";
-  ctx.fillText("AnimationCounter: "+player1.getAnimationCounter(), 8, dbListPos);
+  ctx.fillText("Player1AnimationCounter: "+player1.getAnimationCounter(), 8, dbListPos);
   ctx.fillText("Player1ActionState: "+player1.getActionState(), 8, dbListPos*2);
   ctx.fillText("Player1FacingDir: "+player1.getFacingDirection(), 8, dbListPos*3);
   ctx.fillText("Player1Stamina: "+player1.getStamina(), 8, dbListPos*4);
-  ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*5);
-  ctx.fillText("Opp1FacingDir: "+opp1.getFacingDirection(), 8, dbListPos*6);
-  ctx.fillText("Opp1Stamina: "+opp1.getStamina(), 8, dbListPos*7);
-  ctx.fillText("Opp1HitCooldown: "+opp1.getHitCooldown(), 8, dbListPos*8);
-  ctx.fillText("FPS: "+avg_fps, 8, dbListPos*9);
+  ctx.fillText("Opp1AnimationCounter: "+opp1.getAnimationCounter(), 8, dbListPos*5);
+  ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*6);
+  ctx.fillText("Opp1FacingDir: "+opp1.getFacingDirection(), 8, dbListPos*7);
+  ctx.fillText("Opp1Stamina: "+opp1.getStamina(), 8, dbListPos*8);
+  ctx.fillText("Opp1HitCooldown: "+opp1.getHitCooldown(), 8, dbListPos*9);
+  ctx.fillText("FPS: "+avg_fps, 8, dbListPos*10);
 }
 
 //Main Draw function, responsible for drawing each frame
@@ -1086,112 +1101,114 @@ function draw() {
   ctx.canvas.width  = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
   
-  //When no special actions are being taken by player1: allows free movement
-  if (player1.actionState == NORMAL_STATE) {
-    var collisionAmount = 0;
-    // move right and adjust if outside window border
-    if(rightPressed) {
-      if (player1.getX()+player1.getDx()  > canvas.width - player1.getWidth()) {
-        player1.setX(canvas.width - player1.getWidth() - borderBounce);
-      }
-      player1.setX(player1.getX() + player1.getDx());
-      
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = ( player1.getX() + player1.getWidth()) - entities[i].getX() + 1;
+  if ((currTime <= startTime - 5)) { //allow player and AI actions only after 5 seconds have passed
+
+    //When no special actions are being taken by player1: allows free movement
+    if (player1.actionState == NORMAL_STATE) {
+      var collisionAmount = 0;
+      // move right and adjust if outside window border
+      if(rightPressed) {
+        if (player1.getX()+player1.getDx()  > canvas.width - player1.getWidth()) {
+          player1.setX(canvas.width - player1.getWidth() - borderBounce);
         }
-      }
-      if ( hitSomething ) {
-        player1.setX(player1.getX() - collisionAmount);
-      }
-      player1.setFacingDirection(RIGHT_DIR);
-    }
-    
-    // move left and adjust if outside window border
-    if (leftPressed){
-      if(player1.getX() - player1.getDx()  < 0){
-        player1.setX(borderBounce);
-      }
-      player1.setX(player1.getX() - player1.getDx());
-      
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = ( entities[i].getX() + entities[i].getWidth()) - player1.getX() + 1;
+        player1.setX(player1.getX() + player1.getDx());
+        
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = ( player1.getX() + player1.getWidth()) - entities[i].getX() + 1;
+          }
         }
-      }
-      if ( hitSomething ) {
-        player1.setX(player1.getX() + collisionAmount);
-      }
-      player1.setFacingDirection(LEFT_DIR);
-    }
-    
-    // move up and adjust if outside window border
-    if(upPressed){
-      if(player1.getY() + player1.getDy() <  0) {
-        player1.setY(player1.getY() + player1.getDy());
-      }
-      player1.setY(player1.getY() - player1.getDy());
-      
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = (entities[i].getY() + entities[i].getHeight()) - player1.getY() + 1;
+        if ( hitSomething ) {
+          player1.setX(player1.getX() - collisionAmount);
         }
+        player1.setFacingDirection(RIGHT_DIR);
       }
-      if ( hitSomething ) {
-        player1.setY(player1.getY() + collisionAmount);
+      
+      // move left and adjust if outside window border
+      if (leftPressed){
+        if(player1.getX() - player1.getDx()  < 0){
+          player1.setX(borderBounce);
+        }
+        player1.setX(player1.getX() - player1.getDx());
+        
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = ( entities[i].getX() + entities[i].getWidth()) - player1.getX() + 1;
+          }
+        }
+        if ( hitSomething ) {
+          player1.setX(player1.getX() + collisionAmount);
+        }
+        player1.setFacingDirection(LEFT_DIR);
       }
-      player1.setFacingDirection(UP_DIR);
-    }
-    
-    // move down and adjust if outside window border
-    if(downPressed){
-      if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
-        //player1.setY(canvas.height - player1.getHeight() - vborderBounce);
+      
+      // move up and adjust if outside window border
+      if(upPressed){
+        if(player1.getY() + player1.getDy() <  0) {
+          player1.setY(player1.getY() + player1.getDy());
+        }
         player1.setY(player1.getY() - player1.getDy());
-      }
-      player1.setY(player1.getY() + player1.getDy());
-      
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = (player1.getY() + player1.getHeight()) - entities[i].getY() + 1;
+        
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = (entities[i].getY() + entities[i].getHeight()) - player1.getY() + 1;
+          }
         }
+        if ( hitSomething ) {
+          player1.setY(player1.getY() + collisionAmount);
+        }
+        player1.setFacingDirection(UP_DIR);
       }
-      if ( hitSomething ) {
-        player1.setY(player1.getY() - collisionAmount);
+      
+      // move down and adjust if outside window border
+      if(downPressed){
+        if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
+          //player1.setY(canvas.height - player1.getHeight() - vborderBounce);
+          player1.setY(player1.getY() - player1.getDy());
+        }
+        player1.setY(player1.getY() + player1.getDy());
+        
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = (player1.getY() + player1.getHeight()) - entities[i].getY() + 1;
+          }
+        }
+        if ( hitSomething ) {
+          player1.setY(player1.getY() - collisionAmount);
+        }
+        player1.setFacingDirection(DOWN_DIR);
       }
-      player1.setFacingDirection(DOWN_DIR);
     }
+    //When player1 is performing a bump action
+    else if (player1.getActionState() == BUMPING_STATE) {
+      entityBump(player1);
+    }
+    
+    //When player1 is attempting to pickup an object
+    else if (player1.getActionState() == PICKUP_STATE) {
+      entityPickup(player1);
+    }
+    
+    //When player1 is attemptingto drop an object
+    else if (player1.getActionState() == DROP_STATE) {
+      entityDrop(player1);
+    }
+    
+    //AI takes its actions after the player
+    AILogic();
   }
-  //When player1 is performing a bump action
-  else if (player1.getActionState() == BUMPING_STATE) {
-    entityBump(player1);
-  }
-  
-  //When player1 is attempting to pickup an object
-  else if (player1.getActionState() == PICKUP_STATE) {
-    entityPickup(player1);
-  }
-  
-  //When player1 is attemptingto drop an object
-  else if (player1.getActionState() == DROP_STATE) {
-    entityDrop(player1);
-  }
-  
-  //AI takes its actions after the player
-  AILogic();
-  
   // clear the canvas to redraw screen
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
@@ -1257,6 +1274,7 @@ function keyDownHandler(e) {
     hideArena = !hideArena;
   }
   else if (e.key == "t") {
+    startTime = 3005; //automatically bypass 5 second countdown
     currTime = 3000;
   }
   else if (e.key == "f") {
@@ -1291,4 +1309,43 @@ function keyUpHandler(e) {
     p1BumpPressed = false;
   }
 }
+
+/*
+/   Purpose: sets a new cookie. used to maintain username through transitions
+/
+/   params:  cname: name of the cookie
+/            cvalue: value of the cookie
+/            exdays: number of days until cookie expires
+/ 
+*/
+function setCookie(cname, cvalue, exdays) {
+  const d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  let expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+/*
+/   Purpose: get the value of a cookie
+/
+/   params:  cname: name of the cookie
+/            
+/   return:  value of the cookie, "" if no cookie with the given cname exists
+*/
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
 var drawInterval = setInterval(draw, 10);
