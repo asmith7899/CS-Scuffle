@@ -464,10 +464,10 @@ function hardAI() {
     /   KNOWN BUG:  a single bump can hit the player multiple times and do more damage than intended
     /               I believe this is due to the player's actionState being able to change from HIT_STATE
     /               before the bump is finished. through keyboard inputs, the player's actionState is changed
-    /               from HIT_STATE to something else before the bump has finished and while still colliding with
+    /               from HIT_STATE to something else (BUMPING_STATE) before the bump has finished and while still colliding with
     /               the AI causing multiple hits.
     */
-    if ((opp1.getActionCooldown() == 0) && opp1.getActionState() != BUMPING_STATE && bumped == false && getRandomInt(60) < 2) { //randomness is to balance out the bug for now. will need to actually fix
+    if ((opp1.getActionCooldown() == 0) && opp1.getActionState() != BUMPING_STATE && bumped == false && getRandomInt(65) < 2) { //randomness is to balance out the bug for now. will need to actually fix
         if (xDist(player1, opp1) <= bumpDistance * 1.75 && xDist(player1, opp1) >= 0 && yOverlap(opp1, player1)) {
             opp1.setFacingDirection(RIGHT_DIR);
             opp1.setActionState(BUMPING_STATE);
