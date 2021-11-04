@@ -38,7 +38,7 @@
   var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
   var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
   var CANVAS_OFFSET = 40;                 //The amount of offset the canvas has to the webpage. Defined in the arena css file
-  var SUCCESSFUL_BLOCK = false;
+  var SUCCESSFUL_BLOCK = "success";       // action state for an entity
 
 
 //game timer count down to 0 starting at startTime
@@ -338,6 +338,9 @@ function endGame() {
   entities.push(opp1);
   entities.push(player1);
 
+  // Blocking // DEBUG:
+  //opp1.setActionState(BLOCKING_STATE);
+
   //Test Code to set starting positions of test divs (Will need to be commented out once a working arena is made)
   //moveElement('div1', player1.getX() + 100, player1.getY()+100);
   //moveElement('div2', opp1.getX() + 100, opp1.getY()+100);
@@ -374,6 +377,7 @@ function endGame() {
   var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function)
 
   var blockAniFrames = 50;
+  var successfulBlockAniFrames = 24;
 
   /*
   / Purpose: Changes the x/y position of an html element
@@ -458,12 +462,20 @@ function endGame() {
               endGame();
             }
           }
-        } //else if (entities[i].getActionState() == BLOCKING_STATE) {
-          //successfulBlock(entities[i]);
-        //}
+        }
 
-        entities[i].setActionState(HIT_STATE);
+        if (entities[i].getActionState() == BLOCKING_STATE) {
+          entities[i].setActionState(SUCCESSFUL_BLOCK);
+        } else {
+          entities[i].setActionState(HIT_STATE);
+          hitSomething = true;
+        }
+
+
+        //entities[i].setActionState(SUCCESSFUL_BLOCK);
         hitSomething = true;
+
+
       }
     }
     if ( hitSomething ) {
@@ -495,6 +507,8 @@ function endGame() {
               endGame();
             }
           }
+        } else if (entities[i].getActionState() == BLOCKING_STATE) {
+          entities[i].setActionState(SUCCESSFUL_BLOCK);
         }
 
         entities[i].setActionState(HIT_STATE);
@@ -530,6 +544,8 @@ function endGame() {
               endGame();
             }
           }
+        } else if (entities[i].getActionState() == BLOCKING_STATE) {
+          entities[i].setActionState(SUCCESSFUL_BLOCK);
         }
 
         entities[i].setActionState(HIT_STATE);
@@ -565,10 +581,14 @@ function endGame() {
               endGame();
             }
           }
+        } else if (entities[i].getActionState() == BLOCKING_STATE) {
+          entities[i].setActionState(SUCCESSFUL_BLOCK);
         }
+          entities[i].setActionState(HIT_STATE);
+          hitSomething = true;
 
-        entities[i].setActionState(HIT_STATE);
-        hitSomething = true;
+
+
       }
     }
     if ( hitSomething ) {
@@ -640,7 +660,14 @@ function endGame() {
     }
   }
 
-  //function successfulBlock(sbEntity)
+  function successfulBlock(sbEntity) {
+    sbEntity.setAnimationCounter(sbEntity.getAnimationCounter() + 1);
+      if (sbEntity.getAnimationCounter() >= successfulBlockAniFrames) {
+        sbEntity.setAnimationCounter(0);
+        sbEntity.setActionState(NORMAL_STATE); // CHANGED FROM NORMAL STATE
+        sbEntity.setActionCooldown(ACTION_COOLDOWN);
+      }
+  }
 
 
   /*
@@ -734,6 +761,13 @@ function endGame() {
     }
 
     // ADD SUCCESSFUL BLOCK Animation
+    else if (genEnt.getActionState() == SUCCESSFUL_BLOCK) {
+        ctx.beginPath();
+        ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
+        ctx.fillStyle = '#00ff00';
+        ctx.fill();
+        ctx.closePath();
+    }
 
 
     ctx.beginPath();
@@ -997,8 +1031,17 @@ function endGame() {
           entityBlock(player1);
       }
 
+      //TODO add call to successfulBlock, and create action
+      // state for successful block to trigger animation
+      else if (player1.getActionState() == SUCCESSFUL_BLOCK) {
+          successfulBlock(player1);
+      }
+
       //AI takes its actions after the player
       AILogic();
+
+      // Debug for Blocking
+
 
   		// clear the canvas to redraw screen
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);

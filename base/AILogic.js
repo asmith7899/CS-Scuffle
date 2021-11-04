@@ -1,4 +1,4 @@
-/* 
+/*
 /   A simple AI with a passive, safe play style
 /   focuses on avoiding hits and attempting a hit of its own only when safe
 /   comment out "AILogic();" in gamePlay.js to "turn-off" AI, towards the end of the draw() function
@@ -6,7 +6,7 @@
 
 //begin AI functions
 
-/* 
+/*
 /  Move/other action functions for the AI.
 */
 
@@ -128,7 +128,7 @@ function AIMoveDown() {
 /   Purpose: prevent the AI from getting stuck on walls and corners if it's desired move
 /            is unsuccessful. Tries to move in all other directions while taking the shortest
 /            path to the player.
-/   
+/
 /   Param:   dir: The direction of the unsuccessful movement
 */
 function AIUnstuck(dir) {
@@ -144,7 +144,7 @@ function AIUnstuck(dir) {
             } else if (AIMoveRight() == true) {
             }
         }
-    } 
+    }
     else if (dir == "right") { //cant move right
         if (yDist(player1, opp1) < 0) {
             if (AIMoveUp() == true) {
@@ -157,7 +157,7 @@ function AIUnstuck(dir) {
             } else if (AIMoveLeft() == true) {
             }
         }
-    } 
+    }
     else if (dir == "up") { //cant move up
         if (xDist(player1, opp1) < 0) {
             if (AIMoveLeft() == true) {
@@ -170,7 +170,7 @@ function AIUnstuck(dir) {
             } else if (AIMoveDown() == true) {
             }
         }
-    } 
+    }
     else if (dir == "down") { //cant move down
         if (xDist(player1, opp1) < 0) {
             if (AIMoveLeft() == true) {
@@ -183,14 +183,14 @@ function AIUnstuck(dir) {
             } else if (AIMoveUp() == true) {
             }
         }
-    } 
+    }
 }
 
 /*
 /  Purpose: Used to determine if two entities share any point on the X axis
 /           (i.e. the left edge of ent1 is between the left and right edges of ent2)
 /           Not used to determine collision
-/ 
+/
 /  Params:  ent1: any entity
 /           ent2: any entity
 /
@@ -211,7 +211,7 @@ function xOverlap(ent1, ent2) {
 /  Purpose: Used to determine if two entities share any point on the Y axis
 /           (i.e. the top of ent1 is between the top and bottom of ent2)
 /           Not used to determine collision
-/ 
+/
 /  Params:  ent1: any entity
 /           ent2: any entity
 /
@@ -230,7 +230,7 @@ function yOverlap(ent1, ent2) {
 
 /*
 /  Purpose: calculate the distance between two entities on the X axis
-/ 
+/
 /  Params:  ent1: any entity
 /           ent2: any entity
 /
@@ -243,7 +243,7 @@ function xDist(ent1, ent2) {
 
 /*
 /  Purpose: calculate the distance between two entities on the Y axis
-/ 
+/
 /  Params:  ent1: any entity
 /           ent2: any entity
 /
@@ -289,10 +289,10 @@ function verticalMovement() {
 /   Purpose:  Handles decisions for the AI. Determines how the AI moves, when it bumps, avoids bumps from players
 */
 function AILogic() {
-    
+
     //if far from player1, move closer
     if ((Math.abs(xDist(player1, opp1)) >= bumpDistance * 1.75 || Math.abs(yDist(player1, opp1)) >= bumpDistance * 1.75) && player1.getActionState() != BUMPING_STATE) {
-        
+      
         //can and will move horizontally and vertically at the same time, just like a player could
         //prioritize reducing the greatest distance first
         if (Math.abs(xDist(player1, opp1)) > Math.abs(yDist(player1, opp1))) {
@@ -301,7 +301,7 @@ function AILogic() {
         } else {
             verticalMovement();
             horizontalMovement();
-        }   
+        }
     } else if (player1.getActionState() == BUMPING_STATE) { //will avoid bumps from players, prioritize moving directly away from an attack
         if (player1.getFacingDirection() == LEFT_DIR) {
             if (AIMoveLeft() == false) {
@@ -336,6 +336,6 @@ function AILogic() {
         } else if (yDist(player1, opp1) >= -bumpDistance * 1.75 && yDist(player1, opp1) <= 0 && xOverlap(opp1, player1)) {
             opp1.setFacingDirection(UP_DIR);
             entityBump(opp1);
-        } 
+        }
     }
 }
