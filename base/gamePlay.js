@@ -39,7 +39,9 @@ var MAX_STAMINA = 100;                  //max stamina for players or AI
 var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
 var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
 var BUMP_KNOCKBACK = 10;
-var AI_DIFFICULTY = 1;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
+var AI_DIFFICULTY = 2;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
+
+//Variables
 var transitioned = false;               //Added 5 additional seconds before the game starts for the user to get ready
                                         //on stage transition this means the timer will start above the transition time
                                         //this variable is used to prevent a transition loop when the timer gets back to the transition time
@@ -48,6 +50,7 @@ var transitioned = false;               //Added 5 additional seconds before the 
 
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
+//var arena = 'test';
 var arena = FIRST_ARENA;
 if (canvas == null) {
   arena = SECOND_ARENA;
@@ -57,12 +60,8 @@ var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actual
 
 //The amount of offset the canvas has to the webpage. Defined in the arena css file
 var CANVAS_OFFSET = 0;                  //Use for test-arena
-var MOVE_OFFSET_X = 0;
-var MOVE_OFFSET_Y = 0;
 if (arena == FIRST_ARENA){
   CANVAS_OFFSET = 40;                 //Use for map-arena
-  MOVE_OFFSET_X = 16;
-  MOVE_OFFSET_Y = 210;
 }
 
 
@@ -106,12 +105,12 @@ if (pageURL) {
 var currTime = startTime;
 var timerInterval = setInterval(function() {
   //initialize vars using passed in url to enable passing of arguments
-  
+
   // move to new arena page if a certain amount of time has passed
   if (transitioned == false && currTime == transitionTime && startTime != currTime) {
     transitionStage();
   }
-  
+
   // end game if timer has run to 0
   if (currTime == 0) {
     endGame();
@@ -143,7 +142,7 @@ function endGame() {
       }
     }
   }
-  
+
   for (i = 0; i < entities.length; i++) {
     if (entities[i].isACharacter() == true) {
       if (second == null) {
@@ -159,17 +158,63 @@ function endGame() {
   //calculate 5% score bonus for each second remaining
   timeBonus = maxScore * 0.05;
   maxScore = maxScore + (timeBonus * currTime);
-  
+
   //calculate remaining stamina bonus
   for (i = 0; i < winner.getStamina(); i += 10) {
     maxScore += 50;
   }
-  
+
   window.location.href = '../win-screen/win-screen.html?winner=' + maxScore + "&2nd=" + second.getScore() + '&winnerimg='
   + winner.getImage().src + "&2ndimg=" + second.getImage().src + "&winnerUser=" + winner.username + "&secondUser=" + second.username;
 
   //display basic game over window. Will replace with actual ending screen, this is just a placeholder
   //alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
+}
+
+
+/*
+/ Purpose: This class is to be used for all html elements that will need a destructible object overlay
+/
+/ Variables:
+/           htmlElementID: the elements ID from it's html code, used to reference the element
+/           xOffset: The diffrence between the visible X and actual X position of the element onscreen
+/           yOffset: The diffrence between the visible Y and actual Y position of the element onscreen
+/
+*/
+class HtmlElement {
+  htmlElementID = null;
+  xOffset = 0;
+  yoffset = 0;
+
+  constructor(htmlElementID, xOffset, yOffset) {
+    this.htmlElementID = htmlElementID;
+    this.xOffset = xOffset;
+    this.yOffset = yOffset;
+  }
+
+  getHtmlElementID() {
+    return this.htmlElementID;
+  }
+
+  getXOffset() {
+    return this.xOffset;
+  }
+
+  getYOffset() {
+    return this.yOffset;
+  }
+
+  setHtmlElementID(htmlElementID) {
+    this.htmlElementID = htmlElementID;
+  }
+
+  setXOffset(xOffset) {
+    this.xOffset = xOffset;
+  }
+
+  setYOffset(yOffset) {
+    this.yOffset = yOffset;
+  }
 }
 
 /*
@@ -206,16 +251,17 @@ class Entity {
   entityID = 0;                 //An entities unique ID set before putting in entity list
   stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
   holdingEnt = null;            /*
-  / For destructible entities this is null when not being held
-  / When held this is the entity holding them
-  / for non-destructible entities this is null when not holding another entity
-  / and when they are holding an entity it is the entity they are holding
-  */
+                                / For destructible entities this is null when not being held
+                                / When held this is the entity holding them
+                                / for non-destructible entities this is null when not holding another entity
+                                / and when they are holding an entity it is the entity they are holding
+                                */
+  underlayedHtmlElement = null; //For destructibleObjects that have an underlayed html element
   score = 0;
-  
-  
+
+
   //initializing function
-  constructor(height, width, src, destructibleObject, isCharacter, username) {
+  constructor(height, width, src, destructibleObject, isCharacter, username, underlayedHtmlElement) {
     this.entityImg.src = src;        //src: The link to the source file
     this.entityImg.width = width;    //width: The Width of the image
     this.entityImg.height = height;  //height: The height of the image
@@ -225,32 +271,33 @@ class Entity {
     }
     this.isCharacter = isCharacter;
     this.username = username;
+    this.underlayedHtmlElement = underlayedHtmlElement;
   }
-  
+
   setIsCharacter(isCharacter) {
     this.isCharacter = isCharacter;
   }
-  
+
   isACharacter() {
     return this.isCharacter;
   }
-  
+
   getScore() {
     return this.score;
   }
-  
+
   addScore(score) {
     this.score += score;
   }
-  
+
   getActionState() {
     return this.actionState;
   }
-  
+
   getFacingDirection() {
     return this.facingDirection;
   }
-  
+
   getKnockbackDirection() {
     return this.knockbackDirection;
   }
@@ -258,39 +305,39 @@ class Entity {
   getAnimationCounter() {
     return this.animationCounter;
   }
-  
+
   getHeight() {
     return this.entityImg.height;
   }
-  
+
   getWidth() {
     return this.entityImg.width;
   }
-  
+
   getImage() {
     return this.entityImg;
   }
-  
+
   getX() {
     return this.x;
   }
-  
+
   getY() {
     return this.y;
   }
-  
+
   getDx() {
     return this.dx;
   }
-  
+
   getDy() {
     return this.dy;
   }
-  
+
   getHitCooldown() {
     return this.hitCooldown;
   }
-  
+
   getKnockbackCooldown() {
     return this.knockbackCooldown;
   }
@@ -298,27 +345,35 @@ class Entity {
   getActionCooldown() {
     return this.actionCooldown;
   }
-  
+
   getEntityID() {
     return this.entityID;
   }
-  
+
   getStamina() {
     return this.stamina;
   }
-  
+
   getDestructibleObject() {
     return this.destructibleObject;
   }
-  
+
   getHoldingEnt() {
     return this.holdingEnt;
   }
-  
+
+  getUnderlayedHtmlElement() {
+    return this.underlayedHtmlElement;
+  }
+
+  setUnderlayedHtmlElement(underlayedHtmlElement) {
+    this.underlayedHtmlElement = underlayedHtmlElement;
+  }
+
   setActionState(actionState) {
     this.actionState = actionState;
   }
-  
+
   setFacingDirection(facingDirection) {
     this.facingDirection = facingDirection;
   }
@@ -326,40 +381,40 @@ class Entity {
   setKnockbackDirection(knockbackDirection){
     this.knockbackDirection = knockbackDirection;
   }
-  
+
   setAnimationCounter(animationCounter) {
     this.animationCounter = animationCounter;
   }
-  
+
   setImageSrc(src) {
     this.entityImg.src = src;
   }
-  
+
   setX(x) {
     this.x = x;
   }
-  
+
   setY(y) {
     this.y = y;
   }
-  
+
   setPosition(x,y) {
     this.x = x;
     this.y = y;
   }
-  
+
   setDx(dx) {
     this.dx = dx;
   }
-  
+
   setDy(dy) {
     this.dy = dy;
   }
-  
+
   setHitCooldown(hitCooldown) {
     this.hitCooldown = hitCooldown;
   }
-  
+
   setKnockbackCooldown(knockbackCooldown) {
     this.knockbackCooldown = knockbackCooldown;
   }
@@ -367,24 +422,24 @@ class Entity {
   setActionCooldown(actionCooldown) {
     this.actionCooldown = actionCooldown;
   }
-  
+
   setEntityID(entityID) {
     this.entityID = entityID;
   }
-  
+
   setStamina(stamina) {
     this.stamina = stamina;
   }
-  
+
   //takes a boolean
   setDestructibleObject(destructibleObject) {
     this.destructibleObject = destructibleObject;
   }
-  
+
   setWidth(width) {
     this.width = width;
   }
-  
+
   //Takes an entity
   setHoldingEnt(holdingEnt) {
     this.holdingEnt = holdingEnt;
@@ -393,7 +448,7 @@ class Entity {
   setScore(score) {
     this.score = score;
   }
-  
+
   //Used to decrease or increase statmina by a set amount from the current total
   //negative numbers add to stamina positive numbers lower stamina.
   decreaseStamina(amount) {
@@ -409,7 +464,7 @@ class Entity {
     } else {
       this.stamina = this.stamina - amount;
     }
-    
+
     if (this.getDestructibleObject()) {
       if (this.stamina < (DESTRUCTIBLE_MAX_STAMINA/3)*2 + 1 && this.stamina > DESTRUCTIBLE_MAX_STAMINA/3 ) {
         this.setImageSrc("../Images/destroy_stage_2.png");
@@ -430,7 +485,7 @@ class Entity {
       }
     }
   }
-  
+
   //Sets X and Y and the same time, only for convinence
   setStartingPosition(x, y) {
     this.x = x;
@@ -443,7 +498,7 @@ var p1User = getCookie("username"); //get username from cookie. Username is set 
 if (p1User == "") {
   p1User = "PLAYER"; //username defaults to "PLAYER " if there is no username cookie
 }
-const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User);
+const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User, null);
 player1.setStamina(playerStamina);
 player1.setScore(parseInt(playerScore));
 var vborderBounce = 20;
@@ -451,7 +506,7 @@ var borderBounce = 10;
 
 
 //initialize opponent1
-const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT");
+const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT", null);
 opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
 opp1.setScore(parseInt(oppScore));
@@ -470,17 +525,22 @@ var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
 //html ElementID Array
 if (arena == FIRST_ARENA){
-  var arenaElementIds = new Array('map_layer0_tile_17_1_0');  //Use for map-arena
+
+  var arenaElementIds = new Array(new HtmlElement('map_layer0_tile_17_0_0', 16, -37), new HtmlElement('map_layer0_tile_17_0_1', -240, -37), new HtmlElement('map_layer0_tile_17_1_0', 16, 219),
+                                  new HtmlElement('map_layer0_tile_17_1_1',-240, 219), new HtmlElement('map_layer0_tile_17_0_2',-496, -37), new HtmlElement('map_layer0_tile_17_1_2',-496, 219),
+                                  new HtmlElement('map_layer0_tile_17_0_3',-752, -37), new HtmlElement('map_layer0_tile_17_1_3',-752, 219), new HtmlElement('map_layer0_tile_17_0_4',-1008, -37),
+                                  new HtmlElement( 'map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219) );  //Use for map-arena
 }
 else{
-  var arenaElementIds = new Array('div1','div2','div3');   //Use for test-arena
+  var arenaElementIds = new Array(new HtmlElement('div1', 0, 0),new HtmlElement('div2', 0, 0),new HtmlElement('div3', 0, 0) );   //Use for test-arena
 }
+
 for (var i = 0; i < arenaElementIds.length; i++) {
-  var genElement = document.getElementById(arenaElementIds[i]);
+  var genElement = document.getElementById(arenaElementIds[i].getHtmlElementID());
   if (genElement != null){
-    const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true, false);
+    const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true, false, 'DesObj', arenaElementIds[i]);
     tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top-CANVAS_OFFSET);
-    tempEntity.setEntityID(arenaElementIds[i]);
+    tempEntity.setEntityID(arenaElementIds[i].getHtmlElementID());
     nonDesEntityNumber++;
     entities.push(tempEntity);
   }
@@ -519,18 +579,22 @@ var fallingAniFrames = 60;     //Length of falling animation for destructible ob
 / Purpose: Changes the x/y position of an html element
 /
 / Params:
-/         elementID: the id assigned to the html element used to identify it.
-/         x: the x position you want the element moved to
+/         htmlElement: the underlayedHtmlElement assigned to the destructible entity.
+/         x: the x position you want the element moved to on the canvas
 /         y: the y position you want the element moved to
 /
 / Note: The destructible entity overlayed ontop of any html elements with an ID moves to the current location
 /       of the html element it's connected to whenever the draw() function is called so moving
 /       the html element moves the destructible entity overlayed ontop of it.
 */
-function moveElement(elementID, x, y) {
-  var tempY = y - CANVAS_OFFSET - MOVE_OFFSET_Y;
-  var tempX = x + MOVE_OFFSET_X;
-  var genE = document.getElementById(elementID);
+function moveElement(htmlElement, x, y, needOffset) {
+  var tempY = y - CANVAS_OFFSET - htmlElement.getYOffset();
+  var tempX = x + htmlElement.getXOffset();
+  if (needOffset && CANVAS_OFFSET != 0) {
+    //For some reason objects have a -9 in y movement for offsetted html elements on the map-arena
+    tempY = tempY + 9;
+  }
+  var genE = document.getElementById(htmlElement.getHtmlElementID());
   genE.style.position = "absolute";
   genE.style.left = tempX + 'px';
   genE.style.top = tempY + 'px';
@@ -556,12 +620,12 @@ function rectCollisionCheck(entity1, entity2) {
   if (entity1.getX() >= entity2.getX() + entity2.getWidth() || entity2.getX() >= entity1.getX() + entity1.getWidth()) {
     return false;
   }
-  
+
   //Checks if either entity is below the other
   if (entity1.getY() >= entity2.getY() + entity2.getHeight() || entity2.getY() >= entity1.getY() + entity1.getHeight()) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -580,7 +644,7 @@ function entBumpRight(bumpEnt, multiplier = 1) {
     bumpEnt.setX(canvas.width - bumpEnt.getWidth() - multipliedBumpMov);
   }
   bumpEnt.setX(bumpEnt.getX() + multipliedBumpMov);
-  
+
   //check to see if any entities were collided with
   var hitSomething = false;
   for (var i = 0; i < entities.length; i++) {
@@ -595,7 +659,7 @@ function entBumpRight(bumpEnt, multiplier = 1) {
           }
         }
       }
-      
+
       entities[i].setActionState(HIT_STATE);
       hitSomething = true;
     }
@@ -618,7 +682,7 @@ function entBumpLeft(bumpEnt, multiplier=1) {
     bumpEnt.setX(multipliedBumpMov);
   }
   bumpEnt.setX(bumpEnt.getX() - multipliedBumpMov);
-  
+
   //check to see if any entities were collided with
   var hitSomething = false;
   for (var i = 0; i < entities.length; i++) {
@@ -633,7 +697,7 @@ function entBumpLeft(bumpEnt, multiplier=1) {
           }
         }
       }
-      
+
       entities[i].setActionState(HIT_STATE);
       hitSomething = true;
     }
@@ -656,7 +720,7 @@ function entBumpUp(bumpEnt, multiplier=1) {
     bumpEnt.setY(multipliedBumpMov);
   }
   bumpEnt.setY(bumpEnt.getY() - multipliedBumpMov);
-  
+
   //check to see if any entities were collided with
   var hitSomething = false;
   for (var i = 0; i < entities.length; i++) {
@@ -671,7 +735,7 @@ function entBumpUp(bumpEnt, multiplier=1) {
           }
         }
       }
-      
+
       entities[i].setActionState(HIT_STATE);
       hitSomething = true;
     }
@@ -694,7 +758,7 @@ function entBumpDown(bumpEnt, multiplier=1) {
     bumpEnt.setY(canvas.height- bumpEnt.getHeight() - multipliedBumpMov);
   }
   bumpEnt.setY(bumpEnt.getY() + multipliedBumpMov);
-  
+
   //check to see if any entities were collided with
   var hitSomething = false;
   for (var i = 0; i < entities.length; i++) {
@@ -709,7 +773,7 @@ function entBumpDown(bumpEnt, multiplier=1) {
           }
         }
       }
-      
+
       entities[i].setActionState(HIT_STATE);
       hitSomething = true;
     }
@@ -765,7 +829,7 @@ function entityBump(bumpEntity) {
       entBumpUp(bumpEntity);
     }
   }
-  
+
   bumpEntity.setAnimationCounter(bumpEntity.getAnimationCounter() + 1);
   if (bumpEntity.getAnimationCounter() >= bumpAniFrames) {
     bumpEntity.setAnimationCounter(0);
@@ -800,11 +864,11 @@ function entityPickup(pickupEntity) {
       }
     }
   }
-  
+
   if (pickupEntity.getHoldingEnt() != null) {
-    moveElement(pickupEntity.getHoldingEnt().getEntityID(), pickupEntity.getHoldingEnt().getX() + pickupEntity.getHoldingEnt().getDx(), pickupEntity.getHoldingEnt().getY() + pickupEntity.getHoldingEnt().getDy());
+    moveElement(pickupEntity.getHoldingEnt().getUnderlayedHtmlElement(), pickupEntity.getHoldingEnt().getX() + pickupEntity.getHoldingEnt().getDx(), pickupEntity.getHoldingEnt().getY() + pickupEntity.getHoldingEnt().getDy(), false);
   }
-  
+
   pickupEntity.setAnimationCounter(pickupEntity.getAnimationCounter() + 1);
   if (pickupEntity.getAnimationCounter() >= pickupAniFrames) {
     pickupEntity.setAnimationCounter(0);
@@ -838,8 +902,7 @@ function entityDrop(dropEntity) {
       dropEntity.getHoldingEnt().setDx(5);
     } else if (dropEntity.getFacingDirection() == LEFT_DIR) {
       dropEntity.getHoldingEnt().setDx(-5);
-    }
-    else if (dropEntity.getFacingDirection() == UP_DIR) {
+    } else if (dropEntity.getFacingDirection() == UP_DIR) {
       dropEntity.getHoldingEnt().setDy(-5);
     } else {
       dropEntity.getHoldingEnt().setDy(5);
@@ -849,7 +912,7 @@ function entityDrop(dropEntity) {
     dropEntity.getHoldingEnt().setHoldingEnt(null);
     dropEntity.setHoldingEnt(null);
   }
-  
+
   dropEntity.setAnimationCounter(dropEntity.getAnimationCounter() + 1);
   if (dropEntity.getAnimationCounter() >= pickupAniFrames) {
     dropEntity.setAnimationCounter(0);
@@ -871,15 +934,15 @@ function drawEntity(genEnt) {
   //Update HTML element to follow the entity that is holding it. Used when the entity that is being held up is being drawn.
   if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
     if (genEnt.getHoldingEnt().getActionState() != PICKUP_STATE) {
-      moveElement(genEnt.getEntityID(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10 );
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10, false);
     }
   }
-  
+
   //HTML Element Reposition overlayed destructible entity to match current element location.
   if (genEnt.getDestructibleObject() && genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
     genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left,document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top-CANVAS_OFFSET);
   }
-  
+
   //BUMPING_STATE highlight animation
   if (genEnt.getActionState() == BUMPING_STATE) {
     ctx.beginPath();
@@ -905,14 +968,14 @@ function drawEntity(genEnt) {
         entBumpDown(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
       }
     }
-    
+
     //Draw Red Highlight
     ctx.beginPath();
     ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
     ctx.fillStyle = "#FF0000";
     ctx.fill();
     ctx.closePath();
-    
+
     genEnt.setHitCooldown(genEnt.getHitCooldown() + 1);
     if (genEnt.getHitCooldown() > HIT_COOLDOWN) {
       genEnt.setActionState(NORMAL_STATE);
@@ -936,7 +999,8 @@ function drawEntity(genEnt) {
       //Bounce 1st time
       else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
         genEnt.setDy((-100 / fallingAniFrames));
-      } else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
+      }
+      else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
         genEnt.setDy((100 / fallingAniFrames));
         if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
@@ -975,28 +1039,31 @@ function drawEntity(genEnt) {
       }
       genEnt.setDy(genEnt.getDy()/slowDown );
     }
-    
-    moveElement(genEnt.getEntityID(), genEnt.getX() + genEnt.getDx(), genEnt.getY() + genEnt.getDy() );
-    
+
+    moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX() + genEnt.getDx(), genEnt.getY() + genEnt.getDy(), true);
+
     genEnt.setAnimationCounter(genEnt.getAnimationCounter() + 1);
     if (genEnt.getAnimationCounter() >= fallingAniFrames) {
       itemDrop.play(); //dropped object sound
       genEnt.setActionState(NORMAL_STATE);
       genEnt.setAnimationCounter(0);
+      genEnt.setDx(0);
+      genEnt.setDy(0);
     }
   }
-  
+
   ctx.beginPath();
   ctx.drawImage(genEnt.getImage(), genEnt.getX(), genEnt.getY(), genEnt.getWidth(), genEnt.getHeight());
   ctx.fill();
   ctx.closePath();
-  
+
   //Show coordinates of html element and distructible entity overlay when dubug overlay is active
   if (showDebug) {
     if (genEnt.getDestructibleObject()) {
       ctx.font = "10px Helvetica";
       ctx.fillStyle = "#000000";
       if (genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
+        ctx.fillText(genEnt.getEntityID(), genEnt.getX(), genEnt.getY()-70);
         ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY()-60);
         ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY()-50);
         ctx.fillText(player1.getY(), genEnt.getX() + genEnt.getWidth()-20, genEnt.getY()-50);
@@ -1009,7 +1076,7 @@ function drawEntity(genEnt) {
       }
     }
   }
-  
+
   //Draw entity stamina bar after taking stamina damage
   var genEntMaxStam = MAX_STAMINA;
   if (genEnt.getDestructibleObject()) {
@@ -1029,12 +1096,12 @@ function drawEntity(genEnt) {
     ctx.fill();
     ctx.closePath();
   }
-  
+
   //decrement Action Cooldown if it's above 0
   if (genEnt.getActionCooldown() > 0) {
     genEnt.setActionCooldown(genEnt.getActionCooldown() - 1);
   }
-  
+
   if (genEnt.getEntityID() == gameUI.getEntityID()) {
     drawGamePlayOverlay();
   }
@@ -1074,12 +1141,12 @@ function drawGamePlayOverlay() {
   ctx.font = "15px Helvetica";
   ctx.fillStyle = "#ffffff";
   ctx.fillText(p1User + " STAMINA", 25, (gameUI.getHeight()/4)+yOffset+8); //display player username
-  
+
   //Timer
   ctx.font = "20px Helvetica";
   ctx.fillStyle = "#000000";
   ctx.fillText(currTime, gameUI.getWidth()/2-20, 23+yOffset);
-  
+
   //Empty bar
   ctx.beginPath();
   ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/4)+1, (gameUI.getWidth()/3)-20, gameUI.getHeight()/2);
@@ -1104,7 +1171,7 @@ function drawDebugInfo() {
   //calculate fps
   var thisDraw = new Date();              //current time
   var fps = 1000 / (thisDraw - lastDraw); //estimated frames per second
-  
+
   //Calculate avg fps
   fps_Count++;
   if (fps_Count > 60) {
@@ -1115,7 +1182,7 @@ function drawDebugInfo() {
   var avg_fps = tot_fps / fps_Count;    //The Average estimated FPS
   avg_fps = avg_fps.toFixed(1);
   lastDraw = thisDraw
-  
+
   //Draw background
   ctx.beginPath();
   ctx.rect(0, 0, 220, dbListPos*10);
@@ -1124,7 +1191,7 @@ function drawDebugInfo() {
   ctx.fill();
   ctx.closePath();
   ctx.globalAlpha = 1;
-  
+
   //Draw stats
   ctx.font = "16px Arial";
   ctx.fillStyle = "#FFFFFF";
@@ -1145,7 +1212,7 @@ function draw() {
   // adjust canvas size so that borders of game move with window size
   ctx.canvas.width  = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
-  
+
   if ((currTime <= startTime - 5)) { //allow player and AI actions only after 5 seconds have passed
 
     //When no special actions are being taken by player1: allows free movement
@@ -1157,7 +1224,7 @@ function draw() {
           player1.setX(canvas.width - player1.getWidth() - borderBounce);
         }
         player1.setX(player1.getX() + player1.getDx());
-        
+
         //check to see if any entities were collided with
         var hitSomething = false;
         for (var i = 0; i < entities.length; i++) {
@@ -1171,14 +1238,14 @@ function draw() {
         }
         player1.setFacingDirection(RIGHT_DIR);
       }
-      
+
       // move left and adjust if outside window border
       if (leftPressed){
         if(player1.getX() - player1.getDx()  < 0){
           player1.setX(borderBounce);
         }
         player1.setX(player1.getX() - player1.getDx());
-        
+
         //check to see if any entities were collided with
         var hitSomething = false;
         for (var i = 0; i < entities.length; i++) {
@@ -1192,14 +1259,14 @@ function draw() {
         }
         player1.setFacingDirection(LEFT_DIR);
       }
-      
+
       // move up and adjust if outside window border
       if(upPressed){
         if(player1.getY() + player1.getDy() <  0) {
           player1.setY(player1.getY() + player1.getDy());
         }
         player1.setY(player1.getY() - player1.getDy());
-        
+
         //check to see if any entities were collided with
         var hitSomething = false;
         for (var i = 0; i < entities.length; i++) {
@@ -1213,7 +1280,7 @@ function draw() {
         }
         player1.setFacingDirection(UP_DIR);
       }
-      
+
       // move down and adjust if outside window border
       if(downPressed){
         if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
@@ -1221,7 +1288,7 @@ function draw() {
           player1.setY(player1.getY() - player1.getDy());
         }
         player1.setY(player1.getY() + player1.getDy());
-        
+
         //check to see if any entities were collided with
         var hitSomething = false;
         for (var i = 0; i < entities.length; i++) {
@@ -1240,23 +1307,25 @@ function draw() {
     else if (player1.getActionState() == BUMPING_STATE) {
       entityBump(player1);
     }
-    
+
     //When player1 is attempting to pickup an object
     else if (player1.getActionState() == PICKUP_STATE) {
       entityPickup(player1);
     }
-    
+
     //When player1 is attemptingto drop an object
     else if (player1.getActionState() == DROP_STATE) {
       entityDrop(player1);
     }
-    
+
     //AI takes its actions after the player
-    AILogic();
+    if (AI_DIFFICULTY >= 0) {
+        AILogic();
+    }
   }
   // clear the canvas to redraw screen
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
   if (hideArena) {
     ctx.beginPath();
     ctx.rect(0, 0, window.innerWidth, window.innerHeight);
@@ -1264,14 +1333,14 @@ function draw() {
     ctx.fill();
     ctx.closePath;
   }
-  
+
   //Draws each entity
   if (!hideEntities) {
     for (var i = 0; i < entities.length; i++) {
       drawEntity(entities[i]);
     }
   }
-  
+
   //Check for debug overlay flag
   if (showDebug) {
     drawDebugInfo();
@@ -1361,7 +1430,7 @@ function keyUpHandler(e) {
 /   params:  cname: name of the cookie
 /            cvalue: value of the cookie
 /            exdays: number of days until cookie expires
-/ 
+/
 */
 function setCookie(cname, cvalue, exdays) {
   const d = new Date();
@@ -1374,7 +1443,7 @@ function setCookie(cname, cvalue, exdays) {
 /   Purpose: get the value of a cookie
 /
 /   params:  cname: name of the cookie
-/            
+/
 /   return:  value of the cookie, "" if no cookie with the given cname exists
 */
 function getCookie(cname) {
