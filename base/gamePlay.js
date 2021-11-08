@@ -26,6 +26,8 @@ var PICKUP_STATE = "pickup";
 var HIT_STATE = "hit";
 var DROP_STATE = "dropping";            //Used for characters and AI
 var FALLING_STATE = "falling";          //Used for destructible entities after they are dropped
+var THROWING_STATE = "Throwing"         //Used for characters and AI that are throwing something
+var THROWN_STATE = "flying";            //Used for destructible entities after they are dropped with a force equal to THROW_FORCE
 var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
 var KNOCKBACK_COOLDOWN = 10;
 var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
@@ -38,8 +40,11 @@ var SECOND_ARENA = "second arena page";
 var MAX_STAMINA = 100;                  //max stamina for players or AI
 var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
 var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
+var THROW_DAMAGE = 30;
 var BUMP_KNOCKBACK = 10;
 var AI_DIFFICULTY = 2;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
+var THROW_FORCE = 30;
+var DROP_FORCE = 5;
 
 //Variables
 var transitioned = false;               //Added 5 additional seconds before the game starts for the user to get ready
@@ -572,7 +577,7 @@ var tot_fps = 0;                //The time to draw each frame summed together
 var bumpAniFrames = 14;         //Length of bump animation in frames
 var bumpDistance = 80;          //How far the bump animation takes you forward
 var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
-var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function) for players/AI
+var pickupAniFrames = 21;       //Length of the pickup/drop animation in frames (calls to the draw function) for players/AI
 var fallingAniFrames = 60;     //Length of falling animation for destructible objects that have been dropped
 
 /*
@@ -866,7 +871,7 @@ function entityPickup(pickupEntity) {
   }
 
   if (pickupEntity.getHoldingEnt() != null) {
-    moveElement(pickupEntity.getHoldingEnt().getUnderlayedHtmlElement(), pickupEntity.getHoldingEnt().getX() + pickupEntity.getHoldingEnt().getDx(), pickupEntity.getHoldingEnt().getY() + pickupEntity.getHoldingEnt().getDy(), false);
+    moveElement(pickupEntity.getHoldingEnt().getUnderlayedHtmlElement(), pickupEntity.getHoldingEnt().getX() + pickupEntity.getHoldingEnt().getDx(), pickupEntity.getHoldingEnt().getY() + pickupEntity.getHoldingEnt().getDy(), true);
   }
 
   pickupEntity.setAnimationCounter(pickupEntity.getAnimationCounter() + 1);
@@ -893,21 +898,29 @@ function entityPickup(pickupEntity) {
 /         make sure to only give this function entity objects.
 /
 */
-function entityDrop(dropEntity) {
+function entityDrop(dropEntity, force) {
   if (dropEntity.getAnimationCounter() == 0 && dropEntity.getHoldingEnt() != null) {
     //Holding a html element, drop the element.
     dropEntity.getHoldingEnt().setDy(0);
     dropEntity.getHoldingEnt().setDx(0);
     if (dropEntity.getFacingDirection() == RIGHT_DIR) {
-      dropEntity.getHoldingEnt().setDx(5);
+      dropEntity.getHoldingEnt().setDx(force);
+      dropEntity.getHoldingEnt().setFacingDirection(RIGHT_DIR);
     } else if (dropEntity.getFacingDirection() == LEFT_DIR) {
-      dropEntity.getHoldingEnt().setDx(-5);
+      dropEntity.getHoldingEnt().setDx(-force);
+      dropEntity.getHoldingEnt().setFacingDirection(LEFT_DIR);
     } else if (dropEntity.getFacingDirection() == UP_DIR) {
-      dropEntity.getHoldingEnt().setDy(-5);
+      dropEntity.getHoldingEnt().setDy(-force);
+      dropEntity.getHoldingEnt().setFacingDirection(UP_DIR);
     } else {
-      dropEntity.getHoldingEnt().setDy(5);
+      dropEntity.getHoldingEnt().setDy(force);
+      dropEntity.getHoldingEnt().setFacingDirection(DOWN_DIR);
     }
-    dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
+    if (force == THROW_FORCE) {
+        dropEntity.getHoldingEnt().setActionState(THROWN_STATE);
+    } else {
+        dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
+    }
     dropEntity.getHoldingEnt().setAnimationCounter(0);
     dropEntity.getHoldingEnt().setHoldingEnt(null);
     dropEntity.setHoldingEnt(null);
@@ -920,6 +933,8 @@ function entityDrop(dropEntity) {
     dropEntity.setActionCooldown(ACTION_COOLDOWN);
   }
 }
+
+
 
 //Animation/Action Functions End
 
@@ -984,63 +999,113 @@ function drawEntity(genEnt) {
     }
   }
   //FALLING_STATE (only applies to destructible entities)
-  else if (genEnt.getActionState() == FALLING_STATE) {
-    var slowDown = 1;
-    //Drop right or left
-    if (genEnt.getDx() != 0) {
-      //Initial fall
-      if (genEnt.getAnimationCounter() <= (4*fallingAniFrames)/10 ) {
-        genEnt.setDy((300 / fallingAniFrames) );
+  else if (genEnt.getActionState() == FALLING_STATE || genEnt.getActionState() == THROWN_STATE) {
+    var hitSomething = false;
+
+    if (genEnt.getActionState() == THROWN_STATE) {
+      //check to see if any AI/Players were collided with
+      for (var i = 0; i < entities.length; i++) {
+        if (rectCollisionCheck(genEnt, entities[i]) && genEnt.getEntityID() != entities[i].getEntityID()) {
+          if (entities[i].getActionState() != THROWING_STATE && !entities[i].getDestructibleObject()) {
+            if (entities[i].getActionState() != HIT_STATE) {
+              entities[i].decreaseStamina(THROW_DAMAGE);
+              entities[i].setActionState(HIT_STATE);
+              if (entities[i].isACharacter() == true) {
+                entities[i].setKnockbackDirection(genEnt.getFacingDirection());
+                genEnt.addScore( ((THROW_DAMAGE/BUMP_DAMAGE)+1) *100);
+                if (entities[i].getStamina() == 0) {
+                  endGame();
+                }
+              }
+              //Must be after all the entities[i] calls or issues bugs occur
+              genEnt.decreaseStamina(THROW_DAMAGE);
+            }
+            hitSomething = true;
+          }
+        }
+      }
+      if ( hitSomething ) {
+        genEnt.setDx(0);
+        genEnt.setDy(0);
+      }
+    }
+
+    if (!hitSomething) {
+      var slowDown = 1;
+      //Drop right or left
+      if (genEnt.getDx() != 0) {
+        //Initial fall
+        if (genEnt.getAnimationCounter() <= (4*fallingAniFrames)/10 ) {
+          genEnt.setDy((300 / fallingAniFrames) );
+          if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        //Bounce 1st time
+        else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
+          genEnt.setDy((-100 / fallingAniFrames));
+        }
+        else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
+          genEnt.setDy((100 / fallingAniFrames));
+          if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        //Bounce 2nd time
+        else if (genEnt.getAnimationCounter() <= (9*fallingAniFrames)/10) {
+          genEnt.setDy((-25 / fallingAniFrames));
+        } else if (genEnt.getAnimationCounter() <= (fallingAniFrames)/10) {
+          genEnt.setDy((25 / fallingAniFrames));
+          if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        genEnt.setDx(genEnt.getDx()/slowDown );
+      }
+      //Drop Up or Down
+      else {
+        slowDown = 1;
+        //Initial fall
         if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown*2;
         }
-      }
-      //Bounce 1st time
-      else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
-        genEnt.setDy((-100 / fallingAniFrames));
-      }
-      else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
-        genEnt.setDy((100 / fallingAniFrames));
+        //Bounce 1st time
         if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown*2;
         }
-      }
-      //Bounce 2nd time
-      else if (genEnt.getAnimationCounter() <= (9*fallingAniFrames)/10) {
-        genEnt.setDy((-25 / fallingAniFrames));
-      } else if (genEnt.getAnimationCounter() <= (fallingAniFrames)/10) {
-        genEnt.setDy((25 / fallingAniFrames));
+        //Bounce 2nd time
         if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown*2;
         }
+        genEnt.setDy(genEnt.getDy()/slowDown );
       }
-      genEnt.setDx(genEnt.getDx()/slowDown );
-    }
-    //Drop Up or Down
-    else {
-      slowDown = 1;
-      //Initial fall
-      if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
-        itemDrop.play(); //dropped object sound
-        slowDown = slowDown*2;
-      }
-      //Bounce 1st time
-      if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
-        itemDrop.play(); //dropped object sound
-        slowDown = slowDown*2;
-      }
-      //Bounce 2nd time
-      if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
-        itemDrop.play(); //dropped object sound
-        slowDown = slowDown*2;
-      }
-      genEnt.setDy(genEnt.getDy()/slowDown );
     }
 
     moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX() + genEnt.getDx(), genEnt.getY() + genEnt.getDy(), true);
+
+    //Celling Floor Collision
+    if (genEnt.getY() > canvas.height - genEnt.getHeight()) {
+      genEnt.setY(canvas.height- genEnt.getHeight());
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    } else if (genEnt.getY() < 0) {
+      genEnt.setY(0);
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    }
+
+    //Sides Collision
+    if (genEnt.getX() > canvas.width - genEnt.getWidth()) {
+      genEnt.setX(canvas.width - genEnt.getWidth());
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    } else if (genEnt.getX() < 0) {
+      genEnt.setX(0);
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    }
 
     genEnt.setAnimationCounter(genEnt.getAnimationCounter() + 1);
     if (genEnt.getAnimationCounter() >= fallingAniFrames) {
@@ -1315,7 +1380,12 @@ function draw() {
 
     //When player1 is attemptingto drop an object
     else if (player1.getActionState() == DROP_STATE) {
-      entityDrop(player1);
+      entityDrop(player1, DROP_FORCE);
+    }
+
+    //When player1 is attempting to thrown a held object
+    else if (player1.getActionState() == THROWING_STATE) {
+      entityDrop(player1, THROW_FORCE);
     }
 
     //AI takes its actions after the player
@@ -1366,8 +1436,12 @@ function keyDownHandler(e) {
   }
   else if (e.key == p1BumpKey) {
     if (player1.getActionCooldown() == 0) {
-      p1BumpPressed = true;
-      player1.setActionState(BUMPING_STATE);
+      if (player1.getHoldingEnt() != null) {
+        player1.setActionState(THROWING_STATE);
+      } else {
+        p1BumpPressed = true;
+        player1.setActionState(BUMPING_STATE);
+      }
     }
   }
   else if (e.key == "l") {
