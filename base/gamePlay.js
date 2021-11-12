@@ -42,7 +42,7 @@ var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
 var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
 var THROW_DAMAGE = 30;
 var BUMP_KNOCKBACK = 10;
-var AI_DIFFICULTY = 2;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
+var AI_DIFFICULTY = 0;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
 var THROW_FORCE = 30;
 var DROP_FORCE = 5;
 
