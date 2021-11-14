@@ -26,6 +26,8 @@ var PICKUP_STATE = "pickup";
 var HIT_STATE = "hit";
 var DROP_STATE = "dropping";            //Used for characters and AI
 var FALLING_STATE = "falling";          //Used for destructible entities after they are dropped
+var THROWING_STATE = "Throwing"         //Used for characters and AI that are throwing something
+var THROWN_STATE = "flying";            //Used for destructible entities after they are dropped with a force equal to THROW_FORCE
 var HIT_COOLDOWN = 15;                  //amount of immune to damage time after being hit
 var KNOCKBACK_COOLDOWN = 10;
 var ACTION_COOLDOWN = 15;               //number of frames between actions (time delay between actions)
@@ -38,10 +40,22 @@ var SECOND_ARENA = "second arena page";
 var MAX_STAMINA = 100;                  //max stamina for players or AI
 var DESTRUCTIBLE_MAX_STAMINA = 30;      //max stamina for destructible objects
 var BUMP_DAMAGE = 10;                   //stamina damage delt with any successful bumpaction
+var THROW_DAMAGE = 30;
 var BUMP_KNOCKBACK = 10;
-var started = false;
+var AI_DIFFICULTY = 0;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
+var THROW_FORCE = 30;
+var DROP_FORCE = 5;
+
+//Variables
+var transitioned = false;               //Added 5 additional seconds before the game starts for the user to get ready
+                                        //on stage transition this means the timer will start above the transition time
+                                        //this variable is used to prevent a transition loop when the timer gets back to the transition time
+                                        //likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
+                                        //countdown before the game starts but it felt right with the hard AI being more aggressive right away
+
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
+//var arena = 'test';
 var arena = FIRST_ARENA;
 if (canvas == null) {
   arena = SECOND_ARENA;
@@ -51,12 +65,8 @@ var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actual
 
 //The amount of offset the canvas has to the webpage. Defined in the arena css file
 var CANVAS_OFFSET = 0;                  //Use for test-arena
-var MOVE_OFFSET_X = 0;
-var MOVE_OFFSET_Y = 0;
-if (arena == FIRST_ARENA) {
+if (arena == FIRST_ARENA){
   CANVAS_OFFSET = 40;                 //Use for map-arena
-  MOVE_OFFSET_X = 16;
-  MOVE_OFFSET_Y = 210;
 }
 
 //Sound Effects
@@ -67,23 +77,41 @@ var itemPickup = new Audio("../SoundEffects/itempickup.wav"); //sound for pickin
 var itemDrop = new Audio("../SoundEffects/itemdrop.wav"); //sound for item hitting the floor
 
 //game timer count down to 0 starting at startTime
-var startTime = 30;
+var startTime = 35; //first 5 seconds no actions can be taken by player or AI, player can "queue" an action to be taken though
 var transitionTime = 15;
 playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
-var pageURL = window.location.search.substring(1)
+var playerScore = 0;
+var oppScore = 0;
+var pageURL = window.location.search.substring(1);
 if (pageURL) {
   var URLArray = pageURL.split('&');
-  startTime = URLArray[0].split('=')[1];
-  playerStamina = URLArray[1].split('=')[1];
-  oppStamina = URLArray[2].split('=')[1];
+  for (var i = 0; i < URLArray.length; i++){
+    var splitVals = URLArray[i].split('=');
+    if (splitVals[0] == "startTime") {
+      startTime = splitVals[1];
+    }
+    else if (splitVals[0] == "transitioned") { //used to prevent infinitely looping transition after 5 second countdown
+      transitioned = splitVals[1];
+    }
+    else if (splitVals[0] == "playerStamina") {
+      playerStamina = splitVals[1];
+    }
+    else if (splitVals[0] == "opponentStamina") {
+      oppStamina = splitVals[1];
+    } else if (splitVals[0] == "playerScore") {
+      playerScore = splitVals[1];
+    } else if (splitVals[0] == "opponentScore") {
+      oppScore = splitVals[1];
+    }
+  }
 }
 var currTime = startTime;
 var timerInterval = setInterval(function () {
   //initialize vars using passed in url to enable passing of arguments
 
   // move to new arena page if a certain amount of time has passed
-  if (currTime == transitionTime && startTime != currTime) {
+  if (transitioned == false && currTime == transitionTime && startTime != currTime) {
     transitionStage();
   }
 
@@ -93,20 +121,39 @@ var timerInterval = setInterval(function () {
   }
   currTime--;
 }, 1000); // update about every second
+
 function transitionStage() {
-  window.location.href = '../home-arena/home-arena.html?startTime=' + transitionTime + '&playerStamina='
-    + player1.getStamina() + "&opponentStamina=" + opp1.getStamina();
+  transitioned = true;
+  window.location.href = '../home-arena/home-arena.html?startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
+  + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore();
 }
 function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
   clearInterval(timerInterval); //stop the timer
   var maxScore = 0;
-
+  var secondScore = 0;
+  var winner = null;
+  var second = null;
   for (i = 0; i < entities.length; i++) {
     if (entities[i].isACharacter() == true) {
+      if (winner == null) {
+        winner = entities[i];
+      }
       if (entities[i].getScore() >= maxScore) {
         winner = entities[i];
         maxScore = winner.getScore();
+      }
+    }
+  }
+
+  for (i = 0; i < entities.length; i++) {
+    if (entities[i].isACharacter() == true) {
+      if (second == null) {
+        second = entities[i];
+      }
+      if (entities[i] != winner && entities[i].getScore() >= secondScore) {
+        second = entities[i];
+        secondScore = second.getScore();
       }
     }
   }
@@ -120,8 +167,57 @@ function endGame() {
     maxScore += 50;
   }
 
+  window.location.href = '../win-screen/win-screen.html?winner=' + maxScore + "&2nd=" + second.getScore() + '&winnerimg='
+  + winner.getImage().src + "&2ndimg=" + second.getImage().src + "&winnerUser=" + winner.username + "&secondUser=" + second.username;
+
   //display basic game over window. Will replace with actual ending screen, this is just a placeholder
-  alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
+  //alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
+}
+
+
+/*
+/ Purpose: This class is to be used for all html elements that will need a destructible object overlay
+/
+/ Variables:
+/           htmlElementID: the elements ID from it's html code, used to reference the element
+/           xOffset: The diffrence between the visible X and actual X position of the element onscreen
+/           yOffset: The diffrence between the visible Y and actual Y position of the element onscreen
+/
+*/
+class HtmlElement {
+  htmlElementID = null;
+  xOffset = 0;
+  yoffset = 0;
+
+  constructor(htmlElementID, xOffset, yOffset) {
+    this.htmlElementID = htmlElementID;
+    this.xOffset = xOffset;
+    this.yOffset = yOffset;
+  }
+
+  getHtmlElementID() {
+    return this.htmlElementID;
+  }
+
+  getXOffset() {
+    return this.xOffset;
+  }
+
+  getYOffset() {
+    return this.yOffset;
+  }
+
+  setHtmlElementID(htmlElementID) {
+    this.htmlElementID = htmlElementID;
+  }
+
+  setXOffset(xOffset) {
+    this.xOffset = xOffset;
+  }
+
+  setYOffset(yOffset) {
+    this.yOffset = yOffset;
+  }
 }
 
 /*
@@ -158,16 +254,17 @@ class Entity {
   entityID = 0;                 //An entities unique ID set before putting in entity list
   stamina = MAX_STAMINA;        //stamina: an entity resource that determines when wins a match
   holdingEnt = null;            /*
-  / For destructible entities this is null when not being held
-  / When held this is the entity holding them
-  / for non-destructible entities this is null when not holding another entity
-  / and when they are holding an entity it is the entity they are holding
-  */
+                                / For destructible entities this is null when not being held
+                                / When held this is the entity holding them
+                                / for non-destructible entities this is null when not holding another entity
+                                / and when they are holding an entity it is the entity they are holding
+                                */
+  underlayedHtmlElement = null; //For destructibleObjects that have an underlayed html element
   score = 0;
 
 
   //initializing function
-  constructor(height, width, src, destructibleObject, isCharacter) {
+  constructor(height, width, src, destructibleObject, isCharacter, username, underlayedHtmlElement) {
     this.entityImg.src = src;        //src: The link to the source file
     this.entityImg.width = width;    //width: The Width of the image
     this.entityImg.height = height;  //height: The height of the image
@@ -176,6 +273,8 @@ class Entity {
       this.stamina = DESTRUCTIBLE_MAX_STAMINA;
     }
     this.isCharacter = isCharacter;
+    this.username = username;
+    this.underlayedHtmlElement = underlayedHtmlElement;
   }
 
   setIsCharacter(isCharacter) {
@@ -266,6 +365,14 @@ class Entity {
     return this.holdingEnt;
   }
 
+  getUnderlayedHtmlElement() {
+    return this.underlayedHtmlElement;
+  }
+
+  setUnderlayedHtmlElement(underlayedHtmlElement) {
+    this.underlayedHtmlElement = underlayedHtmlElement;
+  }
+
   setActionState(actionState) {
     this.actionState = actionState;
   }
@@ -294,7 +401,7 @@ class Entity {
     this.y = y;
   }
 
-  setPosition(x, y) {
+  setPosition(x,y) {
     this.x = x;
     this.y = y;
   }
@@ -341,6 +448,10 @@ class Entity {
     this.holdingEnt = holdingEnt;
   }
 
+  setScore(score) {
+    this.score = score;
+  }
+
   //Used to decrease or increase statmina by a set amount from the current total
   //negative numbers add to stamina positive numbers lower stamina.
   decreaseStamina(amount) {
@@ -384,25 +495,24 @@ class Entity {
     this.y = y;
   }
 }
-var playerSrc;
-var oppSrc;
-function initializePlayerOneSrc(src) {
-  playerSrc = src;
-}
 
-function initializePlayerTwoSrc(src) {
-  oppSrc = src;
-}
 //initialize player1
-const player1 = new Entity(90, 70, playerSrc, false, true);
+var p1User = getCookie("username"); //get username from cookie. Username is set by selecting "Singleplayer" from base.html start page
+if (p1User == "") {
+  p1User = "PLAYER"; //username defaults to "PLAYER " if there is no username cookie
+}
+const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User, null);
 player1.setStamina(playerStamina);
+player1.setScore(parseInt(playerScore));
 var vborderBounce = 20;
 var borderBounce = 10;
 
+
 //initialize opponent1
-const opp1 = new Entity(90, 70, oppSrc, false, true);
-opp1.setStartingPosition(window.innerWidth / 2 + 300, window.innerHeight / 2);
+const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT", null);
+opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
+opp1.setScore(parseInt(oppScore));
 
 //initialize UI
 const gameUI = new Entity(50, window.innerWidth, '', true, false);
@@ -417,18 +527,23 @@ var entities = new Array(gameUI);
 var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
 //html ElementID Array
-if (arena == FIRST_ARENA) {
-  var arenaElementIds = new Array('map_layer0_tile_17_1_0');  //Use for map-arena
+if (arena == FIRST_ARENA){
+
+  var arenaElementIds = new Array(new HtmlElement('map_layer0_tile_17_0_0', 16, -37), new HtmlElement('map_layer0_tile_17_0_1', -240, -37), new HtmlElement('map_layer0_tile_17_1_0', 16, 219),
+                                  new HtmlElement('map_layer0_tile_17_1_1',-240, 219), new HtmlElement('map_layer0_tile_17_0_2',-496, -37), new HtmlElement('map_layer0_tile_17_1_2',-496, 219),
+                                  new HtmlElement('map_layer0_tile_17_0_3',-752, -37), new HtmlElement('map_layer0_tile_17_1_3',-752, 219), new HtmlElement('map_layer0_tile_17_0_4',-1008, -37),
+                                  new HtmlElement( 'map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219) );  //Use for map-arena
 }
-else {
-  var arenaElementIds = new Array('div1', 'div2', 'div3');   //Use for test-arena
+else{
+  var arenaElementIds = new Array(new HtmlElement('div1', 0, 0),new HtmlElement('div2', 0, 0),new HtmlElement('div3', 0, 0) );   //Use for test-arena
 }
+
 for (var i = 0; i < arenaElementIds.length; i++) {
-  var genElement = document.getElementById(arenaElementIds[i]);
-  if (genElement != null) {
-    const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true, false);
-    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top - CANVAS_OFFSET);
-    tempEntity.setEntityID(arenaElementIds[i]);
+  var genElement = document.getElementById(arenaElementIds[i].getHtmlElementID());
+  if (genElement != null){
+    const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true, false, 'DesObj', arenaElementIds[i]);
+    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top-CANVAS_OFFSET);
+    tempEntity.setEntityID(arenaElementIds[i].getHtmlElementID());
     nonDesEntityNumber++;
     entities.push(tempEntity);
   }
@@ -458,26 +573,30 @@ var tot_fps = 0;                //The time to draw each frame summed together
 //Animation/Action variables
 var bumpAniFrames = 14;         //Length of bump animation in frames
 var bumpDistance = 80;          //How far the bump animation takes you forward
-var bumpMovPerFrame = bumpDistance / (bumpAniFrames / 2); //The distance the bump animation goes forward each frame
-var pickupAniFrames = 7;       //Length of the pickup/drop animation in frames (calls to the draw function) for players/AI
+var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
+var pickupAniFrames = 21;       //Length of the pickup/drop animation in frames (calls to the draw function) for players/AI
 var fallingAniFrames = 60;     //Length of falling animation for destructible objects that have been dropped
 
 /*
 / Purpose: Changes the x/y position of an html element
 /
 / Params:
-/         elementID: the id assigned to the html element used to identify it.
-/         x: the x position you want the element moved to
+/         htmlElement: the underlayedHtmlElement assigned to the destructible entity.
+/         x: the x position you want the element moved to on the canvas
 /         y: the y position you want the element moved to
 /
 / Note: The destructible entity overlayed ontop of any html elements with an ID moves to the current location
 /       of the html element it's connected to whenever the draw() function is called so moving
 /       the html element moves the destructible entity overlayed ontop of it.
 */
-function moveElement(elementID, x, y) {
-  var tempY = y - CANVAS_OFFSET - MOVE_OFFSET_Y;
-  var tempX = x + MOVE_OFFSET_X;
-  var genE = document.getElementById(elementID);
+function moveElement(htmlElement, x, y, needOffset) {
+  var tempY = y - CANVAS_OFFSET - htmlElement.getYOffset();
+  var tempX = x + htmlElement.getXOffset();
+  if (needOffset && CANVAS_OFFSET != 0) {
+    //For some reason objects have a -9 in y movement for offsetted html elements on the map-arena
+    tempY = tempY + 9;
+  }
+  var genE = document.getElementById(htmlElement.getHtmlElementID());
   genE.style.position = "absolute";
   genE.style.left = tempX + 'px';
   genE.style.top = tempY + 'px';
@@ -749,7 +868,7 @@ function entityPickup(pickupEntity) {
   }
 
   if (pickupEntity.getHoldingEnt() != null) {
-    moveElement(pickupEntity.getHoldingEnt().getEntityID(), pickupEntity.getHoldingEnt().getX() + pickupEntity.getHoldingEnt().getDx(), pickupEntity.getHoldingEnt().getY() + pickupEntity.getHoldingEnt().getDy());
+    moveElement(pickupEntity.getHoldingEnt().getUnderlayedHtmlElement(), pickupEntity.getHoldingEnt().getX() + pickupEntity.getHoldingEnt().getDx(), pickupEntity.getHoldingEnt().getY() + pickupEntity.getHoldingEnt().getDy(), true);
   }
 
   pickupEntity.setAnimationCounter(pickupEntity.getAnimationCounter() + 1);
@@ -776,22 +895,29 @@ function entityPickup(pickupEntity) {
 /         make sure to only give this function entity objects.
 /
 */
-function entityDrop(dropEntity) {
+function entityDrop(dropEntity, force) {
   if (dropEntity.getAnimationCounter() == 0 && dropEntity.getHoldingEnt() != null) {
     //Holding a html element, drop the element.
     dropEntity.getHoldingEnt().setDy(0);
     dropEntity.getHoldingEnt().setDx(0);
     if (dropEntity.getFacingDirection() == RIGHT_DIR) {
-      dropEntity.getHoldingEnt().setDx(5);
+      dropEntity.getHoldingEnt().setDx(force);
+      dropEntity.getHoldingEnt().setFacingDirection(RIGHT_DIR);
     } else if (dropEntity.getFacingDirection() == LEFT_DIR) {
-      dropEntity.getHoldingEnt().setDx(-5);
-    }
-    else if (dropEntity.getFacingDirection() == UP_DIR) {
-      dropEntity.getHoldingEnt().setDy(-5);
+      dropEntity.getHoldingEnt().setDx(-force);
+      dropEntity.getHoldingEnt().setFacingDirection(LEFT_DIR);
+    } else if (dropEntity.getFacingDirection() == UP_DIR) {
+      dropEntity.getHoldingEnt().setDy(-force);
+      dropEntity.getHoldingEnt().setFacingDirection(UP_DIR);
     } else {
-      dropEntity.getHoldingEnt().setDy(5);
+      dropEntity.getHoldingEnt().setDy(force);
+      dropEntity.getHoldingEnt().setFacingDirection(DOWN_DIR);
     }
-    dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
+    if (force == THROW_FORCE) {
+        dropEntity.getHoldingEnt().setActionState(THROWN_STATE);
+    } else {
+        dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
+    }
     dropEntity.getHoldingEnt().setAnimationCounter(0);
     dropEntity.getHoldingEnt().setHoldingEnt(null);
     dropEntity.setHoldingEnt(null);
@@ -804,6 +930,8 @@ function entityDrop(dropEntity) {
     dropEntity.setActionCooldown(ACTION_COOLDOWN);
   }
 }
+
+
 
 //Animation/Action Functions End
 
@@ -819,7 +947,7 @@ function drawEntity(genEnt) {
   //Update HTML element to follow the entity that is holding it. Used when the entity that is being held up is being drawn.
   if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
     if (genEnt.getHoldingEnt().getActionState() != PICKUP_STATE) {
-      moveElement(genEnt.getEntityID(), genEnt.getHoldingEnt().getX() - genEnt.getWidth() / 2 + genEnt.getHoldingEnt().getWidth() / 2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10);
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10, false);
     }
   }
 
@@ -869,68 +997,121 @@ function drawEntity(genEnt) {
     }
   }
   //FALLING_STATE (only applies to destructible entities)
-  else if (genEnt.getActionState() == FALLING_STATE) {
-    var slowDown = 1;
-    //Drop right or left
-    if (genEnt.getDx() != 0) {
-      //Initial fall
-      if (genEnt.getAnimationCounter() <= (4 * fallingAniFrames) / 10) {
-        genEnt.setDy((300 / fallingAniFrames));
-        if (genEnt.getAnimationCounter() == (4 * fallingAniFrames) / 10) {
-          itemDrop.play(); //dropped object sound
-          slowDown = slowDown * 2;
+  else if (genEnt.getActionState() == FALLING_STATE || genEnt.getActionState() == THROWN_STATE) {
+    var hitSomething = false;
+
+    if (genEnt.getActionState() == THROWN_STATE) {
+      //check to see if any AI/Players were collided with
+      for (var i = 0; i < entities.length; i++) {
+        if (rectCollisionCheck(genEnt, entities[i]) && genEnt.getEntityID() != entities[i].getEntityID()) {
+          if (entities[i].getActionState() != THROWING_STATE && !entities[i].getDestructibleObject()) {
+            if (entities[i].getActionState() != HIT_STATE) {
+              entities[i].decreaseStamina(THROW_DAMAGE);
+              entities[i].setActionState(HIT_STATE);
+              if (entities[i].isACharacter() == true) {
+                entities[i].setKnockbackDirection(genEnt.getFacingDirection());
+                genEnt.addScore( ((THROW_DAMAGE/BUMP_DAMAGE)+1) *100);
+                if (entities[i].getStamina() == 0) {
+                  endGame();
+                }
+              }
+              //Must be after all the entities[i] calls or issues bugs occur
+              genEnt.decreaseStamina(THROW_DAMAGE);
+            }
+            hitSomething = true;
+          }
         }
       }
-      //Bounce 1st time
-      else if (genEnt.getAnimationCounter() <= (6 * fallingAniFrames) / 10) {
-        genEnt.setDy((-100 / fallingAniFrames));
-      } else if (genEnt.getAnimationCounter() <= (8 * fallingAniFrames) / 10) {
-        genEnt.setDy((100 / fallingAniFrames));
-        if (genEnt.getAnimationCounter() == (8 * fallingAniFrames) / 10) {
-          itemDrop.play(); //dropped object sound
-          slowDown = slowDown * 2;
-        }
+      if ( hitSomething ) {
+        genEnt.setDx(0);
+        genEnt.setDy(0);
       }
-      //Bounce 2nd time
-      else if (genEnt.getAnimationCounter() <= (9 * fallingAniFrames) / 10) {
-        genEnt.setDy((-25 / fallingAniFrames));
-      } else if (genEnt.getAnimationCounter() <= (fallingAniFrames) / 10) {
-        genEnt.setDy((25 / fallingAniFrames));
-        if (genEnt.getAnimationCounter() == (fallingAniFrames) / 10) {
-          itemDrop.play(); //dropped object sound
-          slowDown = slowDown * 2;
-        }
-      }
-      genEnt.setDx(genEnt.getDx() / slowDown);
-    }
-    //Drop Up or Down
-    else {
-      slowDown = 1;
-      //Initial fall
-      if (genEnt.getAnimationCounter() == (4 * fallingAniFrames) / 10) {
-        itemDrop.play(); //dropped object sound
-        slowDown = slowDown * 2;
-      }
-      //Bounce 1st time
-      if (genEnt.getAnimationCounter() == (8 * fallingAniFrames) / 10) {
-        itemDrop.play(); //dropped object sound
-        slowDown = slowDown * 2;
-      }
-      //Bounce 2nd time
-      if (genEnt.getAnimationCounter() == (fallingAniFrames) / 10) {
-        itemDrop.play(); //dropped object sound
-        slowDown = slowDown * 2;
-      }
-      genEnt.setDy(genEnt.getDy() / slowDown);
     }
 
-    moveElement(genEnt.getEntityID(), genEnt.getX() + genEnt.getDx(), genEnt.getY() + genEnt.getDy());
+    if (!hitSomething) {
+      var slowDown = 1;
+      //Drop right or left
+      if (genEnt.getDx() != 0) {
+        //Initial fall
+        if (genEnt.getAnimationCounter() <= (4*fallingAniFrames)/10 ) {
+          genEnt.setDy((300 / fallingAniFrames) );
+          if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        //Bounce 1st time
+        else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
+          genEnt.setDy((-100 / fallingAniFrames));
+        }
+        else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
+          genEnt.setDy((100 / fallingAniFrames));
+          if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        //Bounce 2nd time
+        else if (genEnt.getAnimationCounter() <= (9*fallingAniFrames)/10) {
+          genEnt.setDy((-25 / fallingAniFrames));
+        } else if (genEnt.getAnimationCounter() <= (fallingAniFrames)/10) {
+          genEnt.setDy((25 / fallingAniFrames));
+          if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
+            itemDrop.play(); //dropped object sound
+            slowDown = slowDown*2;
+          }
+        }
+        genEnt.setDx(genEnt.getDx()/slowDown );
+      }
+      //Drop Up or Down
+      else {
+        slowDown = 1;
+        //Initial fall
+        if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
+          itemDrop.play(); //dropped object sound
+          slowDown = slowDown * 2;
+        }
+        //Bounce 1st time
+        if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
+          itemDrop.play(); //dropped object sound
+          slowDown = slowDown * 2;
+        }
+        //Bounce 2nd time
+        if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
+          itemDrop.play(); //dropped object sound
+          slowDown = slowDown * 2;
+        }
+        genEnt.setDy(genEnt.getDy()/slowDown );
+      }
+    }
+
+    moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX() + genEnt.getDx(), genEnt.getY() + genEnt.getDy(), true);
+
+    //Celling Floor Collision
+    if (genEnt.getY() > canvas.height - genEnt.getHeight()) {
+      genEnt.setY(canvas.height- genEnt.getHeight());
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    } else if (genEnt.getY() < 0) {
+      genEnt.setY(0);
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    }
+
+    //Sides Collision
+    if (genEnt.getX() > canvas.width - genEnt.getWidth()) {
+      genEnt.setX(canvas.width - genEnt.getWidth());
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    } else if (genEnt.getX() < 0) {
+      genEnt.setX(0);
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
+    }
 
     genEnt.setAnimationCounter(genEnt.getAnimationCounter() + 1);
     if (genEnt.getAnimationCounter() >= fallingAniFrames) {
       itemDrop.play(); //dropped object sound
       genEnt.setActionState(NORMAL_STATE);
       genEnt.setAnimationCounter(0);
+      genEnt.setDx(0);
+      genEnt.setDy(0);
     }
   }
 
@@ -945,15 +1126,16 @@ function drawEntity(genEnt) {
       ctx.font = "10px Helvetica";
       ctx.fillStyle = "#000000";
       if (genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
-        ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY() - 60);
-        ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY() - 50);
-        ctx.fillText(player1.getY(), genEnt.getX() + genEnt.getWidth() - 20, genEnt.getY() - 50);
-        ctx.fillText("Destructible Overlay:", genEnt.getX(), genEnt.getY() - 40);
-        ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY() - 30);
-        ctx.fillText(genEnt.getY(), genEnt.getX() + genEnt.getWidth() - 20, genEnt.getY() - 30);
-        ctx.fillText("HTML Element:", genEnt.getX(), genEnt.getY() - 20);
-        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY() - 10);
-        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX() + genEnt.getWidth() - 20, genEnt.getY() - 10);
+        ctx.fillText(genEnt.getEntityID(), genEnt.getX(), genEnt.getY()-70);
+        ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY()-60);
+        ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY()-50);
+        ctx.fillText(player1.getY(), genEnt.getX() + genEnt.getWidth()-20, genEnt.getY()-50);
+        ctx.fillText("Destructible Overlay:", genEnt.getX(), genEnt.getY()-40);
+        ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY()-30);
+        ctx.fillText(genEnt.getY(), genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-30);
+        ctx.fillText("HTML Element:", genEnt.getX(), genEnt.getY()-20);
+        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY()-10);
+        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
       }
     }
   }
@@ -1021,12 +1203,12 @@ function drawGamePlayOverlay() {
   //PLAYER
   ctx.font = "15px Helvetica";
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("PLAYER STAMINA", 25, (gameUI.getHeight() / 4) + yOffset + 8);
+  ctx.fillText(p1User + " STAMINA", 25, (gameUI.getHeight()/4)+yOffset+8); //display player username
 
   //Timer
   ctx.font = "20px Helvetica";
   ctx.fillStyle = "#000000";
-  ctx.fillText(currTime, gameUI.getWidth() / 2 - 20, 23 + yOffset);
+  ctx.fillText(currTime, gameUI.getWidth()/2-20, 23+yOffset);
 
   //Empty bar
   ctx.beginPath();
@@ -1075,15 +1257,16 @@ function drawDebugInfo() {
   //Draw stats
   ctx.font = "16px Arial";
   ctx.fillStyle = "#FFFFFF";
-  ctx.fillText("AnimationCounter: " + player1.getAnimationCounter(), 8, dbListPos);
-  ctx.fillText("Player1ActionState: " + player1.getActionState(), 8, dbListPos * 2);
-  ctx.fillText("Player1FacingDir: " + player1.getFacingDirection(), 8, dbListPos * 3);
-  ctx.fillText("Player1Stamina: " + player1.getStamina(), 8, dbListPos * 4);
-  ctx.fillText("Opp1ActionState: " + opp1.getActionState(), 8, dbListPos * 5);
-  ctx.fillText("Opp1FacingDir: " + opp1.getFacingDirection(), 8, dbListPos * 6);
-  ctx.fillText("Opp1Stamina: " + opp1.getStamina(), 8, dbListPos * 7);
-  ctx.fillText("Opp1HitCooldown: " + opp1.getHitCooldown(), 8, dbListPos * 8);
-  ctx.fillText("FPS: " + avg_fps, 8, dbListPos * 9);
+  ctx.fillText("Player1AnimationCounter: "+player1.getAnimationCounter(), 8, dbListPos);
+  ctx.fillText("Player1ActionState: "+player1.getActionState(), 8, dbListPos*2);
+  ctx.fillText("Player1FacingDir: "+player1.getFacingDirection(), 8, dbListPos*3);
+  ctx.fillText("Player1Stamina: "+player1.getStamina(), 8, dbListPos*4);
+  ctx.fillText("Opp1AnimationCounter: "+opp1.getAnimationCounter(), 8, dbListPos*5);
+  ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*6);
+  ctx.fillText("Opp1FacingDir: "+opp1.getFacingDirection(), 8, dbListPos*7);
+  ctx.fillText("Opp1Stamina: "+opp1.getStamina(), 8, dbListPos*8);
+  ctx.fillText("Opp1HitCooldown: "+opp1.getHitCooldown(), 8, dbListPos*9);
+  ctx.fillText("FPS: "+avg_fps, 8, dbListPos*10);
 }
 
 //Main Draw function, responsible for drawing each frame
@@ -1092,112 +1275,121 @@ function draw() {
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
-  //When no special actions are being taken by player1: allows free movement
-  if (player1.actionState == NORMAL_STATE) {
-    var collisionAmount = 0;
-    // move right and adjust if outside window border
-    if (rightPressed) {
-      if (player1.getX() + player1.getDx() > canvas.width - player1.getWidth()) {
-        player1.setX(canvas.width - player1.getWidth() - borderBounce);
-      }
-      player1.setX(player1.getX() + player1.getDx());
+  if ((currTime <= startTime - 5)) { //allow player and AI actions only after 5 seconds have passed
 
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = (player1.getX() + player1.getWidth()) - entities[i].getX() + 1;
+    //When no special actions are being taken by player1: allows free movement
+    if (player1.actionState == NORMAL_STATE) {
+      var collisionAmount = 0;
+      // move right and adjust if outside window border
+      if(rightPressed) {
+        if (player1.getX()+player1.getDx()  > canvas.width - player1.getWidth()) {
+          player1.setX(canvas.width - player1.getWidth() - borderBounce);
         }
-      }
-      if (hitSomething) {
-        player1.setX(player1.getX() - collisionAmount);
-      }
-      player1.setFacingDirection(RIGHT_DIR);
-    }
+        player1.setX(player1.getX() + player1.getDx());
 
-    // move left and adjust if outside window border
-    if (leftPressed) {
-      if (player1.getX() - player1.getDx() < 0) {
-        player1.setX(borderBounce);
-      }
-      player1.setX(player1.getX() - player1.getDx());
-
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = (entities[i].getX() + entities[i].getWidth()) - player1.getX() + 1;
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = ( player1.getX() + player1.getWidth()) - entities[i].getX() + 1;
+          }
         }
-      }
-      if (hitSomething) {
-        player1.setX(player1.getX() + collisionAmount);
-      }
-      player1.setFacingDirection(LEFT_DIR);
-    }
-
-    // move up and adjust if outside window border
-    if (upPressed) {
-      if (player1.getY() + player1.getDy() < 0) {
-        player1.setY(player1.getY() + player1.getDy());
-      }
-      player1.setY(player1.getY() - player1.getDy());
-
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = (entities[i].getY() + entities[i].getHeight()) - player1.getY() + 1;
+        if ( hitSomething ) {
+          player1.setX(player1.getX() - collisionAmount);
         }
+        player1.setFacingDirection(RIGHT_DIR);
       }
-      if (hitSomething) {
-        player1.setY(player1.getY() + collisionAmount);
-      }
-      player1.setFacingDirection(UP_DIR);
-    }
 
-    // move down and adjust if outside window border
-    if (downPressed) {
-      if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
-        //player1.setY(canvas.height - player1.getHeight() - vborderBounce);
+      // move left and adjust if outside window border
+      if (leftPressed){
+        if(player1.getX() - player1.getDx()  < 0){
+          player1.setX(borderBounce);
+        }
+        player1.setX(player1.getX() - player1.getDx());
+
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = ( entities[i].getX() + entities[i].getWidth()) - player1.getX() + 1;
+          }
+        }
+        if ( hitSomething ) {
+          player1.setX(player1.getX() + collisionAmount);
+        }
+        player1.setFacingDirection(LEFT_DIR);
+      }
+
+      // move up and adjust if outside window border
+      if(upPressed){
+        if(player1.getY() + player1.getDy() <  0) {
+          player1.setY(player1.getY() + player1.getDy());
+        }
         player1.setY(player1.getY() - player1.getDy());
-      }
-      player1.setY(player1.getY() + player1.getDy());
 
-      //check to see if any entities were collided with
-      var hitSomething = false;
-      for (var i = 0; i < entities.length; i++) {
-        if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
-          hitSomething = true;
-          collisionAmount = (player1.getY() + player1.getHeight()) - entities[i].getY() + 1;
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = (entities[i].getY() + entities[i].getHeight()) - player1.getY() + 1;
+          }
         }
+        if ( hitSomething ) {
+          player1.setY(player1.getY() + collisionAmount);
+        }
+        player1.setFacingDirection(UP_DIR);
       }
-      if (hitSomething) {
-        player1.setY(player1.getY() - collisionAmount);
+
+      // move down and adjust if outside window border
+      if(downPressed){
+        if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
+          //player1.setY(canvas.height - player1.getHeight() - vborderBounce);
+          player1.setY(player1.getY() - player1.getDy());
+        }
+        player1.setY(player1.getY() + player1.getDy());
+
+        //check to see if any entities were collided with
+        var hitSomething = false;
+        for (var i = 0; i < entities.length; i++) {
+          if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
+            hitSomething = true;
+            collisionAmount = (player1.getY() + player1.getHeight()) - entities[i].getY() + 1;
+          }
+        }
+        if ( hitSomething ) {
+          player1.setY(player1.getY() - collisionAmount);
+        }
+        player1.setFacingDirection(DOWN_DIR);
       }
-      player1.setFacingDirection(DOWN_DIR);
+    }
+    //When player1 is performing a bump action
+    else if (player1.getActionState() == BUMPING_STATE) {
+      entityBump(player1);
+    }
+
+    //When player1 is attempting to pickup an object
+    else if (player1.getActionState() == PICKUP_STATE) {
+      entityPickup(player1);
+    }
+
+    //When player1 is attemptingto drop an object
+    else if (player1.getActionState() == DROP_STATE) {
+      entityDrop(player1, DROP_FORCE);
+    }
+
+    //When player1 is attempting to thrown a held object
+    else if (player1.getActionState() == THROWING_STATE) {
+      entityDrop(player1, THROW_FORCE);
+    }
+
+    //AI takes its actions after the player
+    if (AI_DIFFICULTY >= 0) {
+        AILogic();
     }
   }
-  //When player1 is performing a bump action
-  else if (player1.getActionState() == BUMPING_STATE) {
-    entityBump(player1);
-  }
-
-  //When player1 is attempting to pickup an object
-  else if (player1.getActionState() == PICKUP_STATE) {
-    entityPickup(player1);
-  }
-
-  //When player1 is attemptingto drop an object
-  else if (player1.getActionState() == DROP_STATE) {
-    entityDrop(player1);
-  }
-
-  //AI takes its actions after the player
-  AILogic();
-
   // clear the canvas to redraw screen
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1241,8 +1433,12 @@ function keyDownHandler(e) {
   }
   else if (e.key == p1BumpKey) {
     if (player1.getActionCooldown() == 0) {
-      p1BumpPressed = true;
-      player1.setActionState(BUMPING_STATE);
+      if (player1.getHoldingEnt() != null) {
+        player1.setActionState(THROWING_STATE);
+      } else {
+        p1BumpPressed = true;
+        player1.setActionState(BUMPING_STATE);
+      }
     }
   }
   else if (e.key == "l") {
@@ -1263,6 +1459,7 @@ function keyDownHandler(e) {
     hideArena = !hideArena;
   }
   else if (e.key == "t") {
+    startTime = 3005; //automatically bypass 5 second countdown
     currTime = 3000;
   }
   else if (e.key == "f") {
@@ -1297,4 +1494,43 @@ function keyUpHandler(e) {
     p1BumpPressed = false;
   }
 }
+
+/*
+/   Purpose: sets a new cookie. used to maintain username through transitions
+/
+/   params:  cname: name of the cookie
+/            cvalue: value of the cookie
+/            exdays: number of days until cookie expires
+/
+*/
+function setCookie(cname, cvalue, exdays) {
+  const d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  let expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+/*
+/   Purpose: get the value of a cookie
+/
+/   params:  cname: name of the cookie
+/
+/   return:  value of the cookie, "" if no cookie with the given cname exists
+*/
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
 var drawInterval = setInterval(draw, 10);
