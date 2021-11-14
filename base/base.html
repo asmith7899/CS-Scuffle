@@ -4,6 +4,9 @@
 
 <head>
 
+    <!--import functions from gamePlay.js-->
+    <script type="text/javascript" src="gamePlay.js"></script>
+
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
@@ -29,8 +32,6 @@
     <link href="../../css/styles-new.css" rel="stylesheet" text="text/css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <!--import functions from gamePlay.js-->
-    <script type="text/javascript" src="gamePlay.js"></script>
 </head>
 
 <body>
@@ -59,54 +60,53 @@
         <!-- Button to close the overlay navigation -->
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 
-      <!-- Overlay content -->
-      <div class="overlay-content">
-        <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
-        <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
-        <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
-        <a href="#">Multiplayer </a>
-        <a href="#">Contact</a>
-        <a href="../map-arena/map-arena.html">Start Game</a>
-      </div>
-    <script>
-        var difficulty = "EASY";
-        var username = "Player";
-      /* Open */
-      function openNav() {
-        document.getElementById("menu").style.width = "20%";
-      }
-      /* Close */
-      function closeNav() {
-        document.getElementById("menu").style.width = "0%";
-      }
-      function userPrompt() {
-          username = prompt("Please Enter a username for the duration of the game:");
-          const d = new Date();
-          d.setTime(d.getTime() + (1*24*60*60*1000));
-          let expires = "expires="+ d.toUTCString();
-          document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
-      }
-      function setEasyDifficulty() {
-          difficulty = "EASY";
-      }
+        <!-- Overlay content -->
+        <div class="overlay-content">
+            <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
+            <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
+            <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
+            <a href="#">Multiplayer </a>
+            <a href="#">Contact</a>
+            <a href="../map-arena/map-arena.html">Start Game</a>
+        </div>
+        <script>
+            var difficulty = "EASY";
+            var username = "Player";
+            /* Open */
+            function openNav() {
+                document.getElementById("menu").style.width = "20%";
+            }
+            /* Close */
+            function closeNav() {
+                document.getElementById("menu").style.width = "0%";
+            }
+            function userPrompt() {
+                username = prompt("Please Enter a username for the duration of the game:");
+                const d = new Date();
+                d.setTime(d.getTime() + (1 * 24 * 60 * 60 * 1000));
+                let expires = "expires=" + d.toUTCString();
+                document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
+            }
+            function setEasyDifficulty() {
+                difficulty = "EASY";
+            }
 
-      function setHardDifficulty() {
-          difficulty = "HARD";
-      }
+            function setHardDifficulty() {
+                difficulty = "HARD";
+            }
 
-      function getDifficulty() {
-          return difficulty;
-      }
+            function getDifficulty() {
+                return difficulty;
+            }
 
-      function getUsername() {
-          return username;
-      }
-
-    </script>
+            function getUsername() {
+                return username;
+            }
+        </script>
     </div>
 
     <!-- Use any element to open/show the overlay navigation menu -->
-      <span id="menuButton" onclick="openNav()">Open Menu</span>
+    <span id="menuButton" onclick="openNav()">Open Menu</span>
 
     <header class="header">
         <!-- Begin Gold Bar -->
@@ -294,6 +294,8 @@
                     <h1>Computer Science Faculty and Visitors</h1>
 
                     <h2>Faculty</h2>
+                    <h3>Select From Characters</h3>
+                    <button onclick="finalizeSelections()">Finalize Selection</button>
                     <div class="photoboard" style="position: relative; height: 3784.66px; display: block;">
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 0px;">
                             <img alt="George Adams" src="https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg"
@@ -575,23 +577,7 @@
                             <figcaption>Xiangyu Zhang</figcaption>
                         </figure>
                     </div>
-                    <script>
-                        var players = 0;
-                        function imageSelected(name) {
-                            if (players == 0) {
-                                initializePlayerOneSrc(document.getElementById(name).src);
-                                document.getElementById(name).style.border= '2px solid black';
-                                players++;
-                            } else if (players == 1) {
-                                initializePlayerTwoSrc(document.getElementById(name).src);
-                                document.getElementById(name).style.border = '2px solid black';
-                                transitionStage();
-                            } 
-                        }
-                    </script>
                 </div>
-
-
             </div>
         </div>
     </main>
@@ -858,6 +844,34 @@
                         }
                     }
                 </script>
+                <script>
+                    var playerSrc = new Array();
+            var playerNum = 0;
+            function imageSelected(name) {
+                var imageSrc = document.getElementById(name).src;
+                var index = playerSrc.indexOf(imageSrc);
+                if (index == -1) {
+                    //if a user selects an image for the first time, add it to the array
+                    playerSrc.push(document.getElementById(name).src);
+                    document.getElementById(name).style.border = '2px solid black';
+                    playerNum++;
+                }
+                else {
+                    //if a user is deselecting an image, remove it from the array and shift values
+                    playerSrc.splice(index, 1);
+                    document.getElementById(name).style.border = '0px';
+                    playerNum--;
+                }
+            }
+            function finalizeSelections()  {
+                if (playerNum < 2) {
+                    prompt("Please select at least 2 characters!");
+                }
+                else {
+                    initializePlayers(playerSrc);
+                }
+            }
+            </script>
             </div>
         </div>
     </footer>

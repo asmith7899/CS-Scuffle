@@ -501,7 +501,7 @@ var p1User = getCookie("username"); //get username from cookie. Username is set 
 if (p1User == "") {
   p1User = "PLAYER"; //username defaults to "PLAYER " if there is no username cookie
 }
-const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User, null);
+var player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User, null);
 player1.setStamina(playerStamina);
 player1.setScore(parseInt(playerScore));
 var vborderBounce = 20;
@@ -509,10 +509,17 @@ var borderBounce = 10;
 
 
 //initialize opponent1
-const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT", null);
+var opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT", null);
 opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
 opp1.setScore(parseInt(oppScore));
+
+var playerSrc = new Array();
+
+function initializePlayers(playerSources) {
+  //gets the sources chosen by the user, sets them in transition
+      playerSrc = playerSources;
+}
 
 //initialize UI
 const gameUI = new Entity(50, window.innerWidth, '', true, false);
@@ -548,7 +555,8 @@ for (var i = 0; i < arenaElementIds.length; i++) {
     entities.push(tempEntity);
   }
 }
-
+player1.setImageSrc(playerSrc[1]);
+opp1.setImageSrc(playerSrc[2]);
 entities.push(opp1);
 entities.push(player1);
 //Default Keyboard controls
