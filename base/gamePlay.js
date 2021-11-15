@@ -103,6 +103,8 @@ if (pageURL) {
       playerScore = splitVals[1];
     } else if (splitVals[0] == "opponentScore") {
       oppScore = splitVals[1];
+    } else if(splitVals[0] == "difficulty") {
+      AI_DIFFICULTY = splitVals[1];
     }
   }
 }
@@ -124,8 +126,8 @@ var timerInterval = setInterval(function () {
 
 function transitionStage() {
   transitioned = true;
-  window.location.href = '../home-arena/home-arena.html?startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
-  + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore();
+  window.location.href = '../home-arena/home-arena.html?startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina=' 
+  + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore() + "&difficulty=" + AI_DIFFICULTY;
 }
 function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
