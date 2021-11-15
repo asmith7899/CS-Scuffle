@@ -4,6 +4,9 @@
 
 <head>
 
+    <!--import functions from gamePlay.js-->
+    <script type="text/javascript" src="gamePlay.js"></script>
+
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
@@ -28,6 +31,7 @@
     <link href="../../css/content.css" rel="stylesheet" text="text/css">
     <link href="../../css/styles-new.css" rel="stylesheet" text="text/css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -53,61 +57,84 @@
         }
     </style>
     <div id="menu" class="overlay">
-      <!-- Button to close the overlay navigation -->
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <!-- Button to close the overlay navigation -->
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 
-      <!-- Overlay content -->
-      <div class="overlay-content">
-        <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
-        <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
-        <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
-        <a href="#">Multiplayer </a>
-        <a href="#">Contact</a>
-        <a href="#" class="menubtn" onclick="startGame()">Start Game</a>
-      </div>
-    <script>
-        var difficulty = 0;
-        var username = "Player";
-      /* Open */
-      function openNav() {
-        document.getElementById("menu").style.width = "20%";
-      }
-      /* Close */
-      function closeNav() {
-        document.getElementById("menu").style.width = "0%";
-      }
-      function userPrompt() {
-          username = prompt("Please Enter a username for the duration of the game:");
-          const d = new Date();
-          d.setTime(d.getTime() + (1*24*60*60*1000));
-          let expires = "expires="+ d.toUTCString();
-          document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
-      }
-      function setEasyDifficulty() {
-          difficulty = 0;
-      }
+        <!-- Overlay content -->
+        <div class="overlay-content">
+            <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
+            <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
+            <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
+            <a href="#">Multiplayer </a>
+            <a href="#">Contact</a>
+            <a href='#' class="menubtn" onclick="startGame()">Start Game</a>
+        </div>
+        <script>
+            var difficulty = 0;
+            var username = "Player";
+            /* Open */
+            function openNav() {
+                document.getElementById("menu").style.width = "20%";
+            }
+            /* Close */
+            function closeNav() {
+                document.getElementById("menu").style.width = "0%";
+            }
+            function userPrompt() {
+                username = prompt("Please Enter a username for the duration of the game:");
+                const d = new Date();
+                d.setTime(d.getTime() + (1 * 24 * 60 * 60 * 1000));
+                let expires = "expires=" + d.toUTCString();
+                document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
+            }
+            function setEasyDifficulty() {
+                difficulty = 0;
+            }
 
-      function setHardDifficulty() {
-          difficulty = 1;
-      }
+            function setHardDifficulty() {
+                difficulty = 1;
+            }
 
-      function getDifficulty() {
-          return difficulty;
-      }
+            function getDifficulty() {
+                return difficulty;
+            }
 
-      function getUsername() {
-          return username;
-      }
+            function getUsername() {
+                return username;
+            }
 
-      function startGame() {
-        window.location.href = "../map-arena/map-arena.html?difficulty=" + getDifficulty();
-      }
+            var playerSrc = new Array();
+            var playerNum = 0;
+            function imageSelected(name) {
+                var imageSrc = document.getElementById(name).src;
+                var index = playerSrc.indexOf(imageSrc);
+                if (index == -1) {
+                    //if a user selects an image for the first time, add it to the array
+                    playerSrc.push(document.getElementById(name).src);
+                    document.getElementById(name).style.border = '2px solid black';
+                    playerNum++;
+                }
+                else {
+                    //if a user is deselecting an image, remove it from the array and shift values
+                    playerSrc.splice(index, 1);
+                    document.getElementById(name).style.border = '0px';
+                    playerNum--;
+                }
+            }
 
-    </script>
+            function startGame() {
+                if (playerSrc.length < 2) {
+                    confirm("Please choose 2 characters before starting the game.");
+                }
+                else {
+                    location.href = '../map-arena/map-arena.html?player1Src=' + playerSrc[0] + '&opp1Src=' + playerSrc[1] + '&difficulty=' + getDifficulty();
+                }
+            }
+        </script>
     </div>
 
     <!-- Use any element to open/show the overlay navigation menu -->
-      <span id="menuButton" onclick="openNav()">Open Menu</span>
+    <span id="menuButton" onclick="openNav()">Open Menu</span>
 
     <header class="header">
         <!-- Begin Gold Bar -->
@@ -297,267 +324,316 @@
                     <h2>Faculty</h2>
                     <div class="photoboard" style="position: relative; height: 3784.66px; display: block;">
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 0px;">
-                            <img alt="George Adams" src="https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg">
+                            <img alt="George Adams" src="https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg"
+                                id="Adams" onclick="imageSelected('Adams')">
                             <figcaption>George Adams</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 0px;">
                             <img alt="Daniel Aliaga"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg" id="Aliaga"
+                                onclick="imageSelected('Aliaga')">
                             <figcaption>Daniel Aliaga</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 0px;">
-                            <img alt="Walid Aref" src="https://www.cs.purdue.edu/people/images/small/faculty/aref.jpg">
+                            <img alt="Walid Aref" src="https://www.cs.purdue.edu/people/images/small/faculty/aref.jpg"
+                                id="Aref" onclick="imageSelected('Aref')">
                             <figcaption>Walid Aref</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 0px;">
                             <img alt="Kamyar Azizzadenesheli"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/kamyar.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/kamyar.jpg"
+                                id="Azizzadenesheli" onclick="imageSelected('Azizzadenesheli')">
                             <figcaption>Kamyar Azizzadenesheli</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 270px;">
                             <img alt="Saugata Basu"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/sbasu.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/sbasu.jpg" id="Basu"
+                                onclick="imageSelected('Basu')">
                             <figcaption>Saugata Basu</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 270px;">
                             <img alt="Tony Bergstrom"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/bgstm.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/bgstm.jpg" id="Bergstrom"
+                                onclick="imageSelected('Bergstrom')">
                             <figcaption>Tony Bergstrom</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 270px;">
                             <img alt="Elisa Bertino"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/bertino.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/bertino.jpg" id="Bertino"
+                                onclick="imageSelected('Bertino')">
                             <figcaption>Elisa Bertino</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 270px;">
                             <img alt="Antonio Bianchi"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/antoniob.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/antoniob.jpg" id="Bianchi"
+                                onclick="imageSelected('Bianchi')">
                             <figcaption>Antonio Bianchi</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 540px;">
                             <img alt="Jeremiah Blocki"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/jblocki.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/jblocki.jpg" id="Blocki"
+                                onclick="imageSelected('Blocki')">
                             <figcaption>Jeremiah Blocki</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 540px;">
                             <img alt="Simina Branzei"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/simina.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/simina.jpg" id="Branzei"
+                                onclick="imageSelected('Branzei')">
                             <figcaption>Simina Branzei</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 540px;">
                             <img alt="Berkay Celik"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/zcelik.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/zcelik.jpg" id="Celik"
+                                onclick="imageSelected('Celik')">
                             <figcaption>Berkay Celik</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 540px;">
                             <img alt="Chris Clifton"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/clifton.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/clifton.jpg" id="Clifton"
+                                onclick="imageSelected('Clifton')">
                             <figcaption>Chris Clifton</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 810px;">
                             <img alt="Benjamin Delaware"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/bendy.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/bendy.jpg" id="Delaware"
+                                onclick="imageSelected('Delaware')">
                             <figcaption>Benjamin Delaware</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 810px;">
                             <img alt="Tamal Dey"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/tamaldey.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/tamaldey.jpg" id="Dey"
+                                onclick="imageSelected('Dey')">
                             <figcaption>Tamal Dey</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 810px;">
                             <img alt="Petros Drineas"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/pdrineas.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/pdrineas.jpg" id="Drineas"
+                                onclick="imageSelected('Drineas')">
                             <figcaption>Petros Drineas</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 810px;">
                             <img alt="Buster Dunsmore"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/bxd.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/bxd.jpg" id="Dunsmore"
+                                onclick="imageSelected('Dunsmore')">
                             <figcaption>Buster Dunsmore</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 1081px;">
-                            <img alt="Sonia Fahmy"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/fahmy.jpg">
+                            <img alt="Sonia Fahmy" src="https://www.cs.purdue.edu/people/images/small/faculty/fahmy.jpg"
+                                id="Fahmy" onclick="imageSelected('Fahmy')">
                             <figcaption>Sonia Fahmy</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 1081px;">
                             <img alt="Pedro Fonseca"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/pfonseca.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/pfonseca.jpg" id="Fonseca"
+                                onclick="imageSelected('Fonseca')">
                             <figcaption>Pedro Fonseca</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 1081px;">
                             <img alt="Christina Garman"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/clg.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/clg.jpg" id="Garman"
+                                onclick="imageSelected('Garman')">
                             <figcaption>Christina Garman</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 1081px;">
                             <img alt="David Gleich"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/dgleich.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/dgleich.jpg" id="Gleich"
+                                onclick="imageSelected('Gleich')">
                             <figcaption>David Gleich</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 1351px;">
                             <img alt="Dan Goldwasser"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/dgoldwas.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/dgoldwas.jpg"
+                                id="Goldwasser" onclick="imageSelected('Goldwasser')">
                             <figcaption>Dan Goldwasser</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 1351px;">
-                            <img alt="Ananth Grama" src="https://www.cs.purdue.edu/people/images/small/faculty/ayg.jpg">
+                            <img alt="Ananth Grama" src="https://www.cs.purdue.edu/people/images/small/faculty/ayg.jpg"
+                                id="Grama" onclick="imageSelected('Grama')">
                             <figcaption>Ananth Grama</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 1351px;">
                             <img alt="Elena Grigorescu"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/egrigore.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/egrigore.jpg"
+                                id="Grigorescu" onclick="imageSelected('Grigorescu')">
                             <figcaption>Elena Grigorescu</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 1351px;">
                             <img alt="Susanne Hambrusch"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/seh.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/seh.jpg" id="Hambrusch"
+                                onclick="imageSelected('Hambrusch')">
                             <figcaption>Susanne Hambrusch</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 1621px;">
                             <img alt="Changhee Jung"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/chjung.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/chjung.jpg" id="Jung"
+                                onclick="imageSelected('Jung')">
                             <figcaption>Changhee Jung</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 1621px;">
-                            <img alt="Aniket Kate"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/akate.jpg">
+                            <img alt="Aniket Kate" src="https://www.cs.purdue.edu/people/images/small/faculty/akate.jpg"
+                                id="Kate" onclick="imageSelected('Kate')">
                             <figcaption>Aniket Kate</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 1621px;">
                             <img alt="Daisuke Kihara"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/dkihara.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/dkihara.jpg" id="Kihara"
+                                onclick="imageSelected('Kihara')">
                             <figcaption>Daisuke Kihara</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 1621px;">
                             <img alt="Ninghui Li"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/ninghui.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/ninghui.jpg" id="NLi"
+                                onclick="imageSelected('NLi')">
                             <figcaption>Ninghui Li</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 1892px;">
-                            <img alt="Pan Li" src="https://www.cs.purdue.edu/people/images/small/faculty/panli.jpg">
+                            <img alt="Pan Li" src="https://www.cs.purdue.edu/people/images/small/faculty/panli.jpg"
+                                id="PLi" onclick="imageSelected('PLi')">
                             <figcaption>Pan Li</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 1892px;">
-                            <img alt="Zhiyuan Li" src="https://www.cs.purdue.edu/people/images/small/faculty/ci.jpg">
+                            <img alt="Zhiyuan Li" src="https://www.cs.purdue.edu/people/images/small/faculty/ci.jpg"
+                                id="ZLi" onclick="imageSelected('ZLi')">
                             <figcaption>Zhiyuan Li</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 1892px;">
                             <img alt="Anuran Makur"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/amakur.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/amakur.jpg" id="Makur"
+                                onclick="imageSelected('Makur')">
                             <figcaption>Anuran Makur</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 1892px;">
                             <img alt="Jennifer Neville"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/neville.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/neville.jpg" id="Neville"
+                                onclick="imageSelected('Neville')">
                             <figcaption>Jennifer Neville</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 2162px;">
                             <img alt="Voicu Popescu"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/popescu.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/popescu.jpg" id="Popescu"
+                                onclick="imageSelected('Popescu')">
                             <figcaption>Voicu Popescu</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 2162px;">
                             <img alt="Alex Pothen"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/apothen.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/apothen.jpg" id="Pothen"
+                                onclick="imageSelected('Pothen')">
                             <figcaption>Alex Pothen</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 2162px;">
                             <img alt="Sunil Prabhakar"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/sunil.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/sunil.jpg" id="Prabhakar"
+                                onclick="imageSelected('Prabhakar')">
                             <figcaption>Sunil Prabhakar</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 2162px;">
                             <img alt="Alex Psomas"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/apsomas.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/apsomas.jpg" id="Psomas"
+                                onclick="imageSelected('Psomas')">
                             <figcaption>Alex Psomas</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 2432px;">
-                            <img alt="Kent Quanrud" src="https://www.cs.purdue.edu/people/images/small/faculty/krq.jpg">
+                            <img alt="Kent Quanrud" src="https://www.cs.purdue.edu/people/images/small/faculty/krq.jpg"
+                                id="Quanrud" onclick="imageSelected('Quanrud')">
                             <figcaption>Kent Quanrud</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 2432px;">
-                            <img alt="Vernon Rego" src="https://www.cs.purdue.edu/people/images/small/faculty/rego.jpg">
+                            <img alt="Vernon Rego" src="https://www.cs.purdue.edu/people/images/small/faculty/rego.jpg"
+                                id="Rego" onclick="imageSelected('Rego')">
                             <figcaption>Vernon Rego</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 2432px;">
                             <img alt="Bruno Ribeiro"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/ribeirob.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/ribeirob.jpg" id="Ribeiro"
+                                onclick="imageSelected('Ribeiro')">
                             <figcaption>Bruno Ribeiro</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 2703px;">
                             <img alt="Gustavo Rodriguez-Rivera"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/grr.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/grr.jpg"
+                                id="Rodriguez-Rivera" onclick="imageSelected('Rodriguez-Rivera')">
                             <figcaption>Gustavo Rodriguez-Rivera</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 2432px;">
-                            <img alt="Tiark Rompf"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/rompf.jpg">
+                            <img alt="Tiark Rompf" src="https://www.cs.purdue.edu/people/images/small/faculty/rompf.jpg"
+                                id="Rompf" onclick="imageSelected('Rompf')">
                             <figcaption>Tiark Rompf</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 2703px;">
-                            <img alt="Elisha Sacks" src="https://www.cs.purdue.edu/people/images/small/faculty/eps.jpg">
+                            <img alt="Elisha Sacks" src="https://www.cs.purdue.edu/people/images/small/faculty/eps.jpg"
+                                id="Sacks" onclick="imageSelected('Sacks')">
                             <figcaption>Elisha Sacks</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 2703px;">
                             <img alt="Roopsha Samanta"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/roopsha.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/roopsha.jpg" id="Samanta"
+                                onclick="imageSelected('Samanta')">
                             <figcaption>Roopsha Samanta</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 2973px;">
                             <img alt="Eugene Spafford"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/spaf.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/spaf.jpg" id="Spafford"
+                                onclick="imageSelected('Spafford')">
                             <figcaption>Eugene Spafford</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 2973px;">
-                            <img alt="Lin Tan" src="https://www.cs.purdue.edu/people/images/small/faculty/lintan.jpg">
+                            <img alt="Lin Tan" src="https://www.cs.purdue.edu/people/images/small/faculty/lintan.jpg"
+                                id="Tan" onclick="imageSelected('Tan')">
                             <figcaption>Lin Tan</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 2973px;">
-                            <img alt="Dave Tian" src="https://www.cs.purdue.edu/people/images/small/faculty/daveti.jpg">
+                            <img alt="Dave Tian" src="https://www.cs.purdue.edu/people/images/small/faculty/daveti.jpg"
+                                id="Tian" onclick="imageSelected('Tian')">
                             <figcaption>Dave Tian</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 2973px;">
                             <img alt="Xavier Tricoche"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/xmt.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/xmt.jpg" id="Tricoche"
+                                onclick="imageSelected('Tricoche')">
                             <figcaption>Xavier Tricoche</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 3243px;">
                             <img alt="Jeffrey A. Turkstra"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/turkstra.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/turkstra.jpg" id="Turkstra"
+                                onclick="imageSelected('Turkstra')">
                             <figcaption>Jeffrey A. Turkstra</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 3243px;">
                             <img alt="Jianguo Wang"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/csjgwang.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/csjgwang.jpg" id="Wang"
+                                onclick="imageSelected('Wang')">
                             <figcaption>Jianguo Wang</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 3243px;">
                             <img alt="Patrick Wolfe"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/patrick.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/patrick.jpg" id="Wolfe"
+                                onclick="imageSelected('Wolfe')">
                             <figcaption>Patrick Wolfe</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 540px; top: 3243px;">
-                            <img alt="Dongyan Xu" src="https://www.cs.purdue.edu/people/images/small/faculty/dxu.jpg">
+                            <img alt="Dongyan Xu" src="https://www.cs.purdue.edu/people/images/small/faculty/dxu.jpg"
+                                id="Xu" onclick="imageSelected('Xu')">
                             <figcaption>Dongyan Xu</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 3514px;">
                             <img alt="Yexiang Xue"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/yexiang.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/yexiang.jpg" id="Xue"
+                                onclick="imageSelected('Xue')">
                             <figcaption>Yexiang Xue</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 180px; top: 3514px;">
-                            <img alt="Ming Yin" src="https://www.cs.purdue.edu/people/images/small/faculty/mingyin.jpg">
+                            <img alt="Ming Yin" src="https://www.cs.purdue.edu/people/images/small/faculty/mingyin.jpg"
+                                id="Yin" onclick="imageSelected('Yin')">
                             <figcaption>Ming Yin</figcaption>
                         </figure>
                         <figure class="directoryphoto" style="position: absolute; left: 360px; top: 3514px;">
                             <img alt="Xiangyu Zhang"
-                                src="https://www.cs.purdue.edu/people/images/small/faculty/xyzhang.jpg">
+                                src="https://www.cs.purdue.edu/people/images/small/faculty/xyzhang.jpg" id="Zhang"
+                                onclick="imageSelected(Zhang)">
                             <figcaption>Xiangyu Zhang</figcaption>
                         </figure>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </main>
@@ -567,8 +643,8 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title"><a class="collapsed" data-parent="#accordion"
-                                data-toggle="collapse"">Communication <i class=" fa fa-plus right"
-                                aria-hidden="true"></i><i class="fa fa-minus right" aria-hidden="true"></i></a></h4>
+                                data-toggle="collapse">Communication <i class=" fa fa-plus right"
+                                    aria-hidden="true"></i><i class="fa fa-minus right" aria-hidden="true"></i></a></h4>
                     </div>
                     <div class="panel-collapse collapse" id="footerone">
                         <div class="panel-body">
@@ -815,6 +891,15 @@
 
 
                 </div>
+                <!-- <script type="text/javascript">
+                    var acc = confirm("Would you like to create an account?");
+                    if (acc == true) {
+                        let username = prompt("Please enter your username!");
+                        if (username != null && username != "") {
+                            let password = prompt("Please enter your password!")
+                        }
+                    }
+                </script> -->
             </div>
         </div>
     </footer>
