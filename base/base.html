@@ -67,7 +67,7 @@
             <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
             <a href="#">Multiplayer </a>
             <a href="#">Contact</a>
-            <a href="../map-arena/map-arena.html">Start Game</a>
+            <a onclick="transitionPage()">Start Game</a>
         </div>
         <script>
             var difficulty = "EASY";
@@ -101,6 +101,35 @@
 
             function getUsername() {
                 return username;
+            }
+
+            var playerSrc = new Array();
+            var playerNum = 0;
+            function imageSelected(name) {
+                var imageSrc = document.getElementById(name).src;
+                var index = playerSrc.indexOf(imageSrc);
+                if (index == -1) {
+                    //if a user selects an image for the first time, add it to the array
+                    playerSrc.push(document.getElementById(name).src);
+                    document.getElementById(name).style.border = '2px solid black';
+                    playerNum++;
+                }
+                else {
+                    //if a user is deselecting an image, remove it from the array and shift values
+                    playerSrc.splice(index, 1);
+                    document.getElementById(name).style.border = '0px';
+                    playerNum--;
+                }
+            }
+
+            function transitionPage() {
+                if (playerSrc.length < 2) {
+                    confirm("Please choose 2 characters before starting the game.");
+                }
+                else {
+                    setPlayers(playerSrc);
+                    location.href = '../map-arena/map-arena.html';
+                }
             }
         </script>
     </div>
@@ -294,8 +323,6 @@
                     <h1>Computer Science Faculty and Visitors</h1>
 
                     <h2>Faculty</h2>
-                    <h3>Select From Characters</h3>
-                    <button onclick="finalizeSelections()">Finalize Selection</button>
                     <div class="photoboard" style="position: relative; height: 3784.66px; display: block;">
                         <figure class="directoryphoto" style="position: absolute; left: 0px; top: 0px;">
                             <img alt="George Adams" src="https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg"
@@ -844,34 +871,6 @@
                         }
                     }
                 </script>
-                <script>
-                    var playerSrc = new Array();
-            var playerNum = 0;
-            function imageSelected(name) {
-                var imageSrc = document.getElementById(name).src;
-                var index = playerSrc.indexOf(imageSrc);
-                if (index == -1) {
-                    //if a user selects an image for the first time, add it to the array
-                    playerSrc.push(document.getElementById(name).src);
-                    document.getElementById(name).style.border = '2px solid black';
-                    playerNum++;
-                }
-                else {
-                    //if a user is deselecting an image, remove it from the array and shift values
-                    playerSrc.splice(index, 1);
-                    document.getElementById(name).style.border = '0px';
-                    playerNum--;
-                }
-            }
-            function finalizeSelections()  {
-                if (playerNum < 2) {
-                    prompt("Please select at least 2 characters!");
-                }
-                else {
-                    initializePlayers(playerSrc);
-                }
-            }
-            </script>
             </div>
         </div>
     </footer>
