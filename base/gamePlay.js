@@ -52,22 +52,27 @@ var transitioned = false;               //Added 5 additional seconds before the 
                                         //this variable is used to prevent a transition loop when the timer gets back to the transition time
                                         //likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
                                         //countdown before the game starts but it felt right with the hard AI being more aggressive right away
+var amountScroll = 0;
+
+
+
+//Canvas Intialization
 
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
 //var arena = 'test';
 var arena = FIRST_ARENA;
-if (canvas == null) {
-  arena = SECOND_ARENA;
-  canvas = document.getElementById("myCanvas3");
+
+//Add else if statements for any additional arenas made in the future.
+if (window.location.href.includes("home-arena")) {  //Looks for the html file name of the arena
+  arena = SECOND_ARENA; //Updates arena variable so other areas of code know the correct assets to use/expect
+  canvas = document.getElementById("myCanvas3");  //Redicts the canvas to the correct one for that arena
 }
 var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
-
 //The amount of offset the canvas has to the webpage. Defined in the arena css file
-var CANVAS_OFFSET = 0;                  //Use for test-arena
-if (arena == FIRST_ARENA){
-  CANVAS_OFFSET = 40;                 //Use for map-arena
-}
+var CANVAS_OFFSET = canvas.offsetTop;                  //Use for test-arena
+
+//End Canvas Initialization
 
 //Sound Effects
 var shater = new Audio("../SoundEffects/Glass-Shatering.mp3");  //Sound of Destructible Entities breaking
@@ -83,10 +88,12 @@ playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
 var playerScore = 0;
 var oppScore = 0;
+var player1Src = '';
+var opp1Src = '';
 var pageURL = window.location.search.substring(1);
 if (pageURL) {
   var URLArray = pageURL.split('&');
-  for (var i = 0; i < URLArray.length; i++){
+  for (var i = 0; i < URLArray.length; i++) {
     var splitVals = URLArray[i].split('=');
     if (splitVals[0] == "startTime") {
       startTime = splitVals[1];
@@ -105,6 +112,12 @@ if (pageURL) {
       oppScore = splitVals[1];
     } else if(splitVals[0] == "difficulty") {
       AI_DIFFICULTY = splitVals[1];
+    }
+    else if (splitVals[0] == "player1Src") {
+      player1Src = splitVals[1];
+    }
+    else if (splitVals[0] == 'opp1Src') {
+      opp1Src = splitVals[1];
     }
   }
 }
@@ -126,7 +139,7 @@ var timerInterval = setInterval(function () {
 
 function transitionStage() {
   transitioned = true;
-  window.location.href = '../home-arena/home-arena.html?startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina=' 
+  window.location.href = '../home-arena/home-arena.html?player1Src=' + player1Src + '&opp1Src=' + opp1Src + '&startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
   + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore() + "&difficulty=" + AI_DIFFICULTY;
 }
 function endGame() {
@@ -403,7 +416,7 @@ class Entity {
     this.y = y;
   }
 
-  setPosition(x,y) {
+  setPosition(x, y) {
     this.x = x;
     this.y = y;
   }
@@ -503,7 +516,7 @@ var p1User = getCookie("username"); //get username from cookie. Username is set 
 if (p1User == "") {
   p1User = "PLAYER"; //username defaults to "PLAYER " if there is no username cookie
 }
-const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User, null);
+const player1 = new Entity(90, 70, player1Src, false, true, p1User, null);
 player1.setStamina(playerStamina);
 player1.setScore(parseInt(playerScore));
 var vborderBounce = 20;
@@ -511,7 +524,7 @@ var borderBounce = 10;
 
 
 //initialize opponent1
-const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT", null);
+const opp1 = new Entity(90, 70, opp1Src, false, true, "OPPONENT", null);
 opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
 opp1.setScore(parseInt(oppScore));
@@ -525,7 +538,7 @@ gameUI.setEntityID('1');
 opp1.setEntityID('2');
 player1.setEntityID('3');
 var playerNumber = 3
-var entities = new Array(gameUI);
+var entities = new Array();
 var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
 //html ElementID Array
@@ -534,7 +547,18 @@ if (arena == FIRST_ARENA){
   var arenaElementIds = new Array(new HtmlElement('map_layer0_tile_17_0_0', 16, -37), new HtmlElement('map_layer0_tile_17_0_1', -240, -37), new HtmlElement('map_layer0_tile_17_1_0', 16, 219),
                                   new HtmlElement('map_layer0_tile_17_1_1',-240, 219), new HtmlElement('map_layer0_tile_17_0_2',-496, -37), new HtmlElement('map_layer0_tile_17_1_2',-496, 219),
                                   new HtmlElement('map_layer0_tile_17_0_3',-752, -37), new HtmlElement('map_layer0_tile_17_1_3',-752, 219), new HtmlElement('map_layer0_tile_17_0_4',-1008, -37),
-                                  new HtmlElement( 'map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219) );  //Use for map-arena
+                                  new HtmlElement('map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_0_0', 16, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_0', 16, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_1', -240, -37),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_1', -240, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_2', -496, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_2', -496, 219),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_0_3', -752, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_3', -752, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_4', -1008, -37),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_4', -1008, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_5', -1264, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_5', 0, 0)
+                                );  //Use for map-arena
+}
+else if (arena == SECOND_ARENA){
+  var arenaElementIds = new Array(new HtmlElement('Research', -763, 131), new HtmlElement('Alumni', -763, 131), new HtmlElement('FutureStudents', -763, 131),
+                                  new HtmlElement('OnlineMasters', -763, 131), new HtmlElement('GraduateStudents', -763, 131), new HtmlElement('TourPurdueCS', -763, 131),
+                                  new HtmlElement('UndergraduateStudents', -763, 131), new HtmlElement('FacultyPositions', -763, 131)
+                                 );
 }
 else{
   var arenaElementIds = new Array(new HtmlElement('div1', 0, 0),new HtmlElement('div2', 0, 0),new HtmlElement('div3', 0, 0) );   //Use for test-arena
@@ -553,6 +577,7 @@ for (var i = 0; i < arenaElementIds.length; i++) {
 
 entities.push(opp1);
 entities.push(player1);
+entities.push(gameUI);
 //Default Keyboard controls
 //update these variables to allow for control changes in options menu
 var p1BumpKey = "e";            //Player1 default bump key
@@ -592,14 +617,16 @@ var fallingAniFrames = 60;     //Length of falling animation for destructible ob
 /       the html element moves the destructible entity overlayed ontop of it.
 */
 function moveElement(htmlElement, x, y, needOffset) {
-  var tempY = y - CANVAS_OFFSET - htmlElement.getYOffset();
+  var tempY = y - CANVAS_OFFSET - amountScroll- htmlElement.getYOffset();
   var tempX = x + htmlElement.getXOffset();
   if (needOffset && CANVAS_OFFSET != 0) {
     //For some reason objects have a -9 in y movement for offsetted html elements on the map-arena
     tempY = tempY + 9;
   }
   var genE = document.getElementById(htmlElement.getHtmlElementID());
-  genE.style.position = "absolute";
+  if (genE.style.position != null) {
+    genE.style.position = "absolute";
+  }
   genE.style.left = tempX + 'px';
   genE.style.top = tempY + 'px';
 }
@@ -1496,6 +1523,11 @@ function keyUpHandler(e) {
     p1BumpPressed = false;
   }
 }
+
+//Update amountScroll
+window.onscroll = function (e) {
+  amountScroll = -window.scrollY; // Value of scroll Y in px
+};
 
 /*
 /   Purpose: sets a new cookie. used to maintain username through transitions
