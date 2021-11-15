@@ -61,11 +61,14 @@
         <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
         <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
         <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
+        <a href="#" class="menubtn" onclick="disableTransitions()">Disable Transitions</a>
+        <a href="#" class="menubtn" onclick="enableTransitions()">Enable Transitions</a>
         <a href="#">Multiplayer </a>
         <a href="#">Contact</a>
         <a href="#" class="menubtn" onclick="startGame()">Start Game</a>
       </div>
     <script>
+        var transitionsEnabled = 0;
         var difficulty = 0;
         var username = "Player";
       /* Open */
@@ -100,7 +103,19 @@
       }
 
       function startGame() {
-        window.location.href = "../map-arena/map-arena.html?difficulty=" + getDifficulty();
+        window.location.href = "../map-arena/map-arena.html?difficulty=" + getDifficulty() + "&shouldTransition=" + getTransitionsEnabled();
+      }
+
+      function disableTransitions() {
+          transitionsEnabled = 1;
+      }
+
+      function enableTransitions() {
+          transitionsEnabled = 0;
+      }
+
+      function getTransitionsEnabled() {
+          return transitionsEnabled;
       }
 
     </script>

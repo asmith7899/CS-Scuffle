@@ -52,7 +52,7 @@ var transitioned = false;               //Added 5 additional seconds before the 
                                         //this variable is used to prevent a transition loop when the timer gets back to the transition time
                                         //likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
                                         //countdown before the game starts but it felt right with the hard AI being more aggressive right away
-
+var shouldTransition = 0;
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
 //var arena = 'test';
@@ -106,6 +106,8 @@ if (pageURL) {
       oppScore = splitVals[1];
     } else if(splitVals[0] == "difficulty") {
       AI_DIFFICULTY = splitVals[1];
+    } else if(splitVals[0] == "shouldTransition") {
+      shouldTransition = splitVals[1];
     }
   }
 }
@@ -114,7 +116,7 @@ var timerInterval = setInterval(function() {
   //initialize vars using passed in url to enable passing of arguments
 
   // move to new arena page if a certain amount of time has passed
-  if (transitioned == false && currTime == transitionTime && startTime != currTime) {
+  if (transitioned == false && currTime == transitionTime && startTime != currTime && shouldTransition==0) {
     transitionStage();
   }
 
