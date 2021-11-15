@@ -53,22 +53,27 @@ var transitioned = false;               //Added 5 additional seconds before the 
                                         //likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
                                         //countdown before the game starts but it felt right with the hard AI being more aggressive right away
 var shouldTransition = 0;
+var amountScroll = 0;
+
+
+
+//Canvas Intialization
+
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
 //var arena = 'test';
 var arena = FIRST_ARENA;
-if (canvas == null) {
-  arena = SECOND_ARENA;
-  canvas = document.getElementById("myCanvas3");
+
+//Add else if statements for any additional arenas made in the future.
+if (window.location.href.includes("home-arena")) {  //Looks for the html file name of the arena
+  arena = SECOND_ARENA; //Updates arena variable so other areas of code know the correct assets to use/expect
+  canvas = document.getElementById("myCanvas3");  //Redicts the canvas to the correct one for that arena
 }
 var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actually paint on the canvas
-
 //The amount of offset the canvas has to the webpage. Defined in the arena css file
-var CANVAS_OFFSET = 0;                  //Use for test-arena
-if (arena == FIRST_ARENA){
-  CANVAS_OFFSET = 40;                 //Use for map-arena
-}
+var CANVAS_OFFSET = canvas.offsetTop;                  //Use for test-arena
 
+//End Canvas Initialization
 
 //Sound Effects
 var shater = new Audio("../SoundEffects/Glass-Shatering.mp3");  //Sound of Destructible Entities breaking
@@ -84,10 +89,12 @@ playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
 var playerScore = 0;
 var oppScore = 0;
+var player1Src = '';
+var opp1Src = '';
 var pageURL = window.location.search.substring(1);
 if (pageURL) {
   var URLArray = pageURL.split('&');
-  for (var i = 0; i < URLArray.length; i++){
+  for (var i = 0; i < URLArray.length; i++) {
     var splitVals = URLArray[i].split('=');
     if (splitVals[0] == "startTime") {
       startTime = splitVals[1];
@@ -109,10 +116,16 @@ if (pageURL) {
     } else if(splitVals[0] == "shouldTransition") {
       shouldTransition = splitVals[1];
     }
+    else if (splitVals[0] == "player1Src") {
+      player1Src = splitVals[1];
+    }
+    else if (splitVals[0] == 'opp1Src') {
+      opp1Src = splitVals[1];
+    }
   }
 }
 var currTime = startTime;
-var timerInterval = setInterval(function() {
+var timerInterval = setInterval(function () {
   //initialize vars using passed in url to enable passing of arguments
 
   // move to new arena page if a certain amount of time has passed
@@ -129,10 +142,9 @@ var timerInterval = setInterval(function() {
 
 function transitionStage() {
   transitioned = true;
-  window.location.href = '../home-arena/home-arena.html?startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina=' 
+  window.location.href = '../home-arena/home-arena.html?player1Src=' + player1Src + '&opp1Src=' + opp1Src + '&startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
   + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore() + "&difficulty=" + AI_DIFFICULTY;
 }
-
 function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
   clearInterval(timerInterval); //stop the timer
@@ -246,8 +258,8 @@ class HtmlElement {
 */
 class Entity {
   entityImg = new Image();      //entityImg: The image object for the entity
-  x = window.innerWidth/2;      //x: the x value on the 2d coordinant grid where the entity is located
-  y = window.innerHeight/2;     //y: the y value on the 2d coordinant grid where the entity is located
+  x = window.innerWidth / 2;      //x: the x value on the 2d coordinant grid where the entity is located
+  y = window.innerHeight / 2;     //y: the y value on the 2d coordinant grid where the entity is located
   dx = 10;                      //dx: the speed in which the entity moves in the x direction
   dy = 10;                      //dy: the speed in which the entity moves in the y direction
   actionState = NORMAL_STATE;   //actionState: What is going on with the entity, are they bumping, just got hit, ect.
@@ -387,7 +399,7 @@ class Entity {
     this.facingDirection = facingDirection;
   }
 
-  setKnockbackDirection(knockbackDirection){
+  setKnockbackDirection(knockbackDirection) {
     this.knockbackDirection = knockbackDirection;
   }
 
@@ -407,7 +419,7 @@ class Entity {
     this.y = y;
   }
 
-  setPosition(x,y) {
+  setPosition(x, y) {
     this.x = x;
     this.y = y;
   }
@@ -464,7 +476,7 @@ class Entity {
     playerHit.play();
     if (this.stamina < amount && this.stamina != -1) {
       this.stamina = 0;
-    } else if ( ( this.stamina - amount > MAX_STAMINA && !this.getDestructibleObject() ) || (this.stamina - amount > DESTRUCTIBLE_MAX_STAMINA && this.getDestructibleObject() ) ) {
+    } else if ((this.stamina - amount > MAX_STAMINA && !this.getDestructibleObject()) || (this.stamina - amount > DESTRUCTIBLE_MAX_STAMINA && this.getDestructibleObject())) {
       if (this.getDestructibleObject()) {
         this.stamina = DESTRUCTIBLE_MAX_STAMINA;
       } else {
@@ -475,10 +487,10 @@ class Entity {
     }
 
     if (this.getDestructibleObject()) {
-      if (this.stamina < (DESTRUCTIBLE_MAX_STAMINA/3)*2 + 1 && this.stamina > DESTRUCTIBLE_MAX_STAMINA/3 ) {
+      if (this.stamina < (DESTRUCTIBLE_MAX_STAMINA / 3) * 2 + 1 && this.stamina > DESTRUCTIBLE_MAX_STAMINA / 3) {
         this.setImageSrc("../Images/destroy_stage_2.png");
       }
-      else if (this.stamina < DESTRUCTIBLE_MAX_STAMINA/3 + 1 && this.stamina >= 1) {
+      else if (this.stamina < DESTRUCTIBLE_MAX_STAMINA / 3 + 1 && this.stamina >= 1) {
         this.setImageSrc("../Images/destroy_stage_9.png");
       }
       else if (this.stamina == 0) {
@@ -507,7 +519,7 @@ var p1User = getCookie("username"); //get username from cookie. Username is set 
 if (p1User == "") {
   p1User = "PLAYER"; //username defaults to "PLAYER " if there is no username cookie
 }
-const player1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/gba.jpg', false, true, p1User, null);
+const player1 = new Entity(90, 70, player1Src, false, true, p1User, null);
 player1.setStamina(playerStamina);
 player1.setScore(parseInt(playerScore));
 var vborderBounce = 20;
@@ -515,21 +527,21 @@ var borderBounce = 10;
 
 
 //initialize opponent1
-const opp1 = new Entity(90, 70, 'https://www.cs.purdue.edu/people/images/small/faculty/aliaga.jpg', false, true, "OPPONENT", null);
+const opp1 = new Entity(90, 70, opp1Src, false, true, "OPPONENT", null);
 opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
 opp1.setScore(parseInt(oppScore));
 
 //initialize UI
 const gameUI = new Entity(50, window.innerWidth, '', true, false);
-gameUI.setStartingPosition(0,0);
+gameUI.setStartingPosition(0, 0);
 
 //initialize entity list (EntityID must be unique)
 gameUI.setEntityID('1');
 opp1.setEntityID('2');
 player1.setEntityID('3');
 var playerNumber = 3
-var entities = new Array(gameUI);
+var entities = new Array();
 var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
 //html ElementID Array
@@ -538,7 +550,18 @@ if (arena == FIRST_ARENA){
   var arenaElementIds = new Array(new HtmlElement('map_layer0_tile_17_0_0', 16, -37), new HtmlElement('map_layer0_tile_17_0_1', -240, -37), new HtmlElement('map_layer0_tile_17_1_0', 16, 219),
                                   new HtmlElement('map_layer0_tile_17_1_1',-240, 219), new HtmlElement('map_layer0_tile_17_0_2',-496, -37), new HtmlElement('map_layer0_tile_17_1_2',-496, 219),
                                   new HtmlElement('map_layer0_tile_17_0_3',-752, -37), new HtmlElement('map_layer0_tile_17_1_3',-752, 219), new HtmlElement('map_layer0_tile_17_0_4',-1008, -37),
-                                  new HtmlElement( 'map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219) );  //Use for map-arena
+                                  new HtmlElement('map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_0_0', 16, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_0', 16, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_1', -240, -37),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_1', -240, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_2', -496, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_2', -496, 219),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_0_3', -752, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_3', -752, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_4', -1008, -37),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_4', -1008, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_5', -1264, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_5', 0, 0)
+                                );  //Use for map-arena
+}
+else if (arena == SECOND_ARENA){
+  var arenaElementIds = new Array(new HtmlElement('Research', -763, 131), new HtmlElement('Alumni', -763, 131), new HtmlElement('FutureStudents', -763, 131),
+                                  new HtmlElement('OnlineMasters', -763, 131), new HtmlElement('GraduateStudents', -763, 131), new HtmlElement('TourPurdueCS', -763, 131),
+                                  new HtmlElement('UndergraduateStudents', -763, 131), new HtmlElement('FacultyPositions', -763, 131)
+                                 );
 }
 else{
   var arenaElementIds = new Array(new HtmlElement('div1', 0, 0),new HtmlElement('div2', 0, 0),new HtmlElement('div3', 0, 0) );   //Use for test-arena
@@ -557,7 +580,7 @@ for (var i = 0; i < arenaElementIds.length; i++) {
 
 entities.push(opp1);
 entities.push(player1);
-
+entities.push(gameUI);
 //Default Keyboard controls
 //update these variables to allow for control changes in options menu
 var p1BumpKey = "e";            //Player1 default bump key
@@ -597,14 +620,16 @@ var fallingAniFrames = 60;     //Length of falling animation for destructible ob
 /       the html element moves the destructible entity overlayed ontop of it.
 */
 function moveElement(htmlElement, x, y, needOffset) {
-  var tempY = y - CANVAS_OFFSET - htmlElement.getYOffset();
+  var tempY = y - CANVAS_OFFSET - amountScroll- htmlElement.getYOffset();
   var tempX = x + htmlElement.getXOffset();
   if (needOffset && CANVAS_OFFSET != 0) {
     //For some reason objects have a -9 in y movement for offsetted html elements on the map-arena
     tempY = tempY + 9;
   }
   var genE = document.getElementById(htmlElement.getHtmlElementID());
-  genE.style.position = "absolute";
+  if (genE.style.position != null) {
+    genE.style.position = "absolute";
+  }
   genE.style.left = tempX + 'px';
   genE.style.top = tempY + 'px';
 }
@@ -649,7 +674,7 @@ function rectCollisionCheck(entity1, entity2) {
 function entBumpRight(bumpEnt, multiplier = 1) {
   bumpMovement.play();  //Play bump sound effect
   multipliedBumpMov = bumpMovPerFrame * multiplier;
-  if (bumpEnt.getX() + multipliedBumpMov  > canvas.width - bumpEnt.getWidth()) {
+  if (bumpEnt.getX() + multipliedBumpMov > canvas.width - bumpEnt.getWidth()) {
     bumpEnt.setX(canvas.width - bumpEnt.getWidth() - multipliedBumpMov);
   }
   bumpEnt.setX(bumpEnt.getX() + multipliedBumpMov);
@@ -673,7 +698,7 @@ function entBumpRight(bumpEnt, multiplier = 1) {
       hitSomething = true;
     }
   }
-  if ( hitSomething ) {
+  if (hitSomething) {
     bumpEnt.setX(bumpEnt.getX() - bumpMovPerFrame);
   }
 }
@@ -684,10 +709,10 @@ function entBumpRight(bumpEnt, multiplier = 1) {
 /
 / Note: Assumes an entity is given do not use non entities as it's parameter
 */
-function entBumpLeft(bumpEnt, multiplier=1) {
+function entBumpLeft(bumpEnt, multiplier = 1) {
   bumpMovement.play();  //Play bump sound effect
   multipliedBumpMov = bumpMovPerFrame * multiplier;
-  if(bumpEnt.getX() - multipliedBumpMov  < 0){
+  if (bumpEnt.getX() - multipliedBumpMov < 0) {
     bumpEnt.setX(multipliedBumpMov);
   }
   bumpEnt.setX(bumpEnt.getX() - multipliedBumpMov);
@@ -711,7 +736,7 @@ function entBumpLeft(bumpEnt, multiplier=1) {
       hitSomething = true;
     }
   }
-  if ( hitSomething ) {
+  if (hitSomething) {
     bumpEnt.setX(bumpEnt.getX() + bumpMovPerFrame);
   }
 }
@@ -722,10 +747,10 @@ function entBumpLeft(bumpEnt, multiplier=1) {
 /
 / Note: Assumes an entity is given do not use non entities as it's parameter
 */
-function entBumpUp(bumpEnt, multiplier=1) {
+function entBumpUp(bumpEnt, multiplier = 1) {
   bumpMovement.play();  //Play bump sound effect
   multipliedBumpMov = bumpMovPerFrame * multiplier;
-  if(bumpEnt.getY() + multipliedBumpMov <  0) {
+  if (bumpEnt.getY() + multipliedBumpMov < 0) {
     bumpEnt.setY(multipliedBumpMov);
   }
   bumpEnt.setY(bumpEnt.getY() - multipliedBumpMov);
@@ -749,7 +774,7 @@ function entBumpUp(bumpEnt, multiplier=1) {
       hitSomething = true;
     }
   }
-  if ( hitSomething ) {
+  if (hitSomething) {
     bumpEnt.setY(bumpEnt.getY() + bumpMovPerFrame);
   }
 }
@@ -760,11 +785,11 @@ function entBumpUp(bumpEnt, multiplier=1) {
 /
 / Note: Assumes an entity is given do not use non entities as it's parameter
 */
-function entBumpDown(bumpEnt, multiplier=1) {
+function entBumpDown(bumpEnt, multiplier = 1) {
   bumpMovement.play();  //Play bump sound effect
   multipliedBumpMov = bumpMovPerFrame * multiplier;
   if (bumpEnt.getY() - multipliedBumpMov > canvas.height - bumpEnt.getHeight()) { // implement this in game
-    bumpEnt.setY(canvas.height- bumpEnt.getHeight() - multipliedBumpMov);
+    bumpEnt.setY(canvas.height - bumpEnt.getHeight() - multipliedBumpMov);
   }
   bumpEnt.setY(bumpEnt.getY() + multipliedBumpMov);
 
@@ -787,7 +812,7 @@ function entBumpDown(bumpEnt, multiplier=1) {
       hitSomething = true;
     }
   }
-  if ( hitSomething ) {
+  if (hitSomething) {
     bumpEnt.setY(bumpEnt.getY() - bumpMovPerFrame);
   }
 }
@@ -807,7 +832,7 @@ function entBumpDown(bumpEnt, multiplier=1) {
 */
 function entityBump(bumpEntity) {
   if (bumpEntity.getFacingDirection() == RIGHT_DIR) {
-    if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+    if (bumpEntity.getAnimationCounter() <= bumpAniFrames / 2) {
       entBumpRight(bumpEntity);
     }
     else {
@@ -815,7 +840,7 @@ function entityBump(bumpEntity) {
     }
   }
   else if (bumpEntity.getFacingDirection() == LEFT_DIR) {
-    if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+    if (bumpEntity.getAnimationCounter() <= bumpAniFrames / 2) {
       entBumpLeft(bumpEntity);
     }
     else {
@@ -823,7 +848,7 @@ function entityBump(bumpEntity) {
     }
   }
   else if (bumpEntity.getFacingDirection() == UP_DIR) {
-    if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+    if (bumpEntity.getAnimationCounter() <= bumpAniFrames / 2) {
       entBumpUp(bumpEntity);
     }
     else {
@@ -831,7 +856,7 @@ function entityBump(bumpEntity) {
     }
   }
   else if (bumpEntity.getFacingDirection() == DOWN_DIR) {
-    if (bumpEntity.getAnimationCounter() <= bumpAniFrames/2) {
+    if (bumpEntity.getAnimationCounter() <= bumpAniFrames / 2) {
       entBumpDown(bumpEntity);
     }
     else {
@@ -864,9 +889,9 @@ function entityPickup(pickupEntity) {
     itemPickup.play();
     //check to see if any entities were collided with and can be picked up
     for (var i = 0; i < entities.length; i++) {
-      if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getEntityID() != '1' && entities[i].getHoldingEnt() == null ) {
-        entities[i].setDx( ( (pickupEntity.getX() - entities[i].getWidth()/2 + pickupEntity.getWidth()/2) - entities[i].getX() ) / pickupAniFrames);
-        entities[i].setDy( ( (pickupEntity.getY() - entities[i].getHeight() + 10) - entities[i].getY() ) / pickupAniFrames);
+      if (rectCollisionCheck(pickupEntity, entities[i]) && entities[i].getDestructibleObject() && entities[i].getEntityID() != '1' && entities[i].getHoldingEnt() == null) {
+        entities[i].setDx(((pickupEntity.getX() - entities[i].getWidth() / 2 + pickupEntity.getWidth() / 2) - entities[i].getX()) / pickupAniFrames);
+        entities[i].setDy(((pickupEntity.getY() - entities[i].getHeight() + 10) - entities[i].getY()) / pickupAniFrames);
         entities[i].setHoldingEnt(pickupEntity);
         pickupEntity.setHoldingEnt(entities[i]);
         break;
@@ -949,6 +974,7 @@ function entityDrop(dropEntity, force) {
 /
 / Notes: Will crash for non-entities
 */
+
 function drawEntity(genEnt) {
   //Update HTML element to follow the entity that is holding it. Used when the entity that is being held up is being drawn.
   if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
@@ -959,13 +985,13 @@ function drawEntity(genEnt) {
 
   //HTML Element Reposition overlayed destructible entity to match current element location.
   if (genEnt.getDestructibleObject() && genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
-    genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left,document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top-CANVAS_OFFSET);
+    genEnt.setPosition(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top - CANVAS_OFFSET);
   }
 
   //BUMPING_STATE highlight animation
   if (genEnt.getActionState() == BUMPING_STATE) {
     ctx.beginPath();
-    ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
+    ctx.rect(genEnt.getX() - 5, genEnt.getY() - 5, genEnt.getWidth() + 10, genEnt.getHeight() + 10);
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
@@ -974,23 +1000,23 @@ function drawEntity(genEnt) {
   else if (genEnt.getActionState() == HIT_STATE) {
     if (genEnt.isACharacter() == true && genEnt.getKnockbackCooldown() <= KNOCKBACK_COOLDOWN) {
       genEnt.setKnockbackCooldown(genEnt.getKnockbackCooldown() + 1);
-      if (genEnt.getKnockbackDirection() == RIGHT_DIR){
-        entBumpRight(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+      if (genEnt.getKnockbackDirection() == RIGHT_DIR) {
+        entBumpRight(genEnt, BUMP_KNOCKBACK / KNOCKBACK_COOLDOWN);
       }
       if (genEnt.getKnockbackDirection() == LEFT_DIR) {
-        entBumpLeft(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+        entBumpLeft(genEnt, BUMP_KNOCKBACK / KNOCKBACK_COOLDOWN);
       }
       if (genEnt.getKnockbackDirection() == UP_DIR) {
-        entBumpUp(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+        entBumpUp(genEnt, BUMP_KNOCKBACK / KNOCKBACK_COOLDOWN);
       }
       if (genEnt.getKnockbackDirection() == DOWN_DIR) {
-        entBumpDown(genEnt, BUMP_KNOCKBACK/KNOCKBACK_COOLDOWN);
+        entBumpDown(genEnt, BUMP_KNOCKBACK / KNOCKBACK_COOLDOWN);
       }
     }
 
     //Draw Red Highlight
     ctx.beginPath();
-    ctx.rect(genEnt.getX()-5, genEnt.getY()-5, genEnt.getWidth()+10, genEnt.getHeight()+10);
+    ctx.rect(genEnt.getX() - 5, genEnt.getY() - 5, genEnt.getWidth() + 10, genEnt.getHeight() + 10);
     ctx.fillStyle = "#FF0000";
     ctx.fill();
     ctx.closePath();
@@ -1075,17 +1101,17 @@ function drawEntity(genEnt) {
         //Initial fall
         if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
           itemDrop.play(); //dropped object sound
-          slowDown = slowDown*2;
+          slowDown = slowDown * 2;
         }
         //Bounce 1st time
         if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
-          slowDown = slowDown*2;
+          slowDown = slowDown * 2;
         }
         //Bounce 2nd time
         if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
-          slowDown = slowDown*2;
+          slowDown = slowDown * 2;
         }
         genEnt.setDy(genEnt.getDy()/slowDown );
       }
@@ -1160,7 +1186,7 @@ function drawEntity(genEnt) {
     ctx.closePath();
     //Stamina bar
     ctx.beginPath();
-    ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), (genEnt.getWidth()*genEnt.getStamina())/genEntMaxStam, 6);
+    ctx.rect(genEnt.getX(), genEnt.getY() + genEnt.getHeight(), (genEnt.getWidth() * genEnt.getStamina()) / genEntMaxStam, 6);
     ctx.fillStyle = "#ccbb91";
     ctx.fill();
     ctx.closePath();
@@ -1188,7 +1214,7 @@ function drawGamePlayOverlay() {
   ctx.fill();
   ctx.closePath();
   ctx.beginPath();
-  ctx.rect(2, 2, window.innerWidth-2, gameUI.getHeight()-4);
+  ctx.rect(2, 2, window.innerWidth - 2, gameUI.getHeight() - 4);
   ctx.fillStyle = "#ccbb91";
   ctx.fill();
   ctx.closePath();
@@ -1196,13 +1222,13 @@ function drawGamePlayOverlay() {
   ctx.globalAlpha = 1;
   //Empty bar
   ctx.beginPath();
-  ctx.rect(gameUI.getX()+20, (gameUI.getHeight()/4)+1, (gameUI.getWidth()/3)-20, gameUI.getHeight()/2);
+  ctx.rect(gameUI.getX() + 20, (gameUI.getHeight() / 4) + 1, (gameUI.getWidth() / 3) - 20, gameUI.getHeight() / 2);
   ctx.fillStyle = "#000000";
   ctx.fill();
   ctx.closePath();
   //Stamina bar
   ctx.beginPath();
-  ctx.rect(gameUI.getX()+22, (gameUI.getHeight()/4)+3, ((((gameUI.getWidth()/3)-20)*player1.getStamina())/100)-4, (gameUI.getHeight()/2)-4);
+  ctx.rect(gameUI.getX() + 22, (gameUI.getHeight() / 4) + 3, ((((gameUI.getWidth() / 3) - 20) * player1.getStamina()) / 100) - 4, (gameUI.getHeight() / 2) - 4);
   ctx.fillStyle = "#ccbb91";
   ctx.fill();
   ctx.closePath();
@@ -1218,22 +1244,21 @@ function drawGamePlayOverlay() {
 
   //Empty bar
   ctx.beginPath();
-  ctx.rect((gameUI.getWidth()/3)*2-20, (gameUI.getHeight()/4)+1, (gameUI.getWidth()/3)-20, gameUI.getHeight()/2);
+  ctx.rect((gameUI.getWidth() / 3) * 2 - 20, (gameUI.getHeight() / 4) + 1, (gameUI.getWidth() / 3) - 20, gameUI.getHeight() / 2);
   ctx.fillStyle = "#000000";
   ctx.fill();
   ctx.closePath();
   //Stamina bar
   ctx.beginPath();
-  ctx.rect((gameUI.getWidth()/3)*2-18, (gameUI.getHeight()/4)+3, ((((gameUI.getWidth()/3)-20)*opp1.getStamina())/100)-4, (gameUI.getHeight()/2)-4);
+  ctx.rect((gameUI.getWidth() / 3) * 2 - 18, (gameUI.getHeight() / 4) + 3, ((((gameUI.getWidth() / 3) - 20) * opp1.getStamina()) / 100) - 4, (gameUI.getHeight() / 2) - 4);
   ctx.fillStyle = "#ccbb91";
   ctx.fill();
   ctx.closePath();
   //OPPONENT
   ctx.font = "15px Helvetica";
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("OPPONENT STAMINA", (gameUI.getWidth()/3)*2-15, (gameUI.getHeight()/4)+yOffset+8);
+  ctx.fillText("OPPONENT STAMINA", (gameUI.getWidth() / 3) * 2 - 15, (gameUI.getHeight() / 4) + yOffset + 8);
 }
-
 //Show Debug information
 function drawDebugInfo() {
   var dbListPos = 20;     //Starting Y position for the debug overlay
@@ -1254,7 +1279,7 @@ function drawDebugInfo() {
 
   //Draw background
   ctx.beginPath();
-  ctx.rect(0, 0, 220, dbListPos*10);
+  ctx.rect(0, 0, 220, dbListPos * 10);
   ctx.globalAlpha = 0.8;
   ctx.fillStyle = "#000000";
   ctx.fill();
@@ -1279,7 +1304,7 @@ function drawDebugInfo() {
 //Main Draw function, responsible for drawing each frame
 function draw() {
   // adjust canvas size so that borders of game move with window size
-  ctx.canvas.width  = window.innerWidth;
+  ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
   if ((currTime <= startTime - 5)) { //allow player and AI actions only after 5 seconds have passed
@@ -1426,13 +1451,13 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
 function keyDownHandler(e) {
-  if(e.key == "Right" || e.key == "ArrowRight") {
+  if (e.key == "Right" || e.key == "ArrowRight") {
     rightPressed = true;
   }
-  else if(e.key == "Left" || e.key == "ArrowLeft") {
+  else if (e.key == "Left" || e.key == "ArrowLeft") {
     leftPressed = true;
   }
-  else if (e.key == "Up" || e.key == "ArrowUp"){
+  else if (e.key == "Up" || e.key == "ArrowUp") {
     upPressed = true;
   }
   else if (e.key == "Down" || e.key == "ArrowDown") {
@@ -1481,15 +1506,15 @@ function keyDownHandler(e) {
 }
 
 function keyUpHandler(e) {
-  if(e.key == "Right" || e.key == "ArrowRight") {
+  if (e.key == "Right" || e.key == "ArrowRight") {
     rightPressed = false;
     e.preventDefault();
   }
-  else if(e.key == "Left" || e.key == "ArrowLeft") {
+  else if (e.key == "Left" || e.key == "ArrowLeft") {
     leftPressed = false;
     e.preventDefault();
   }
-  else if (e.key == "Up" || e.key == "ArrowUp"){
+  else if (e.key == "Up" || e.key == "ArrowUp") {
     upPressed = false;
     e.preventDefault();
   }
@@ -1501,6 +1526,11 @@ function keyUpHandler(e) {
     p1BumpPressed = false;
   }
 }
+
+//Update amountScroll
+window.onscroll = function (e) {
+  amountScroll = -window.scrollY; // Value of scroll Y in px
+};
 
 /*
 /   Purpose: sets a new cookie. used to maintain username through transitions
