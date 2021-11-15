@@ -67,9 +67,12 @@
             <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
             <a href="#">Multiplayer </a>
             <a href="#">Contact</a>
+            <a href='#' class="menubtn" onclick="disableTransitions()">Single Level</a>
+            <a href='#' class="menubtn" onclick="enableTransitions()">Multi Level</a>
             <a href='#' class="menubtn" onclick="startGame()">Start Game</a>
         </div>
         <script>
+            var transitionsEnabled = 0;
             var difficulty = 0;
             var username = "Player";
             /* Open */
@@ -103,6 +106,18 @@
                 return username;
             }
 
+            function getTransitionsEnabled() {
+                return transitionsEnabled;
+            }
+
+            function enableTransitions() {
+                transitionsEnabled = 0;
+            }
+
+            function disableTransitions() {
+                transitionsEnabled = 1;
+            }
+
             var playerSrc = new Array();
             var playerNum = 0;
             function imageSelected(name) {
@@ -127,7 +142,7 @@
                     confirm("Please choose 2 characters before starting the game.");
                 }
                 else {
-                    location.href = '../map-arena/map-arena.html?player1Src=' + playerSrc[0] + '&opp1Src=' + playerSrc[1] + '&difficulty=' + getDifficulty();
+                    location.href = '../map-arena/map-arena.html?player1Src=' + playerSrc[0] + '&opp1Src=' + playerSrc[1] + '&difficulty=' + getDifficulty() + '&shouldTransition=' + getTransitionsEnabled();
                 }
             }
         </script>
