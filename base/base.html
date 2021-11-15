@@ -67,10 +67,10 @@
             <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
             <a href="#">Multiplayer </a>
             <a href="#">Contact</a>
-            <a href='#' onclick="transitionPage()">Start Game</a>
+            <a href='#' class="menubtn" onclick="transitionPage()">Start Game</a>
         </div>
         <script>
-            var difficulty = "EASY";
+            var difficulty = 0;
             var username = "Player";
             /* Open */
             function openNav() {
@@ -88,11 +88,11 @@
                 document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
             }
             function setEasyDifficulty() {
-                difficulty = "EASY";
+                difficulty = 0;
             }
 
             function setHardDifficulty() {
-                difficulty = "HARD";
+                difficulty = 1;
             }
 
             function getDifficulty() {
@@ -122,12 +122,12 @@
                 }
             }
 
-            function transitionPage() {
+            function startGame() {
                 if (playerSrc.length < 2) {
                     confirm("Please choose 2 characters before starting the game.");
                 }
                 else {
-                    location.href = '../map-arena/map-arena.html?player1Src=' + playerSrc[0] + '&opp1Src=' + playerSrc[1];
+                    location.href = '../map-arena/map-arena.html?player1Src=' + playerSrc[0] + '&opp1Src=' + playerSrc[1] + '&difficulty=' + getDifficulty();
                 }
             }
         </script>
