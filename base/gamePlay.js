@@ -48,10 +48,10 @@ var DROP_FORCE = 5;
 
 //Variables
 var transitioned = false;               //Added 5 additional seconds before the game starts for the user to get ready
-//on stage transition this means the timer will start above the transition time
-//this variable is used to prevent a transition loop when the timer gets back to the transition time
-//likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
-//countdown before the game starts but it felt right with the hard AI being more aggressive right away
+                                        //on stage transition this means the timer will start above the transition time
+                                        //this variable is used to prevent a transition loop when the timer gets back to the transition time
+                                        //likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
+                                        //countdown before the game starts but it felt right with the hard AI being more aggressive right away
 
 // initialize canvas
 var canvas = document.getElementById("myCanvas");
@@ -65,7 +65,7 @@ var ctx = canvas.getContext("2d"); // we use this 2d rendering context to actual
 
 //The amount of offset the canvas has to the webpage. Defined in the arena css file
 var CANVAS_OFFSET = 0;                  //Use for test-arena
-if (arena == FIRST_ARENA) {
+if (arena == FIRST_ARENA){
   CANVAS_OFFSET = 40;                 //Use for map-arena
 }
 
@@ -83,6 +83,8 @@ playerStamina = MAX_STAMINA;
 oppStamina = MAX_STAMINA;
 var playerScore = 0;
 var oppScore = 0;
+var player1Src = '';
+var opp1Src = '';
 var pageURL = window.location.search.substring(1);
 if (pageURL) {
   var URLArray = pageURL.split('&');
@@ -104,9 +106,14 @@ if (pageURL) {
     } else if (splitVals[0] == "opponentScore") {
       oppScore = splitVals[1];
     }
+    else if (splitVals[0] == "player1Src") {
+      player1Src = splitVals[1];
+    }
+    else if (splitVals[0] == 'opp1Src') {
+      opp1Src = splitVals[1];
+    }
   }
 }
-
 var currTime = startTime;
 var timerInterval = setInterval(function () {
   //initialize vars using passed in url to enable passing of arguments
@@ -125,8 +132,8 @@ var timerInterval = setInterval(function () {
 
 function transitionStage() {
   transitioned = true;
-  window.location.href = '../home-arena/home-arena.html?players=' + players + '&startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
-    + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore();
+  window.location.href = '../home-arena/home-arena.html?player1Src=' + player1Src + '&opp1Src=' + opp1Src + '&startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
+  + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore();
 }
 function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
@@ -169,7 +176,7 @@ function endGame() {
   }
 
   window.location.href = '../win-screen/win-screen.html?winner=' + maxScore + "&2nd=" + second.getScore() + '&winnerimg='
-    + winner.getImage().src + "&2ndimg=" + second.getImage().src + "&winnerUser=" + winner.username + "&secondUser=" + second.username;
+  + winner.getImage().src + "&2ndimg=" + second.getImage().src + "&winnerUser=" + winner.username + "&secondUser=" + second.username;
 
   //display basic game over window. Will replace with actual ending screen, this is just a placeholder
   //alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
@@ -502,8 +509,7 @@ var p1User = getCookie("username"); //get username from cookie. Username is set 
 if (p1User == "") {
   p1User = "PLAYER"; //username defaults to "PLAYER " if there is no username cookie
 }
-prompt(players[0] + '!!!!')
-var player1 = new Entity(90, 70, players[0], false, true, p1User, null);
+const player1 = new Entity(90, 70, player1Src, false, true, p1User, null);
 player1.setStamina(playerStamina);
 player1.setScore(parseInt(playerScore));
 var vborderBounce = 20;
@@ -511,9 +517,8 @@ var borderBounce = 10;
 
 
 //initialize opponent1
-prompt(players[1] + '!!!!')
-var opp1 = new Entity(90, 70, players[1], false, true, "OPPONENT", null);
-opp1.setStartingPosition(window.innerWidth / 2 + 300, window.innerHeight / 2);
+const opp1 = new Entity(90, 70, opp1Src, false, true, "OPPONENT", null);
+opp1.setStartingPosition(window.innerWidth/2+ 300, window.innerHeight/2);
 opp1.setStamina(oppStamina);
 opp1.setScore(parseInt(oppScore));
 
@@ -530,30 +535,28 @@ var entities = new Array(gameUI);
 var nonDesEntityNumber = 2;   //Number of non-destructible entities
 
 //html ElementID Array
-if (arena == FIRST_ARENA) {
+if (arena == FIRST_ARENA){
 
   var arenaElementIds = new Array(new HtmlElement('map_layer0_tile_17_0_0', 16, -37), new HtmlElement('map_layer0_tile_17_0_1', -240, -37), new HtmlElement('map_layer0_tile_17_1_0', 16, 219),
-    new HtmlElement('map_layer0_tile_17_1_1', -240, 219), new HtmlElement('map_layer0_tile_17_0_2', -496, -37), new HtmlElement('map_layer0_tile_17_1_2', -496, 219),
-    new HtmlElement('map_layer0_tile_17_0_3', -752, -37), new HtmlElement('map_layer0_tile_17_1_3', -752, 219), new HtmlElement('map_layer0_tile_17_0_4', -1008, -37),
-    new HtmlElement('map_layer0_tile_17_1_4', -1008, 219), new HtmlElement('map_layer0_tile_17_0_5', -1264, -37), new HtmlElement('map_layer0_tile_17_1_5', -1264, 219));  //Use for map-arena
+                                  new HtmlElement('map_layer0_tile_17_1_1',-240, 219), new HtmlElement('map_layer0_tile_17_0_2',-496, -37), new HtmlElement('map_layer0_tile_17_1_2',-496, 219),
+                                  new HtmlElement('map_layer0_tile_17_0_3',-752, -37), new HtmlElement('map_layer0_tile_17_1_3',-752, 219), new HtmlElement('map_layer0_tile_17_0_4',-1008, -37),
+                                  new HtmlElement( 'map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219) );  //Use for map-arena
 }
-else {
-  var arenaElementIds = new Array(new HtmlElement('div1', 0, 0), new HtmlElement('div2', 0, 0), new HtmlElement('div3', 0, 0));   //Use for test-arena
+else{
+  var arenaElementIds = new Array(new HtmlElement('div1', 0, 0),new HtmlElement('div2', 0, 0),new HtmlElement('div3', 0, 0) );   //Use for test-arena
 }
 
 for (var i = 0; i < arenaElementIds.length; i++) {
   var genElement = document.getElementById(arenaElementIds[i].getHtmlElementID());
-  if (genElement != null) {
+  if (genElement != null){
     const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true, false, 'DesObj', arenaElementIds[i]);
-    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top - CANVAS_OFFSET);
+    tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top-CANVAS_OFFSET);
     tempEntity.setEntityID(arenaElementIds[i].getHtmlElementID());
     nonDesEntityNumber++;
     entities.push(tempEntity);
   }
 }
-prompt(playerSrc[0]);
-player1.setImageSrc(playerSrc[0]);
-opp1.setImageSrc(playerSrc[1]);
+
 entities.push(opp1);
 entities.push(player1);
 //Default Keyboard controls
@@ -578,7 +581,7 @@ var tot_fps = 0;                //The time to draw each frame summed together
 //Animation/Action variables
 var bumpAniFrames = 14;         //Length of bump animation in frames
 var bumpDistance = 80;          //How far the bump animation takes you forward
-var bumpMovPerFrame = bumpDistance / (bumpAniFrames / 2); //The distance the bump animation goes forward each frame
+var bumpMovPerFrame = bumpDistance/(bumpAniFrames/2); //The distance the bump animation goes forward each frame
 var pickupAniFrames = 21;       //Length of the pickup/drop animation in frames (calls to the draw function) for players/AI
 var fallingAniFrames = 60;     //Length of falling animation for destructible objects that have been dropped
 
@@ -919,9 +922,9 @@ function entityDrop(dropEntity, force) {
       dropEntity.getHoldingEnt().setFacingDirection(DOWN_DIR);
     }
     if (force == THROW_FORCE) {
-      dropEntity.getHoldingEnt().setActionState(THROWN_STATE);
+        dropEntity.getHoldingEnt().setActionState(THROWN_STATE);
     } else {
-      dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
+        dropEntity.getHoldingEnt().setActionState(FALLING_STATE);
     }
     dropEntity.getHoldingEnt().setAnimationCounter(0);
     dropEntity.getHoldingEnt().setHoldingEnt(null);
@@ -952,7 +955,7 @@ function drawEntity(genEnt) {
   //Update HTML element to follow the entity that is holding it. Used when the entity that is being held up is being drawn.
   if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
     if (genEnt.getHoldingEnt().getActionState() != PICKUP_STATE) {
-      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getHoldingEnt().getX() - genEnt.getWidth() / 2 + genEnt.getHoldingEnt().getWidth() / 2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10, false);
+      moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10, false);
     }
   }
 
@@ -1015,7 +1018,7 @@ function drawEntity(genEnt) {
               entities[i].setActionState(HIT_STATE);
               if (entities[i].isACharacter() == true) {
                 entities[i].setKnockbackDirection(genEnt.getFacingDirection());
-                genEnt.addScore(((THROW_DAMAGE / BUMP_DAMAGE) + 1) * 100);
+                genEnt.addScore( ((THROW_DAMAGE/BUMP_DAMAGE)+1) *100);
                 if (entities[i].getStamina() == 0) {
                   endGame();
                 }
@@ -1027,7 +1030,7 @@ function drawEntity(genEnt) {
           }
         }
       }
-      if (hitSomething) {
+      if ( hitSomething ) {
         genEnt.setDx(0);
         genEnt.setDy(0);
       }
@@ -1038,55 +1041,55 @@ function drawEntity(genEnt) {
       //Drop right or left
       if (genEnt.getDx() != 0) {
         //Initial fall
-        if (genEnt.getAnimationCounter() <= (4 * fallingAniFrames) / 10) {
-          genEnt.setDy((300 / fallingAniFrames));
-          if (genEnt.getAnimationCounter() == (4 * fallingAniFrames) / 10) {
+        if (genEnt.getAnimationCounter() <= (4*fallingAniFrames)/10 ) {
+          genEnt.setDy((300 / fallingAniFrames) );
+          if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
             itemDrop.play(); //dropped object sound
-            slowDown = slowDown * 2;
+            slowDown = slowDown*2;
           }
         }
         //Bounce 1st time
-        else if (genEnt.getAnimationCounter() <= (6 * fallingAniFrames) / 10) {
+        else if (genEnt.getAnimationCounter() <= (6*fallingAniFrames)/10) {
           genEnt.setDy((-100 / fallingAniFrames));
         }
-        else if (genEnt.getAnimationCounter() <= (8 * fallingAniFrames) / 10) {
+        else if (genEnt.getAnimationCounter() <= (8*fallingAniFrames)/10) {
           genEnt.setDy((100 / fallingAniFrames));
-          if (genEnt.getAnimationCounter() == (8 * fallingAniFrames) / 10) {
+          if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
             itemDrop.play(); //dropped object sound
-            slowDown = slowDown * 2;
+            slowDown = slowDown*2;
           }
         }
         //Bounce 2nd time
-        else if (genEnt.getAnimationCounter() <= (9 * fallingAniFrames) / 10) {
+        else if (genEnt.getAnimationCounter() <= (9*fallingAniFrames)/10) {
           genEnt.setDy((-25 / fallingAniFrames));
-        } else if (genEnt.getAnimationCounter() <= (fallingAniFrames) / 10) {
+        } else if (genEnt.getAnimationCounter() <= (fallingAniFrames)/10) {
           genEnt.setDy((25 / fallingAniFrames));
-          if (genEnt.getAnimationCounter() == (fallingAniFrames) / 10) {
+          if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
             itemDrop.play(); //dropped object sound
-            slowDown = slowDown * 2;
+            slowDown = slowDown*2;
           }
         }
-        genEnt.setDx(genEnt.getDx() / slowDown);
+        genEnt.setDx(genEnt.getDx()/slowDown );
       }
       //Drop Up or Down
       else {
         slowDown = 1;
         //Initial fall
-        if (genEnt.getAnimationCounter() == (4 * fallingAniFrames) / 10) {
+        if (genEnt.getAnimationCounter() == (4*fallingAniFrames)/10) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown * 2;
         }
         //Bounce 1st time
-        if (genEnt.getAnimationCounter() == (8 * fallingAniFrames) / 10) {
+        if (genEnt.getAnimationCounter() == (8*fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown * 2;
         }
         //Bounce 2nd time
-        if (genEnt.getAnimationCounter() == (fallingAniFrames) / 10) {
+        if (genEnt.getAnimationCounter() == (fallingAniFrames)/10 ) {
           itemDrop.play(); //dropped object sound
           slowDown = slowDown * 2;
         }
-        genEnt.setDy(genEnt.getDy() / slowDown);
+        genEnt.setDy(genEnt.getDy()/slowDown );
       }
     }
 
@@ -1094,7 +1097,7 @@ function drawEntity(genEnt) {
 
     //Celling Floor Collision
     if (genEnt.getY() > canvas.height - genEnt.getHeight()) {
-      genEnt.setY(canvas.height - genEnt.getHeight());
+      genEnt.setY(canvas.height- genEnt.getHeight());
       moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getX(), genEnt.getY(), true);
     } else if (genEnt.getY() < 0) {
       genEnt.setY(0);
@@ -1131,16 +1134,16 @@ function drawEntity(genEnt) {
       ctx.font = "10px Helvetica";
       ctx.fillStyle = "#000000";
       if (genEnt.getEntityID() != '1' && genEnt.getEntityID() != '2') {
-        ctx.fillText(genEnt.getEntityID(), genEnt.getX(), genEnt.getY() - 70);
-        ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY() - 60);
-        ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY() - 50);
-        ctx.fillText(player1.getY(), genEnt.getX() + genEnt.getWidth() - 20, genEnt.getY() - 50);
-        ctx.fillText("Destructible Overlay:", genEnt.getX(), genEnt.getY() - 40);
-        ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY() - 30);
-        ctx.fillText(genEnt.getY(), genEnt.getX() + genEnt.getWidth() - 20, genEnt.getY() - 30);
-        ctx.fillText("HTML Element:", genEnt.getX(), genEnt.getY() - 20);
-        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY() - 10);
-        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX() + genEnt.getWidth() - 20, genEnt.getY() - 10);
+        ctx.fillText(genEnt.getEntityID(), genEnt.getX(), genEnt.getY()-70);
+        ctx.fillText("PLAYER1:", genEnt.getX(), genEnt.getY()-60);
+        ctx.fillText(player1.getX(), genEnt.getX(), genEnt.getY()-50);
+        ctx.fillText(player1.getY(), genEnt.getX() + genEnt.getWidth()-20, genEnt.getY()-50);
+        ctx.fillText("Destructible Overlay:", genEnt.getX(), genEnt.getY()-40);
+        ctx.fillText(genEnt.getX(), genEnt.getX(), genEnt.getY()-30);
+        ctx.fillText(genEnt.getY(), genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-30);
+        ctx.fillText("HTML Element:", genEnt.getX(), genEnt.getY()-20);
+        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY()-10);
+        ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
       }
     }
   }
@@ -1208,12 +1211,12 @@ function drawGamePlayOverlay() {
   //PLAYER
   ctx.font = "15px Helvetica";
   ctx.fillStyle = "#ffffff";
-  ctx.fillText(p1User + " STAMINA", 25, (gameUI.getHeight() / 4) + yOffset + 8); //display player username
+  ctx.fillText(p1User + " STAMINA", 25, (gameUI.getHeight()/4)+yOffset+8); //display player username
 
   //Timer
   ctx.font = "20px Helvetica";
   ctx.fillStyle = "#000000";
-  ctx.fillText(currTime, gameUI.getWidth() / 2 - 20, 23 + yOffset);
+  ctx.fillText(currTime, gameUI.getWidth()/2-20, 23+yOffset);
 
   //Empty bar
   ctx.beginPath();
@@ -1262,16 +1265,16 @@ function drawDebugInfo() {
   //Draw stats
   ctx.font = "16px Arial";
   ctx.fillStyle = "#FFFFFF";
-  ctx.fillText("Player1AnimationCounter: " + player1.getAnimationCounter(), 8, dbListPos);
-  ctx.fillText("Player1ActionState: " + player1.getActionState(), 8, dbListPos * 2);
-  ctx.fillText("Player1FacingDir: " + player1.getFacingDirection(), 8, dbListPos * 3);
-  ctx.fillText("Player1Stamina: " + player1.getStamina(), 8, dbListPos * 4);
-  ctx.fillText("Opp1AnimationCounter: " + opp1.getAnimationCounter(), 8, dbListPos * 5);
-  ctx.fillText("Opp1ActionState: " + opp1.getActionState(), 8, dbListPos * 6);
-  ctx.fillText("Opp1FacingDir: " + opp1.getFacingDirection(), 8, dbListPos * 7);
-  ctx.fillText("Opp1Stamina: " + opp1.getStamina(), 8, dbListPos * 8);
-  ctx.fillText("Opp1HitCooldown: " + opp1.getHitCooldown(), 8, dbListPos * 9);
-  ctx.fillText("FPS: " + avg_fps, 8, dbListPos * 10);
+  ctx.fillText("Player1AnimationCounter: "+player1.getAnimationCounter(), 8, dbListPos);
+  ctx.fillText("Player1ActionState: "+player1.getActionState(), 8, dbListPos*2);
+  ctx.fillText("Player1FacingDir: "+player1.getFacingDirection(), 8, dbListPos*3);
+  ctx.fillText("Player1Stamina: "+player1.getStamina(), 8, dbListPos*4);
+  ctx.fillText("Opp1AnimationCounter: "+opp1.getAnimationCounter(), 8, dbListPos*5);
+  ctx.fillText("Opp1ActionState: "+opp1.getActionState(), 8, dbListPos*6);
+  ctx.fillText("Opp1FacingDir: "+opp1.getFacingDirection(), 8, dbListPos*7);
+  ctx.fillText("Opp1Stamina: "+opp1.getStamina(), 8, dbListPos*8);
+  ctx.fillText("Opp1HitCooldown: "+opp1.getHitCooldown(), 8, dbListPos*9);
+  ctx.fillText("FPS: "+avg_fps, 8, dbListPos*10);
 }
 
 //Main Draw function, responsible for drawing each frame
@@ -1286,8 +1289,8 @@ function draw() {
     if (player1.actionState == NORMAL_STATE) {
       var collisionAmount = 0;
       // move right and adjust if outside window border
-      if (rightPressed) {
-        if (player1.getX() + player1.getDx() > canvas.width - player1.getWidth()) {
+      if(rightPressed) {
+        if (player1.getX()+player1.getDx()  > canvas.width - player1.getWidth()) {
           player1.setX(canvas.width - player1.getWidth() - borderBounce);
         }
         player1.setX(player1.getX() + player1.getDx());
@@ -1297,18 +1300,18 @@ function draw() {
         for (var i = 0; i < entities.length; i++) {
           if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
             hitSomething = true;
-            collisionAmount = (player1.getX() + player1.getWidth()) - entities[i].getX() + 1;
+            collisionAmount = ( player1.getX() + player1.getWidth()) - entities[i].getX() + 1;
           }
         }
-        if (hitSomething) {
+        if ( hitSomething ) {
           player1.setX(player1.getX() - collisionAmount);
         }
         player1.setFacingDirection(RIGHT_DIR);
       }
 
       // move left and adjust if outside window border
-      if (leftPressed) {
-        if (player1.getX() - player1.getDx() < 0) {
+      if (leftPressed){
+        if(player1.getX() - player1.getDx()  < 0){
           player1.setX(borderBounce);
         }
         player1.setX(player1.getX() - player1.getDx());
@@ -1318,18 +1321,18 @@ function draw() {
         for (var i = 0; i < entities.length; i++) {
           if (rectCollisionCheck(player1, entities[i]) && player1.getEntityID() != entities[i].getEntityID() && !entities[i].getDestructibleObject()) {
             hitSomething = true;
-            collisionAmount = (entities[i].getX() + entities[i].getWidth()) - player1.getX() + 1;
+            collisionAmount = ( entities[i].getX() + entities[i].getWidth()) - player1.getX() + 1;
           }
         }
-        if (hitSomething) {
+        if ( hitSomething ) {
           player1.setX(player1.getX() + collisionAmount);
         }
         player1.setFacingDirection(LEFT_DIR);
       }
 
       // move up and adjust if outside window border
-      if (upPressed) {
-        if (player1.getY() + player1.getDy() < 0) {
+      if(upPressed){
+        if(player1.getY() + player1.getDy() <  0) {
           player1.setY(player1.getY() + player1.getDy());
         }
         player1.setY(player1.getY() - player1.getDy());
@@ -1342,14 +1345,14 @@ function draw() {
             collisionAmount = (entities[i].getY() + entities[i].getHeight()) - player1.getY() + 1;
           }
         }
-        if (hitSomething) {
+        if ( hitSomething ) {
           player1.setY(player1.getY() + collisionAmount);
         }
         player1.setFacingDirection(UP_DIR);
       }
 
       // move down and adjust if outside window border
-      if (downPressed) {
+      if(downPressed){
         if (player1.getY() - player1.getDy() > canvas.height - player1.getHeight()) { // implement this in game
           //player1.setY(canvas.height - player1.getHeight() - vborderBounce);
           player1.setY(player1.getY() - player1.getDy());
@@ -1364,7 +1367,7 @@ function draw() {
             collisionAmount = (player1.getY() + player1.getHeight()) - entities[i].getY() + 1;
           }
         }
-        if (hitSomething) {
+        if ( hitSomething ) {
           player1.setY(player1.getY() - collisionAmount);
         }
         player1.setFacingDirection(DOWN_DIR);
@@ -1392,7 +1395,7 @@ function draw() {
 
     //AI takes its actions after the player
     if (AI_DIFFICULTY >= 0) {
-      AILogic();
+        AILogic();
     }
   }
   // clear the canvas to redraw screen
@@ -1510,8 +1513,8 @@ function keyUpHandler(e) {
 */
 function setCookie(cname, cvalue, exdays) {
   const d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  let expires = "expires=" + d.toUTCString();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  let expires = "expires="+ d.toUTCString();
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
@@ -1526,7 +1529,7 @@ function getCookie(cname) {
   let name = cname + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
   let ca = decodedCookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
+  for(let i = 0; i <ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
       c = c.substring(1);
