@@ -2,14 +2,17 @@
 @import url(bootstrap.min.css);
 
 #myCanvas3 {
+    width: 100%;
+    height: 100%;
+    margin: 0;
     position: fixed;
     z-index: 100;
     pointer-events: none;
-    top: 50px;
+    top: 0px;
     left: 0px;
     background: transparent;
   }
-  
+
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{
     margin:0;
     padding:0;
@@ -73,7 +76,7 @@ html {
 body {
   margin: 0;
 }
- 
+
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
@@ -718,17 +721,17 @@ u{
             width: 100%
         }
     }
-    
+
     @media (max-width: 767px) {
-    	
+
     	 .top .logo {
     	 	padding-left:25px
     	 }
-    	
+
     	 .top .logo a img {
     	  	width:100%
-    	 }	
-    	
+    	 }
+
         .top .logo a {
             margin: 0 auto;
             width: 50%;
@@ -915,21 +918,21 @@ u{
 }
  .blackbar>ul {
 	 padding-top: 0;
-	 padding-bottom: 0 
+	 padding-bottom: 0
 }
  .blackbar .dropdown-toggle .caret {
-	 position:relative 
+	 position:relative
 }
  .blackbar .dropdown-toggle .caret:after {
 	 position:absolute;
-	 top:0.35rem 
+	 top:0.35rem
 }
  @media (min-width: 1200px) {
 	 .blackbar li {
-		 color: #000 
+		 color: #000
 	}
 	 .blackbar .black>ul>li>a {
-		 background-color:#fff 
+		 background-color:#fff
 	}
 	 .blackbar .black>ul>li>a:after {
 		 content:"";
@@ -941,127 +944,127 @@ u{
 		 visibility:hidden;
 		 background:#8e6f3e;
 		 transform:scaleX(0);
-		 transition:all 0.25s cubic-bezier(1, 0.25, 0, 0.75) 0s 
+		 transition:all 0.25s cubic-bezier(1, 0.25, 0, 0.75) 0s
 	}
 	 .blackbar .black>ul>li:hover a:after {
 		 visibility:visible;
-		 transform:scaleX(1) 
+		 transform:scaleX(1)
 	}
 	 .blackbar li:hover, .blackbar li a:hover, .blackbar li a:focus {
-		 outline:none !important 
+		 outline:none !important
 	}
 	 .blackbar li:hover li a:after, .blackbar li a:hover li a:after, .blackbar li a:focus li a:after {
 		 visibility:visible;
-		 transform:scaleX(1) 
+		 transform:scaleX(1)
 	}
 }
  @media (max-width: 1199px) { /* Changed in April 2021 because navigation size increased */
 	 .blackbar {
-		 background-color:rgba(0,0,0,0.9) 
+		 background-color:rgba(0,0,0,0.9)
 	}
 	 .blackbar li {
-		 color:#fff 
+		 color:#fff
 	}
 	 .blackbar li a:link, .blackbar li a:visited, .blackbar li a:hover, .blackbar li a:focus, .blackbar li a:active {
-		 background-color:inherit !important 
+		 background-color:inherit !important
 	}
 	 .blackbar li:hover, .blackbar li a:focus {
-		 color:#cfb991 !important 
+		 color:#cfb991 !important
 	}
 }
  .blackbar a {
-	 width: 100% 
+	 width: 100%
 }
  .blackbar a:link {
 	 color: inherit !important;
 	 text-decoration: none !important;
 	 font-weight: 400;
-	 background-color: #fff 
+	 background-color: #fff
 }
  .blackbar a:visited {
 	 color: inherit !important;
 	 text-decoration: none !important;
 	 font-weight: 400;
-	 background-color: #fff !important 
+	 background-color: #fff !important
 }
  .blackbar a:hover, .blackbar a:focus {
 	 color: inherit !important;
 	 text-decoration: none !important;
 	 font-weight: 400;
-	 background-color: #fff !important 
+	 background-color: #fff !important
 }
  .blackbar a:active {
 	 color: inherit !important;
 	 text-decoration: none !important;
 	 font-weight: 400;
-	 background-color: #fff !important 
+	 background-color: #fff !important
 }
  .blackbar .navbar-header .navbar-toggle {
 	 float: left;
 	 border: none;
-	 color: #000 
+	 color: #000
 }
  .blackbar .navbar-header .navbar-toggle .icon-bar {
 	 float: left;
 	 clear: left;
 	 margin-right: 10px;
-	 background-color: #000 
+	 background-color: #000
 }
  .blackbar .navbar-header .navbar-toggle>.icon-bar:first-child {
-	 margin-top: 3px 
+	 margin-top: 3px
 }
  .blackbar .navbar-header .navbar-toggle:hover, .blackbar .navbar-header .navbar-toggle:focus {
 	 color: #cfb991;
-	 background-color: transparent 
+	 background-color: transparent
 }
  .blackbar .navbar-header .navbar-toggle:hover .icon-bar, .blackbar .navbar-header .navbar-toggle:focus .icon-bar {
-	 background-color: #cfb991 
+	 background-color: #cfb991
 }
 
     /* Updated this as a section was added to the navigation, April 2021 */
      @media (min-width: 1200px) {
     	 .blackbar .navbar-header {
-    		 display: none 
+    		 display: none
     	}
     }
      @media (max-width: 1199px) {
     	 .blackbar .navbar-toggle {
     		 display: block;
     		 padding: 0;
-    		 margin: 10px 0 
+    		 margin: 10px 0
     	}
     	 .blackbar .navbar-collapse {
     		 border-top: 1px solid transparent;
-    		 box-shadow: none 
+    		 box-shadow: none
     	}
     	 .blackbar .navbar-collapse.collapse {
-    		 display: none !important 
+    		 display: none !important
     	}
     	 .blackbar .navbar-header {
     		 float: none;
-    		 display: block 
+    		 display: block
     	}
     	 .blackbar .navbar-header .navbar-toggle {
     		 display: block;
     		 color: #fff;
     	}
     	 .blackbar .navbar-header .navbar-toggle .icon-bar {
-    		 background-color:#fff 
+    		 background-color:#fff
     	}
     	 .blackbar .navbar-nav {
     		 float: none !important;
     		 margin: 0;
-    		 padding: 10px 0 !important 
+    		 padding: 10px 0 !important
     	}
     	 .blackbar .navbar-nav li {
     		 display: block;
     		 width: 100%;
-    		 overflow: hidden 
+    		 overflow: hidden
     	}
     	 .blackbar .navbar-nav li a {
     		 padding-top: 0;
     		 padding-bottom: 0;
-    		 margin: 10px 0 
+    		 margin: 10px 0
     	}
     	 .dropdown-menu {
     		 border: none;
@@ -1071,51 +1074,51 @@ u{
     		 position: static;
     		 margin-top: -10px;
     		 padding: 0 0 10px 12px;
-    		 font-size: 0.9em 
+    		 font-size: 0.9em
     	}
     	 .blackbar .navbar-nav li .dropdown-menu li a {
     		 margin: 10px 0 0;
     		 padding: 0;
     		 white-space: normal;
-    		 padding-left: 15px 
+    		 padding-left: 15px
     	}
     	 .blackbar .navbar-nav li .dropdown-menu li.dropdown-submenu .dropdown-menu {
     		 margin-top: 0;
-    		 font-size: 1em 
+    		 font-size: 1em
     	}
     	 .blackbar .navbar-nav li.first a {
-    		 margin-top: 0 
+    		 margin-top: 0
     	}
     	 .blackbar .navbar-text {
     		 float: none;
-    		 margin: 15px 0 
+    		 margin: 15px 0
     	}
     	 .blackbar .navbar-collapse.collapse.in {
-    		 display: block !important 
+    		 display: block !important
     	}
     	 .blackbar .collapsing {
-    		 overflow: hidden !important 
+    		 overflow: hidden !important
     	}
     }
-    
+
      @media (max-width: 767px) {
     	 .blackbar .navbar-toggle {
-    		 padding-left: 15px 
+    		 padding-left: 15px
     	}
     }
      .blackbar .black {
     	 padding-left: 0;
-    	 max-height: none 
+    	 max-height: none
     }
      .blackbar .black .nav {
     	 padding-top: 0;
     	 padding-bottom: 0;
     	 margin-left: -15px;
-    	 margin-right: -15px 
+    	 margin-right: -15px
     }
      @media (max-width: 767px) {
     	 .blackbar .black .nav {
-    		 margin-right: 0 
+    		 margin-right: 0
     	}
     }
      .blackbar .black .dropdown-menu {
@@ -1127,54 +1130,54 @@ u{
     	 border-bottom-right-radius:5px;
     	 border-bottom-left-radius:5px;
     	 background-clip:border-box;
-    	 overflow:visible 
+    	 overflow:visible
     }
      @media (max-width: 1200px) {
     	 .blackbar .black .dropdown-menu .dropdown-submenu .dropdown-menu {
     		 display: block;
-    		 padding-left: 15px 
+    		 padding-left: 15px
     	}
     	 .blackbar .black .dropdown-menu {
-    		 background-color:inherit !important 
+    		 background-color:inherit !important
     	}
     }
      @media (min-width: 1200px) {
     	 .blackbar .black .dropdown-menu li {
-    		 border-top:1px solid #c4bfc0 
+    		 border-top:1px solid #c4bfc0
     	}
     	 .blackbar .black .dropdown-menu li:first-child {
-    		 border-top:none 
+    		 border-top:none
     	}
     	 .blackbar .black .dropdown-menu li a {
     		 padding:0.5rem 1.25rem;
-    		 color:#555960 !important 
+    		 color:#555960 !important
     	}
     	 .blackbar .black .dropdown-menu li:hover>a {
     		 background-color:#dedede !important;
-    		 color:#000 !important 
+    		 color:#000 !important
     	}
 }
  .blackbar .black .dropdown-menu .dropdown-submenu {
-	 position: relative 
+	 position: relative
 }
  .blackbar .black .dropdown-menu .dropdown-submenu>a {
-	 float: left 
+	 float: left
 }
      @media (max-width: 1199px) {
     	 .blackbar .black .dropdown-menu .dropdown-submenu .dropdown-menu {
     		 display:block;
-    		 padding-left:15px 
+    		 padding-left:15px
     	}
     }
      @media (min-width: 1200px) {
     	 .blackbar .black .dropdown-menu .dropdown-submenu {
-    		 min-height:1.8125em 
+    		 min-height:1.8125em
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu .caret {
-    		 display:none 
+    		 display:none
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu a {
-    		 float:none 
+    		 float:none
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu>.dropdown-menu {
     		 overflow:hidden;
@@ -1192,27 +1195,27 @@ u{
     		 border-top-right-radius:5px;
     		 border-top-left-radius:0;
     		 box-shadow:0 6px 12px rgba(0,0,0,0.175);
-    		 padding:0 
+    		 padding:0
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu>.dropdown-menu>li {
-    		 background:#fff 
+    		 background:#fff
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu>.dropdown-menu>li:first-child {
-    		 border-top:none 
+    		 border-top:none
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu>.dropdown-menu>li>a {
     		 width:0;
     		 height:0;
     		 overflow:hidden;
-    		 background:#fff 
+    		 background:#fff
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu>.dropdown-menu>li>a:focus {
     		 width:auto;
     		 height:auto;
-    		 background:#000 
+    		 background:#000
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu:hover>.dropdown-toggle {
-    		 color:#000 
+    		 color:#000
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu:hover>.dropdown-menu {
     		 overflow:hidden;
@@ -1222,25 +1225,25 @@ u{
     		 min-height:none;
     		 background:#fff;
     		 box-shadow:0 6px 12px rgba(0,0,0,0.175);
-    		 padding:0 
+    		 padding:0
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu:hover>.dropdown-menu>li>a {
     		 width:auto;
     		 height:auto;
-    		 background:#fff 
+    		 background:#fff
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu:hover+.dropdown-submenu>.dropdown-menu {
-    		 display:none 
+    		 display:none
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu a.dropdown-toggle:focus+ul.dropdown-menu {
     		 background:#000;
     		 border:1px solid #000;
-    		 box-shadow:0 6px 12px rgba(0,0,0,0.175) 
+    		 box-shadow:0 6px 12px rgba(0,0,0,0.175)
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu a.dropdown-toggle:focus+ul.dropdown-menu>li>a {
     		 width:auto;
     		 height:auto;
-    		 background:#000 
+    		 background:#000
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu:after {
     		 display:block;
@@ -1255,16 +1258,16 @@ u{
     		 border-width:4px 0 4px 4px;
     		 border-left-color:#555960;
     		 margin-top:16px;
-    		 margin-right:5px 
+    		 margin-right:5px
     	}
     	 .blackbar .black .dropdown-menu .dropdown-submenu:hover:after, .blackbar .black .dropdown-menu .dropdown-submenu:focus:after {
-    		 border-left-color:#000 
+    		 border-left-color:#000
     	}
     }
-    
+
      @media (max-width: 1199px) {
     	 .blackbar .black .dropdown-menu li a, .blackbar .black .dropdown-menu li a:link, .blackbar .black .dropdown-menu li a:visited {
-    		 background-color:inherit !important 
+    		 background-color:inherit !important
     	}
     }
      @media (min-width: 1200px) {
@@ -1277,23 +1280,23 @@ u{
     		 transform:scaleX(1);
     		 bottom:12px;
     		 left:0.95rem;
-    		 background:#8e6f3e 
+    		 background:#8e6f3e
     	}
     }
-    
+
  .blackbar .black .dropdown.open .dropdown-submenu>.dropdown-menu {
 	 display:block;
 	 left:100%;
-	 top:0 
+	 top:0
 }
      @media (max-width: 767px) {
     	 .blackbar .black {
-    		 padding-left:15px 
+    		 padding-left:15px
     	}
     }
      @media (min-width: 1200px) {
     	 .blackbar {
-    		 font-size:.875em 
+    		 font-size:.875em
     	}
     	 .blackbar .container .black .navbar-nav>li>a.is-active-page:after {
     		 content:"";
@@ -1304,47 +1307,47 @@ u{
     		 transform:scaleX(1);
     		 bottom:12px;
     		 left:0.95rem;
-    		 background:#8e6f3e 
+    		 background:#8e6f3e
     	}
     }
      @media (min-width: 767px) and (min-width: 1199px) {
     	 .blackbar {
-    		 font-size:1em 
+    		 font-size:1em
     	}
     }
      @media (max-width: 767px) {
     	 .blackbar {
-    		 font-size:.88889em 
+    		 font-size:.88889em
     	}
     }
  .blackbar .black .dropdown.open .dropdown-submenu>.dropdown-menu {
 	 display: block;
 	 left: 100%;
 	 top: 0;
-	 margin-left: -1px 
+	 margin-left: -1px
 }
 
      @media (max-width: 767px) {
     	 .blackbar .black {
-    		 padding-left: 15px 
+    		 padding-left: 15px
     	}
     }
      @media (min-width: 992px) {
     	 .blackbar {
-    		 font-size: .875em 
+    		 font-size: .875em
     	}
     }
      @media (min-width: 767px) and (min-width: 991px) {
     	 .blackbar {
-    		 font-size: 1em 
+    		 font-size: 1em
     	}
     }
      @media (max-width: 767px) {
     	 .blackbar {
-    		 font-size: .88889em 
+    		 font-size: .88889em
     	}
     }
-	
+
 
 /* Breadcrumbs */
 .breadcrumb {
@@ -1779,7 +1782,7 @@ u{
  	outline-color:#8e6f3e;
  	border-bottom-color:#8e6f3e
 }
- 
+
 .button-campusGold-inverse:hover, .button-campusGold-inverse:active, .button-campusGold-inverse:focus, .button-campusGold-inverse:link {
  	outline-color:#8e6f3e
 }
@@ -2519,76 +2522,76 @@ u{
     .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.news,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.news,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.news,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.news{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.news .caption .fa{
         color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.news,.collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.news,.collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.news{
         background-color:#000;
 		color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.news .caption .fa{
         color:#cfb991 !important
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.audience,.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.audience,.collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.audience,.collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.audience,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.audience,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.audience,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.audience{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.audience .caption .divider{
         background-color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-6.row-lg-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-9.row-lg-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-12.row-lg-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-2 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-3 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-lg-3.row-lg-4 a.audience .caption .fa{
         color:#fff
     }
-    
+
 }
 
 @media (min-width: 992px) and (max-width: 1199px){
     .collegeContent .grid .tiles .row .tile.col-md-3.row-md-1 a.news,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-2 a.news,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-3 a.news,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-4 a.news{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-3.row-md-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-2 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-3 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-4 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-3.row-md-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-2 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-3 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-4 a.news .caption .fa{
         color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-6.row-md-1 a.news,.collegeContent .grid .tiles .row .tile.col-md-9.row-md-1 a.news,.collegeContent .grid .tiles .row .tile.col-md-12.row-md-1 a.news{
         background-color:#000;
 		color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-6.row-md-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-9.row-md-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-12.row-md-1 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-6.row-md-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-9.row-md-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-12.row-md-1 a.news .caption .fa{
         color:#cfb991 !important
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-3.row-md-1 a.audience,.collegeContent .grid .tiles .row .tile.col-md-6.row-md-1 a.audience,.collegeContent .grid .tiles .row .tile.col-md-9.row-md-1 a.audience,.collegeContent .grid .tiles .row .tile.col-md-12.row-md-1 a.audience,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-2 a.audience,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-3 a.audience,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-4 a.audience{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-3.row-md-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-6.row-md-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-9.row-md-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-12.row-md-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-2 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-3 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-4 a.audience .caption .divider{
         background-color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-md-3.row-md-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-6.row-md-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-9.row-md-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-12.row-md-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-2 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-3 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-md-3.row-md-4 a.audience .caption .fa{
         color:#fff
     }
@@ -2598,36 +2601,36 @@ u{
     .collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-1 a.news,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-2 a.news,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-3 a.news,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-4 a.news{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-2 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-3 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-4 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-2 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-3 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-4 a.news .caption .fa{
         color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-6.row-sm-1 a.news,.collegeContent .grid .tiles .row .tile.col-sm-9.row-sm-1 a.news,.collegeContent .grid .tiles .row .tile.col-sm-12.row-sm-1 a.news{
         background-color:#000;
 		color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-6.row-sm-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-9.row-sm-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-12.row-sm-1 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-6.row-sm-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-9.row-sm-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-12.row-sm-1 a.news .caption .fa{
         color:#cfb991 !important
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-1 a.audience,.collegeContent .grid .tiles .row .tile.col-sm-6.row-sm-1 a.audience,.collegeContent .grid .tiles .row .tile.col-sm-9.row-sm-1 a.audience,.collegeContent .grid .tiles .row .tile.col-sm-12.row-sm-1 a.audience,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-2 a.audience,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-3 a.audience,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-4 a.audience{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-6.row-sm-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-9.row-sm-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-12.row-sm-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-2 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-3 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-4 a.audience .caption .divider{
         background-color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-6.row-sm-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-9.row-sm-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-12.row-sm-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-2 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-3 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-sm-3.row-sm-4 a.audience .caption .fa{
         color:#fff
     }
@@ -2637,48 +2640,48 @@ u{
     .collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-1 a.audience,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-1 a.news,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-2 a.audience,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-2 a.news,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-3 a.audience,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-3 a.news,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-4 a.audience,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-4 a.news{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-1 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-2 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-3 a.audience .caption .divider,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-4 a.audience .caption .divider{
         background-color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-1 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-2 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-3 a.audience .caption .fa,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-4 a.audience .caption .fa{
         color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-1 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-2 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-3 a.news .caption .divider,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-4 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-1 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-2 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-3 a.news .caption .fa,.collegeContent .grid .tiles .row .tile.col-xs-6.row-xs-4 a.news .caption .fa{
         color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-12.row-xs-1 a.audience{
         background-color:#000
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-12.row-xs-1 a.audience .caption .divider{
         background-color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-12.row-xs-1 a.audience .caption .fa{
         color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-12.row-xs-1 a.news{
         background-color:#000;
 		color:#fff
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-12.row-xs-1 a.news .caption .divider{
         background-color:#cfb991
     }
-    
+
     .collegeContent .grid .tiles .row .tile.col-xs-12.row-xs-1 a.news .caption .fa{
         color:#cfb991 !important
     }
-    
+
 }
 
 .collegeContent .grid .tiles .row a.audience.academics .caption .divider {
@@ -2799,7 +2802,7 @@ u{
 
 .collegeContent .grid .tiles .row a.audience.landGrantGreen .caption .fa {
  	color:#9d9795 !important
-}		
+}
 
 
 @media (min-width: 1200px){
@@ -3512,7 +3515,7 @@ u{
 }
 
 .footer #accordion .motto .social {
-    display: block; 
+    display: block;
     position:relative;
  	margin:2.5px 2%;
  	text-align:center
@@ -3643,7 +3646,7 @@ u{
 		 .footer #accordion .panel .panel-heading .panel-title>a:active,
 		 .footer #accordion .panel .panel-heading .panel-title>a:link {
 			font-weight:700
-		 }	
+		 }
 
 		.footer #accordion .panel .panel-heading a .fa-plus {
 			display: none
@@ -3663,9 +3666,9 @@ u{
 
 		.footer #accordion .motto {
 			padding:2.93rem 1rem;
-			width: auto;	
-		}	
-		
+			width: auto;
+		}
+
 		.footer #accordion .motto .social {
 			width: 100%;
 			margin: 0;
@@ -3682,7 +3685,7 @@ u{
 		.footer #accordion .motto .taglineContainer .tagline .horizontal {
 			max-height:48px;
 			width:100%
-		}	
+		}
 	}
 
 	@media (min-width: 768px) {
@@ -3770,29 +3773,29 @@ u{
 			width: 20%;
 			padding: 0 15px
 		}
-		
+
 		.footer #accordion .motto {
 			float: left;
 			width: 20%;
 			padding:8px 15px 0 15px; /* 10px 15px 15px */
 			font-size: 1.35em
 		}
-		
+
 		.footer #accordion .motto .taglineContainer {
 			width: auto
 		}
-		
+
 		.footer #accordion .motto .taglineContainer .tagline {
 			margin-bottom: 10px;
 			padding-bottom: 20% /* 35.14851%*/
 		}
-		
+
 		.footer #accordion .motto .vertical {
 		  	display:block;
 		  	height:100px;
 		  	margin-left:auto
 		 }
-		
+
 		.footer #accordion .motto .horizontal {
 			display: none
 		}
@@ -3811,12 +3814,12 @@ u{
 		  	height:114px;
 		  	margin-left:auto
 		}
-		
+
 		.footer #accordion .motto .social {
 		  	margin-left: 1.5rem;
 			padding-left:0;
 		  	border-top:none
-		}	
+		}
 	}
 
 /* Bottom Section */
