@@ -62,14 +62,24 @@
 
         <!-- Overlay content -->
         <div class="overlay-content">
-            <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
-            <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">EASY </span>
+            <input type="checkbox" id="switch"
+            class="checkbox" />
+            <label for="switch" class="toggle" onclick="switchDifficulty()"></label>
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">HARD </span>
+            <hr style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">Multi-Level</span>
+            <input type="checkbox" id="transitionSwitch"
+            class="checkbox" />
+            <label for="transitionSwitch" class="toggle" onclick="switchTransitionsEnabled()"></label>
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">One-Level </span>
+            <hr style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <hr style="height:5px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:black">
             <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
             <a href="#">Multiplayer </a>
-            <a href="#">Contact</a>
-            <a href='#' class="menubtn" onclick="disableTransitions()">Single Level</a>
-            <a href='#' class="menubtn" onclick="enableTransitions()">Multi Level</a>
-            <a href='#' class="menubtn" onclick="startGame()">Start Game</a>
+            <hr style="height:5px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:black">
+            <hr style="height:10px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <a href='#' class="menubtn" onclick="startGame()" style="background-color: black; color: white">Start Game</a>
         </div>
         <script>
             var transitionsEnabled = 0;
@@ -90,6 +100,15 @@
                 let expires = "expires=" + d.toUTCString();
                 document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
             }
+
+            function switchDifficulty() {
+                switchVal = document.getElementById("switch");
+                if (switchVal.checked == 1) {
+                    difficulty = 0;
+                } else {
+                    difficulty = 1;
+                }
+            }
             function setEasyDifficulty() {
                 difficulty = 0;
             }
@@ -104,6 +123,16 @@
 
             function getUsername() {
                 return username;
+            }
+
+            function switchTransitionsEnabled (){
+                tswitchVal = document.getElementById("transitionSwitch");
+                if (tswitchVal.checked == 1) {
+                    transitionsEnabled = 0;
+                }
+                else {
+                    transitionsEnabled = 1;
+                }
             }
 
             function getTransitionsEnabled() {
@@ -149,7 +178,7 @@
     </div>
 
     <!-- Use any element to open/show the overlay navigation menu -->
-    <span id="menuButton" onclick="openNav()">Open Menu</span>
+    <span id="menuButton" onclick="openNav()">MENU</span>
 
     <header class="header">
         <!-- Begin Gold Bar -->
