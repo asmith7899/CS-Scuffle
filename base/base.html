@@ -63,24 +63,33 @@
         <!-- Overlay content -->
         <div class="overlay-content">
             <a href='#' class="menubtn" onclick="openInstructionModal()">Instructions</a>
-            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">EASY </span>
-            <input type="checkbox" id="switch"
-            class="checkbox" />
+            <span
+                style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">EASY
+            </span>
+            <input type="checkbox" id="switch" class="checkbox" />
             <label for="switch" class="toggle" onclick="switchDifficulty()"></label>
-            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">HARD </span>
-            <hr style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
-            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">Multi-Level</span>
-            <input type="checkbox" id="transitionSwitch"
-            class="checkbox" />
+            <span
+                style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">HARD
+            </span>
+            <hr
+                style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <span
+                style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">Multi-Level</span>
+            <input type="checkbox" id="transitionSwitch" class="checkbox" />
             <label for="transitionSwitch" class="toggle" onclick="switchTransitionsEnabled()"></label>
-            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">One-Level </span>
-            <hr style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <span
+                style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">One-Level
+            </span>
+            <hr
+                style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
             <hr style="height:5px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:black">
             <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
             <a href="#">Multiplayer </a>
             <hr style="height:5px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:black">
-            <hr style="height:10px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
-            <a href='#' class="menubtn" onclick="startGame()" style="background-color: black; color: white">Start Game</a>
+            <hr
+                style="height:10px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <a href='#' class="menubtn" onclick="startGame()" style="background-color: black; color: white">Start
+                Game</a>
         </div>
         <script>
             var transitionsEnabled = 0;
@@ -126,7 +135,7 @@
                 return username;
             }
 
-            function switchTransitionsEnabled (){
+            function switchTransitionsEnabled() {
                 tswitchVal = document.getElementById("transitionSwitch");
                 if (tswitchVal.checked == 1) {
                     transitionsEnabled = 0;
@@ -969,50 +978,53 @@
     <div id="instructionModal" class="modal">
         <!-- Modal content -->
         <div id="modal-content-1">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="close"
-                    onclick="closeInstructions()">&times;</span>
-                <h2 style="text-align: center;">Welcome to CS Scuffle!</h2>
-                <b>
-                    <h3 style="text-align: center;">Instructions for how to play the game are below. Click anywhere
-                        outside the modal to close.</h3>
-                </b>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-3"></div>
-                    <div class="col-lg-6">
-                        <b><h3 style="text-align: center;">How to Begin</h3></b>
-                        <p style="border-bottom: 1px black;">Select two avatars from the roster of players on this screen.</p>
-                        <p style="border-bottom: 1px black;">The first avatar you select will be your character, and the second avatar will be your AI
-                            controlled opponent.</p>
-                            <p style="border-bottom: 1px black;">Choose a difficulty level from the menu. Easy is the default.</p>
-                        <p style="border-bottom: 1px black;">Continue selecting and de-selecting until you're happy with your choices.</p>
-                        <p>When you're ready to begin, choose 'Start Game' from the menu on the left!</p>
-                    </div>
-                    <div class="col-lg-3"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close" onclick="closeInstructions()">&times;</span>
+                    <h2 style="text-align: center;">Welcome to CS Scuffle!</h2>
+                    <b>
+                        <h3 style="text-align: center;">Instructions for how to play the game are below. Click anywhere
+                            outside the modal to close.</h3>
+                    </b>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <div class="row"  style="display: flex; justify-content: center; align-items: center;">
-                    <div class="col-lg-8"></div>
-                    <div class="col-lg-3" style="display: flex; justify-content: left;">
-                        <b><p>Next, we'll discuss gameplay elements.</p></b>
-                    </div>
-                    <div class="col-lg-1" style="display: flex; justify-content: right; align-items: center;">
-                        <b><button class="button" style="background-color: #252628; border: 1px gold; border-radius: 6px; padding: 10px 15px;"
-                            onclick="openSecondModal()">Continue</button></b>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-6">
+                            <b>
+                                <h3 style="text-align: center; border-bottom: black solid 1px;">How to Begin
+                            </b>
+                            <p style="color: black;">Select two avatars from the roster of players on this screen.</p>
+                            <p style="color: black;">The first avatar you select will be your character, and the second avatar will be your AI
+                                controlled opponent.</p>
+                            <p style="color: black;">Choose a difficulty level from the menu. Easy is the default.</p>
+                            <p style="color: black;">Continue selecting and de-selecting until you're happy with your choices.</p>
+                            <p style="color: black;">When you're ready to begin, choose 'Start Game' from the menu on the left!</p>
+                        </div>
+                        <div class="col-lg-3"></div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <div class="row" style="display: flex; justify-content: center; align-items: center;">
+                        <div class="col-lg-8"></div>
+                        <div class="col-lg-3" style="display: flex; justify-content: left;">
+                            <b>
+                                <p>Next, we'll discuss gameplay elements.</p>
+                            </b>
+                        </div>
+                        <div class="col-lg-1" style="display: flex; justify-content: right; align-items: center;">
+                            <b><button class="button"
+                                    style="background-color: #252628; border: 1px gold; border-radius: 6px; padding: 10px 15px;"
+                                    onclick="openSecondModal()">Continue</button></b>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
         </div>
         <div id="modal-content-2" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <span class="close"
-                        onclick="closeInstructions()">&times;</span>
+                    <span class="close" onclick="closeInstructions()">&times;</span>
                     <h2 style="text-align: center;">Welcome to CS Scuffle!</h2>
                     <b>
                         <h3 style="text-align: center;">Instructions for how to play the game are below. Click anywhere
@@ -1022,36 +1034,47 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-6">
-                            <b><h3 style="text-align: center;">Game Transitions</b>
-                            <p>Once you've chosen to begin the game, you will transition to the first gameplay arena.
+                            <b>
+                                <h3 style="text-align: center; border-bottom: black solid 1px;">Game Transitions
+                            </b>
+                            <p style="color: black;">Once you've chosen to begin the game, you will transition to the first gameplay arena.
                             </p>
-                            <p>As the game progresses, you will transition to new arenas.</p>
-                            <p>These transitions are triggered by a few events - the timer running out, loss of a
+                            <p style="color: black;">As the game progresses, you will transition to new arenas.</p>
+                            <p style="color: black;">These transitions are triggered by a few events - the timer running out, loss of a
                                 player's health, or destruction of all on-screen elements.</p>
-                            <p>The timer is displayed at the top of the screen in game arenas, along with player health.</p>
-                        </div>
-                        <div class="col-lg-6" style="border-left: black 1px;">
-                            <b><h3 style="text-align: center;">Game Elements</b>
-                            <p>There are multiple game arenas to move through, and each arena contains different elements.
+                            <p style="color: black;">The timer is displayed at the top of the screen in game arenas, along with player health.
                             </p>
-                            <p>The most important elements are yourself and your opponent; these are the characters which
+                        </div>
+                        <div class="col-lg-6" style="border-left: black solid 1px;">
+                            <b>
+                                <h3 style="text-align: center;">Game Elements
+                            </b>
+                            <p style="color: black;">There are multiple game arenas to move through, and each arena contains different
+                                elements.
+                            </p>
+                            <p style="color: black;">The most important elements are yourself and your opponent; these are the characters
+                                which
                                 will determine how the game progresses.</p>
-                            <p>Other visual page elements, such as images or text blocks, can be used by players to inflict
+                            <p style="color: black;">Other visual page elements, such as images or text blocks, can be used by players to
+                                inflict
                                 damage on their opponent.</p>
-                            <p>Decreasing the health of all objects will earn you points and will progress you through
+                            <p style="color: black;">Decreasing the health of all objects will earn you points and will progress you through
                                 different game arenas.</p>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="row"  style="display: flex; justify-content: center; align-items: center;">
+                    <div class="row" style="display: flex; justify-content: center; align-items: center;">
                         <div class="col-lg-7"></div>
                         <div class="col-lg-4">
-                            <b><p>Next, we'll discuss character movement. Select 'Continue' to continue!</p></b>
+                            <b>
+                                <p >Next, we'll discuss character movement.</p>
+                            </b>
                         </div>
                         <div class="col-lg-1" style="display: flex; justify-content: center; align-items: center;">
-                            <b><button style="background-color: #252628; border: 1px gold; border-radius: 6px; padding: 10px 15px;"
-                                onclick="openThirdModal()">Continue</button></b>
+                            <b><button
+                                    style="background-color: #252628; border: 1px gold; border-radius: 6px; padding: 10px 15px;"
+                                    onclick="openThirdModal()">Continue</button></b>
                         </div>
                     </div>
                 </div>
@@ -1060,8 +1083,7 @@
         <div id="modal-content-3" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <span class="close"
-                        onclick="closeInstructions()">&times;</span>
+                    <span class="close" onclick="closeInstructions()">&times;</span>
                     <h2 style="text-align: center;">Welcome to CS Scuffle!</h2>
                     <b>
                         <h3 style="text-align: center;">Instructions for how to play the game are below. Click anywhere
@@ -1071,32 +1093,45 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-6">
-                            <b><h3 style="text-align: center;">Character Movement</b>
-                            <p>You can move your character via the arrow keys on your keyboard. Your goal is to bump or hit your opponent.
+                            <b>
+                                <h3 style="text-align: center;">Character Movement
+                            </b>
+                            <p style="color: black;">You can move your character via the arrow keys on your keyboard. Your goal is to bump or
+                                hit your opponent.
                             </p>
-                            <p>Your opponent has the same goal; they will pursue you and attempt to hit or bump your character. Be prepared to defend!</p>
-                            <p>"More movement descriptions here!"</p>
-                            <p>The timer is displayed at the top of the screen in game arenas, along with player health.</p>
+                            <p style="color: black;">Your opponent has the same goal; they will pursue you and attempt to hit or bump your
+                                character. Be prepared to defend!</p>
+                            <p style="color: black;">"More movement descriptions here!"</p>
+                            <p style="color: black;">The timer is displayed at the top of the screen in game arenas, along with player health.
+                            </p>
                         </div>
-                        <div class="col-lg-6" style="border-left: black 1px;">
-                            <b><h3 style="text-align: center;">Object Interactions</b>
-                            <p>You can use objects on the page to do damage to your opponent. 
+                        <div class="col-lg-6" style="border-left: black solid 1px;">
+                            <b>
+                                <h3 style="text-align: center;">Object Interactions
+                            </b>
+                            <p style="color: black;">You can use objects on the page to do damage to your opponent.
                             </p>
-                            <p>To interact with a page element, approach it from any angle.</p>
-                            <p>To pick up an element, .... To throw an element, .... To hit your opponent with an element, ....</p>
-                            <p>The health of the element will be visually displayed; once depleted, that element cannot be used as a weapon!</p>
+                            <p style="color: black;">To interact with a page element, approach it from any angle.</p>
+                            <p style="color: black;">To pick up an element, .... To throw an element, .... To hit your opponent with an
+                                element, ....</p>
+                            <p style="color: black;">The health of the element will be visually displayed; once depleted, that element cannot
+                                be used as a weapon!</p>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="row"  style="display: flex; justify-content: center; align-items: center;">
+                    <div class="row" style="display: flex; justify-content: center; align-items: center;">
                         <div class="col-lg-6"></div>
                         <div class="col-lg-5">
-                            <b><p>There will be further opportunities to get instructions on each new arena page. You're now ready to start the game!</p></b>
+                            <b>
+                                <p>There will be further opportunities to get instructions on each new arena page.
+                                    You're now ready to start the game!</p>
+                            </b>
                         </div>
                         <div class="col-lg-1" style="display: flex; justify-content: right; align-items: center;">
-                            <b><button class="button" style="background-color: #252628; border: 1px gold; border-radius: 6px; padding: 10px 25px;"
-                                onclick="closeInstructions()">Let's go!</button></b>
+                            <b><button class="button"
+                                    style="background-color: #252628; border: 1px gold; border-radius: 6px; padding: 10px 25px;"
+                                    onclick="closeInstructions()">Let's go!</button></b>
                         </div>
                     </div>
                 </div>
@@ -1120,7 +1155,7 @@
         window.onclick = function (event) {
             var modal = document.getElementById("instructionModal");
             if (event.target == modal) {
-                modal.style.display = "none";
+                closeInstructions();
             }
         }
         function openSecondModal() {
