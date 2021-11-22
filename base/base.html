@@ -62,15 +62,28 @@
 
         <!-- Overlay content -->
         <div class="overlay-content">
-            <a href="#" class="menubtn" onclick="setEasyDifficulty()">Easy Difficulty</a>
-            <a href="#" class="menubtn" onclick="setHardDifficulty()">Hard Difficulty</a>
+            <a href='#' class="menubtn" onclick="openInstructionModal()">Instructions</a>
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">EASY </span>
+            <input type="checkbox" id="switch"
+            class="checkbox" />
+            <label for="switch" class="toggle" onclick="switchDifficulty()"></label>
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">HARD </span>
+            <hr style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">Multi-Level</span>
+            <input type="checkbox" id="transitionSwitch"
+            class="checkbox" />
+            <label for="transitionSwitch" class="toggle" onclick="switchTransitionsEnabled()"></label>
+            <span style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; color:black">One-Level </span>
+            <hr style="height:30px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <hr style="height:5px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:black">
             <a href="#" class="menubtn" onclick="userPrompt()">Single Player </a>
             <a href="#">Multiplayer </a>
-            <a href="#">Contact</a>
-            <a href='#' class="menubtn" onclick="startGame()">Start Game</a>
-            <a href='#' class="menubtn" onclick="openInstructionModal()">Instructions</a>
+            <hr style="height:5px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:black">
+            <hr style="height:10px;margin-top:2px;margin-bottom:2px;border-width:0;color:gray;background-color:transparent">
+            <a href='#' class="menubtn" onclick="startGame()" style="background-color: black; color: white">Start Game</a>
         </div>
         <script>
+            var transitionsEnabled = 0;
             var difficulty = 0;
             var username = "Player";
             /* Open */
@@ -88,6 +101,15 @@
                 let expires = "expires=" + d.toUTCString();
                 document.cookie = "username" + "=" + username + ";" + expires + ";path=/";
             }
+
+            function switchDifficulty() {
+                switchVal = document.getElementById("switch");
+                if (switchVal.checked == 1) {
+                    difficulty = 0;
+                } else {
+                    difficulty = 1;
+                }
+            }
             function setEasyDifficulty() {
                 difficulty = 0;
             }
@@ -102,6 +124,28 @@
 
             function getUsername() {
                 return username;
+            }
+
+            function switchTransitionsEnabled (){
+                tswitchVal = document.getElementById("transitionSwitch");
+                if (tswitchVal.checked == 1) {
+                    transitionsEnabled = 0;
+                }
+                else {
+                    transitionsEnabled = 1;
+                }
+            }
+
+            function getTransitionsEnabled() {
+                return transitionsEnabled;
+            }
+
+            function enableTransitions() {
+                transitionsEnabled = 0;
+            }
+
+            function disableTransitions() {
+                transitionsEnabled = 1;
             }
 
             var playerSrc = new Array();
@@ -128,7 +172,7 @@
                     confirm("Please choose 2 characters before starting the game.");
                 }
                 else {
-                    location.href = '../map-arena/map-arena.html?player1Src=' + playerSrc[0] + '&opp1Src=' + playerSrc[1] + '&difficulty=' + getDifficulty();
+                    location.href = '../map-arena/map-arena.html?player1Src=' + playerSrc[0] + '&opp1Src=' + playerSrc[1] + '&difficulty=' + getDifficulty() + '&shouldTransition=' + getTransitionsEnabled();
                 }
             }
 
@@ -153,7 +197,7 @@
     </div>
 
     <!-- Use any element to open/show the overlay navigation menu -->
-    <span id="menuButton" onclick="openNav()">Open Menu</span>
+    <span id="menuButton" onclick="openNav()">MENU</span>
 
     <header class="header">
         <!-- Begin Gold Bar -->
@@ -939,7 +983,7 @@
                 <div class="row">
                     <div class="col-lg-3"></div>
                     <div class="col-lg-6">
-                        <b><h3 style="text-align: center;">How to Begin</b>
+                        <b><h3 style="text-align: center;">How to Begin</h3></b>
                         <p style="border-bottom: 1px black;">Select two avatars from the roster of players on this screen.</p>
                         <p style="border-bottom: 1px black;">The first avatar you select will be your character, and the second avatar will be your AI
                             controlled opponent.</p>

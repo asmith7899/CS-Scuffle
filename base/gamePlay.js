@@ -45,6 +45,9 @@ var BUMP_KNOCKBACK = 10;
 var AI_DIFFICULTY = 0;                  //0 for easy, 1 for hard. Will be changed by start menu UI later, for now just a constant
 var THROW_FORCE = 30;
 var DROP_FORCE = 5;
+var STAMINA_PICKUP = "Stamina";
+var DAMAGE_PICKUP = "Damage";
+var POWERUP_SIZE = 30;
 
 //Variables
 var transitioned = false;               //Added 5 additional seconds before the game starts for the user to get ready
@@ -52,6 +55,7 @@ var transitioned = false;               //Added 5 additional seconds before the 
                                         //this variable is used to prevent a transition loop when the timer gets back to the transition time
                                         //likely a better way to handle this, but this is what I thought of. Not sure if we want a 5 second
                                         //countdown before the game starts but it felt right with the hard AI being more aggressive right away
+var shouldTransition = 0;               // if = 0, does transition
 var amountScroll = 0;
 
 
@@ -75,11 +79,14 @@ var CANVAS_OFFSET = canvas.offsetTop;                  //Use for test-arena
 //End Canvas Initialization
 
 //Sound Effects
-var shater = new Audio("../SoundEffects/Glass-Shatering.mp3");  //Sound of Destructible Entities breaking
+var shatter = new Audio("../SoundEffects/Glass-Shatering.mp3");  //Sound of Destructible Entities breaking
 var bumpMovement = new Audio("../SoundEffects/bumpMovement.wav"); //Sound of moving during a bumpaction
 var playerHit = new Audio("../SoundEffects/playerHit.wav"); //sound of a player being hit by something
 var itemPickup = new Audio("../SoundEffects/itempickup.wav"); //sound for picking up an object
 var itemDrop = new Audio("../SoundEffects/itemdrop.wav"); //sound for item hitting the floor
+var losePowerUp = new Audio("../SoundEffects/PowerDown10.mp3"); //Sound effect for losing the damage buff
+var gainPowerUp = new Audio("../SoundEffects/PowerUP20.mp3"); //Sound effect for gaining the damage buff
+var gainStamina = new Audio("../SoundEffects/StaminaPU.mp3"); //Sound effect for gaining stamina powerup
 
 //game timer count down to 0 starting at startTime
 var startTime = 35; //first 5 seconds no actions can be taken by player or AI, player can "queue" an action to be taken though
@@ -112,6 +119,8 @@ if (pageURL) {
       oppScore = splitVals[1];
     } else if(splitVals[0] == "difficulty") {
       AI_DIFFICULTY = splitVals[1];
+    } else if(splitVals[0] == "shouldTransition") {
+      shouldTransition = splitVals[1];
     }
     else if (splitVals[0] == "player1Src") {
       player1Src = splitVals[1];
@@ -126,7 +135,7 @@ var timerInterval = setInterval(function () {
   //initialize vars using passed in url to enable passing of arguments
 
   // move to new arena page if a certain amount of time has passed
-  if (transitioned == false && currTime == transitionTime && startTime != currTime) {
+  if (transitioned == false && currTime == transitionTime && startTime != currTime && shouldTransition==0) {
     transitionStage();
   }
 
@@ -187,6 +196,81 @@ function endGame() {
 
   //display basic game over window. Will replace with actual ending screen, this is just a placeholder
   //alert("Entity " + winner.getEntityID() + " is the winner!\nScore: " + maxScore);
+}
+
+
+class PowerUp {
+    type = null;
+    x = 0;
+    y = 0;
+    powerImg = new Image();
+
+    constructor(type, x, y, src, width, height) {
+      this.type = type;
+      this.x = x;
+      this.y = y;
+      this.powerImg.src = src;        //src: The link to the source file
+      this.powerImg.width = width;    //width: The Width of the image
+      this.powerImg.height = height;  //height: The height of the image
+    }
+
+    getType() {
+      return this.type;
+    }
+
+    getX() {
+      return this.x;
+    }
+
+    getY() {
+      return this.y;
+    }
+
+    getHeight() {
+      return this.powerImg.height;
+    }
+
+    getWidth() {
+      return this.powerImg.width;
+    }
+
+    getImage() {
+      return this.powerImg;
+    }
+
+    setImageSrc(src) {
+      this.powerImg.src = src;
+    }
+
+    setWidth(width) {
+      this.powerImg.width = width;
+    }
+
+    setHeight(height) {
+      this.powerImg.height = height;
+    }
+
+    setX(x) {
+      this.x = x;
+    }
+
+    setY(y) {
+      this.y = y;
+    }
+
+    pickup(entity) {
+      if (this.type == null) {
+        return -1;
+      } else if (this.type == STAMINA_PICKUP) {
+        entity.decreaseStamina(-30);
+        gainStamina.play();
+      } else if (this.type == DAMAGE_PICKUP) {
+        entity.setDamageMulti(2);
+        entity.setPowerUpTimer(1000);
+        gainPowerUp.play();
+      }
+      return 0;
+    }
 }
 
 
@@ -276,6 +360,8 @@ class Entity {
                                 */
   underlayedHtmlElement = null; //For destructibleObjects that have an underlayed html element
   score = 0;
+  damageMulti = 1;
+  powerUpTimer = 0;
 
 
   //initializing function
@@ -384,6 +470,14 @@ class Entity {
     return this.underlayedHtmlElement;
   }
 
+  getDamageMulti() {
+    return this.damageMulti;
+  }
+
+  getPowerUpTimer() {
+    return this.powerUpTimer;
+  }
+
   setUnderlayedHtmlElement(underlayedHtmlElement) {
     this.underlayedHtmlElement = underlayedHtmlElement;
   }
@@ -467,6 +561,14 @@ class Entity {
     this.score = score;
   }
 
+  setDamageMulti(damageMulti) {
+    this.damageMulti = damageMulti;
+  }
+
+  setPowerUpTimer(powerUpTimer) {
+    this.powerUpTimer = powerUpTimer;
+  }
+
   //Used to decrease or increase statmina by a set amount from the current total
   //negative numbers add to stamina positive numbers lower stamina.
   decreaseStamina(amount) {
@@ -491,7 +593,20 @@ class Entity {
         this.setImageSrc("../Images/destroy_stage_9.png");
       }
       else if (this.stamina == 0) {
-        shater.play();
+        shatter.play();
+
+        //Spawn Pickup Item
+        if (Math.floor(Math.random() * 10) >= 5) {
+          if (Math.floor(Math.random() * 10) >= 5) {
+            const tempPowerUp = new PowerUp(DAMAGE_PICKUP, this.getX() + Math.floor(Math.random() * this.getWidth()) , this.getY() + Math.floor(Math.random() * this.getHeight()),  "../Images/Study.png", POWERUP_SIZE, POWERUP_SIZE);
+            powerUpList.push(tempPowerUp);
+          } else {
+            const tempPowerUp = new PowerUp(STAMINA_PICKUP, this.getX() + Math.floor(Math.random() * this.getWidth()) , this.getY() + Math.floor(Math.random() * this.getHeight()),  "../Images/coffee.png", POWERUP_SIZE, POWERUP_SIZE);
+            powerUpList.push(tempPowerUp);
+          }
+        }
+
+        //Remove destroyed entity
         if (this.getEntityID() != '1') {
           document.getElementById(this.getEntityID()).remove();
         }
@@ -557,7 +672,12 @@ if (arena == FIRST_ARENA){
 else if (arena == SECOND_ARENA){
   var arenaElementIds = new Array(new HtmlElement('Research', -763, 131), new HtmlElement('Alumni', -763, 131), new HtmlElement('FutureStudents', -763, 131),
                                   new HtmlElement('OnlineMasters', -763, 131), new HtmlElement('GraduateStudents', -763, 131), new HtmlElement('TourPurdueCS', -763, 131),
-                                  new HtmlElement('UndergraduateStudents', -763, 131), new HtmlElement('FacultyPositions', -763, 131)
+                                  new HtmlElement('UndergraduateStudents', -763, 131), new HtmlElement('FacultyPositions', -763, 131), new HtmlElement('GreyLinks', -387, 131),
+                                  new HtmlElement('CSNews', -381, 713), new HtmlElement('CSNewsTitle', -381, 713), new HtmlElement('CSNewsPara', -381, 713),
+                                  new HtmlElement('CyberCrime', -381, 713), new HtmlElement('CyberCrimeTitle', -381, 713), new HtmlElement('CyberCrimePara', -381, 713),
+                                  new HtmlElement('CPW', -381, 713), new HtmlElement('CPWTitle', -381, 713), new HtmlElement('CPWPara', -381, 713),
+                                  new HtmlElement('PPD', -381, 713), new HtmlElement('PPDTitle', -381, 713), new HtmlElement('PPDPara', -381, 713),
+                                  new HtmlElement('MoreNews', -381, 713)
                                  );
 }
 else{
@@ -578,6 +698,10 @@ for (var i = 0; i < arenaElementIds.length; i++) {
 entities.push(opp1);
 entities.push(player1);
 entities.push(gameUI);
+
+//Initialize the list of powerUps that are currently in the arena
+var powerUpList = new Array();
+
 //Default Keyboard controls
 //update these variables to allow for control changes in options menu
 var p1BumpKey = "e";            //Player1 default bump key
@@ -681,7 +805,7 @@ function entBumpRight(bumpEnt, multiplier = 1) {
   for (var i = 0; i < entities.length; i++) {
     if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
       if (entities[i].getActionState() != HIT_STATE) {
-        entities[i].decreaseStamina(BUMP_DAMAGE);
+        entities[i].decreaseStamina(BUMP_DAMAGE*bumpEnt.getDamageMulti());
         if (entities[i].isACharacter() == true) {
           entities[i].setKnockbackDirection(RIGHT_DIR);
           bumpEnt.addScore(100);
@@ -719,7 +843,7 @@ function entBumpLeft(bumpEnt, multiplier = 1) {
   for (var i = 0; i < entities.length; i++) {
     if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
       if (entities[i].getActionState() != HIT_STATE) {
-        entities[i].decreaseStamina(BUMP_DAMAGE);
+        entities[i].decreaseStamina(BUMP_DAMAGE*bumpEnt.getDamageMulti());
         if (entities[i].isACharacter() == true) {
           entities[i].setKnockbackDirection(LEFT_DIR);
           bumpEnt.addScore(100);
@@ -757,7 +881,7 @@ function entBumpUp(bumpEnt, multiplier = 1) {
   for (var i = 0; i < entities.length; i++) {
     if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
       if (entities[i].getActionState() != HIT_STATE) {
-        entities[i].decreaseStamina(BUMP_DAMAGE);
+        entities[i].decreaseStamina(BUMP_DAMAGE*bumpEnt.getDamageMulti());
         if (entities[i].isACharacter() == true) {
           entities[i].setKnockbackDirection(UP_DIR);
           bumpEnt.addScore(100);
@@ -795,7 +919,7 @@ function entBumpDown(bumpEnt, multiplier = 1) {
   for (var i = 0; i < entities.length; i++) {
     if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
       if (entities[i].getActionState() != HIT_STATE) {
-        entities[i].decreaseStamina(BUMP_DAMAGE);
+        entities[i].decreaseStamina(BUMP_DAMAGE*bumpEnt.getDamageMulti());
         if (entities[i].isACharacter() == true) {
           entities[i].setKnockbackDirection(DOWN_DIR);
           bumpEnt.addScore(100);
@@ -977,6 +1101,9 @@ function drawEntity(genEnt) {
   if (genEnt.getHoldingEnt() != null && genEnt.getDestructibleObject()) {
     if (genEnt.getHoldingEnt().getActionState() != PICKUP_STATE) {
       moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getHoldingEnt().getX() - genEnt.getWidth()/2 + genEnt.getHoldingEnt().getWidth()/2, genEnt.getHoldingEnt().getY() - genEnt.getHeight() + 10, false);
+
+      //Used to get the offset for  new destructible objects.
+      //moveElement(genEnt.getUnderlayedHtmlElement(), genEnt.getHoldingEnt().getX(), genEnt.getHoldingEnt().getY(), false);
     }
   }
 
@@ -1144,6 +1271,14 @@ function drawEntity(genEnt) {
     }
   }
 
+  if (genEnt.getPowerUpTimer() > 0) {
+    ctx.beginPath();
+    ctx.rect(genEnt.getX() - 2, genEnt.getY() - 2, genEnt.getWidth() + 4, genEnt.getHeight() + 4);
+    ctx.fillStyle = "#FF10F0";
+    ctx.fill();
+    ctx.closePath();
+  }
+
   ctx.beginPath();
   ctx.drawImage(genEnt.getImage(), genEnt.getX(), genEnt.getY(), genEnt.getWidth(), genEnt.getHeight());
   ctx.fill();
@@ -1165,6 +1300,16 @@ function drawEntity(genEnt) {
         ctx.fillText("HTML Element:", genEnt.getX(), genEnt.getY()-20);
         ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().left, genEnt.getX(), genEnt.getY()-10);
         ctx.fillText(document.getElementById(genEnt.getEntityID()).getBoundingClientRect().top, genEnt.getX()+genEnt.getWidth()-20, genEnt.getY()-10);
+      }
+    }
+  }
+
+  //Check if they are colliding with a powerUp
+  if (powerUpList != null && genEnt.getDestructibleObject() == false) {
+    for (var i = 0; i < powerUpList.length; i++) {
+      if (rectCollisionCheck(genEnt, powerUpList[i])) {
+        powerUpList[i].pickup(genEnt);
+        powerUpList.splice(i, 1);
       }
     }
   }
@@ -1192,6 +1337,15 @@ function drawEntity(genEnt) {
   //decrement Action Cooldown if it's above 0
   if (genEnt.getActionCooldown() > 0) {
     genEnt.setActionCooldown(genEnt.getActionCooldown() - 1);
+  }
+
+  //decrement powerUpTimer
+  if (genEnt.getPowerUpTimer() > 0) {
+    genEnt.setPowerUpTimer(genEnt.getPowerUpTimer() - 1);
+  } else if(genEnt.getPowerUpTimer() == 0) {
+    losePowerUp.play();
+    genEnt.setPowerUpTimer(-1);
+    genEnt.setDamageMulti(1);
   }
 
   if (genEnt.getEntityID() == gameUI.getEntityID()) {
@@ -1296,6 +1450,13 @@ function drawDebugInfo() {
   ctx.fillText("Opp1Stamina: "+opp1.getStamina(), 8, dbListPos*8);
   ctx.fillText("Opp1HitCooldown: "+opp1.getHitCooldown(), 8, dbListPos*9);
   ctx.fillText("FPS: "+avg_fps, 8, dbListPos*10);
+}
+
+function drawPowerUps(genPower) {
+  ctx.beginPath();
+  ctx.drawImage(genPower.getImage(), genPower.getX(), genPower.getY(), genPower.getWidth(), genPower.getHeight());
+  ctx.fill();
+  ctx.closePath();
 }
 
 //Main Draw function, responsible for drawing each frame
@@ -1428,6 +1589,13 @@ function draw() {
     ctx.fillStyle = "#ffffff";
     ctx.fill();
     ctx.closePath;
+  }
+
+  //Draw Powerups
+  if (powerUpList != null) {
+    for (var i = 0; i < powerUpList.length; i++) {
+      drawPowerUps(powerUpList[i]);
+    }
   }
 
   //Draws each entity
