@@ -5,8 +5,8 @@ body {
   .container {
     position: absolute;
     top:50%;
-    left:30%;
-    right:30%;
+    left: 10%;
+    right: 10%;
     display: flex;
     align-items: flex-end;
     justify-content: center;
