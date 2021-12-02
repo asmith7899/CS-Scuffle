@@ -9,6 +9,9 @@
 /   comment out "AILogic();" in gamePlay.js to "turn-off" AI, towards the end of the draw() function
 */
 
+
+var target = player1;
+
 //utility funciton to generate a number between 0 (inclusive) and max (exclusive)
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -145,7 +148,7 @@ function AIMove(dir) {
 */
 function AIUnstuck(dir) {
     if (dir == LEFT_DIR) { //cant move left
-        if (yDist(player1, opp1) < 0) { //take shortest path to player
+        if (yDist(target, opp1) < 0) { //take shortest path to player
             if (AIMove(UP_DIR) == true) {
             } else if (AIMove(DOWN_DIR) == true) {
             } else if (AIMove(RIGHT_DIR) == true) {
@@ -158,7 +161,7 @@ function AIUnstuck(dir) {
         }
     } 
     else if (dir == RIGHT_DIR) { //cant move right
-        if (yDist(player1, opp1) < 0) {
+        if (yDist(target, opp1) < 0) {
             if (AIMove(UP_DIR) == true) {
             } else if (AIMove(DOWN_DIR) == true) {
             } else if (AIMove(LEFT_DIR) == true) {
@@ -171,7 +174,7 @@ function AIUnstuck(dir) {
         }
     } 
     else if (dir == UP_DIR) { //cant move up
-        if (xDist(player1, opp1) < 0) {
+        if (xDist(target, opp1) < 0) {
             if (AIMove(LEFT_DIR) == true) {
             } else if (AIMove(RIGHT_DIR) == true) {
             } else if (AIMove(DOWN_DIR) == true) {
@@ -184,7 +187,7 @@ function AIUnstuck(dir) {
         }
     } 
     else if (dir == DOWN_DIR) { //cant move down
-        if (xDist(player1, opp1) < 0) {
+        if (xDist(target, opp1) < 0) {
             if (AIMove(LEFT_DIR) == true) {
             } else if (AIMove(RIGHT_DIR) == true) {
             } else if (AIMove(UP_DIR) == true) {
@@ -215,8 +218,8 @@ function xOverlap(ent1, ent2) {
     var ent1Right = ent1.getX() + ent1.getWidth();
     var ent2Left = ent2.getX();
     var ent2Right = ent2.getX() + ent2.getWidth();
-    return (ent1Left <= ent2Right && ent1Left >= ent2Left) ||
-        (ent1Right <= ent2Right && ent1Right >= ent2Left)
+    return (ent1Left < ent2Right && ent1Left > ent2Left) ||
+        (ent1Right < ent2Right && ent1Right > ent2Left)
 }
 
 /*
@@ -236,8 +239,8 @@ function yOverlap(ent1, ent2) {
     var ent1Bot = ent1.getY() + ent1.getHeight();
     var ent2Top = ent2.getY();
     var ent2Bot = ent2.getY() + ent2.getHeight();
-    return (ent1Top <= ent2Bot && ent1Top >= ent2Top) ||
-        (ent1Bot <= ent2Bot && ent1Bot >= ent2Top)
+    return (ent1Top < ent2Bot && ent1Top > ent2Top) ||
+        (ent1Bot < ent2Bot && ent1Bot > ent2Top)
 }
 
 /*
@@ -270,9 +273,9 @@ function yDist(ent1, ent2) {
 /  Purpose: Move the AI towards the player horizontally (in the X axis)
 */
 function horizontalMovement() {
-    if (xDist(player1, opp1) >= bumpDistance * 1.75) {
+    if (xDist(target, opp1) > 0) {
         AIMove(RIGHT_DIR);
-    } else if (xDist(player1, opp1) <= -bumpDistance * 1.75) {
+    } else if (xDist(target, opp1) < 0) {
         AIMove(LEFT_DIR);
     }
 }
@@ -281,9 +284,9 @@ function horizontalMovement() {
 /  Purpose: Move the AI towards the player vertically (in the Y axis)
 */
 function verticalMovement() {
-    if (yDist(player1, opp1) >= bumpDistance * 1.75) {
+    if (yDist(target, opp1) > 0) {
         AIMove(DOWN_DIR);
-    } else if (yDist(player1, opp1) <= -bumpDistance * 1.75) {
+    } else if (yDist(target, opp1) < 0) {
         AIMove(UP_DIR);
     }
 }
@@ -292,9 +295,9 @@ function verticalMovement() {
 /  Purpose: Move the AI away from the player horizontally (in the X axis)
 */
 function horizontalMovementAway() {
-    if (xDist(player1, opp1) <= bumpDistance * 1.75 && xDist(player1, opp1) > 0) {
+    if (xDist(target, opp1) <= bumpDistance * 1.75 && xDist(target, opp1) > 0) {
         AIMove(LEFT_DIR);
-    } else if (xDist(player1, opp1) >= -bumpDistance * 1.75 && xDist(player1, opp1) < 0) {
+    } else if (xDist(target, opp1) >= -bumpDistance * 1.75 && xDist(target, opp1) < 0) {
         AIMove(RIGHT_DIR);
     }
 }
@@ -303,9 +306,9 @@ function horizontalMovementAway() {
 /  Purpose: Move the AI away from the player vertically (in the Y axis)
 */
 function verticalMovementAway() {
-    if (yDist(player1, opp1) <= bumpDistance * 1.75 && yDist(player1, opp1) > 0) {
+    if (yDist(target, opp1) <= bumpDistance * 1.75 && yDist(target, opp1) > 0) {
         AIMove(UP_DIR);
-    } else if (yDist(player1, opp1) >= -bumpDistance * 1.75 && yDist(player1, opp1) < 0) {
+    } else if (yDist(target, opp1) >= -bumpDistance * 1.75 && yDist(target, opp1) < 0) {
         AIMove(DOWN_DIR);
     }
 }
@@ -322,168 +325,306 @@ function AILogic() {
 }
 
 function easyAI() {
-    //if far from player1, move closer
-    if ((Math.abs(xDist(player1, opp1)) >= bumpDistance * 1.75 || Math.abs(yDist(player1, opp1)) >= bumpDistance * 1.75) && player1.getActionState() != BUMPING_STATE) {
-        
-        //can and will move horizontally and vertically at the same time, just like a player could
-        //prioritize reducing the greatest distance first
-        if (Math.abs(xDist(player1, opp1)) > Math.abs(yDist(player1, opp1))) {
-            horizontalMovement();
-            verticalMovement();
-        } else {
-            verticalMovement();
-            horizontalMovement();
-        }   
-    } else if (player1.getActionState() == BUMPING_STATE) { //will avoid bumps from players, prioritize moving directly away from an attack
-        if (player1.getFacingDirection() == LEFT_DIR) {
-            AIMove(LEFT_DIR);
-        } else if (player1.getFacingDirection() == RIGHT_DIR) {
-            AIMove(RIGHT_DIR);
-        } else if (player1.getFacingDirection() == UP_DIR) {
-            AIMove(UP_DIR);
-        }else if (player1.getFacingDirection() == DOWN_DIR) {
-            AIMove(DOWN_DIR);
+    target = player1;
+    if (opp1.getPowerUpTimer() <= 0) {
+        if (powerUpList.length > 0 && powerUpList[0].type == DAMAGE_PICKUP) {
+            target = powerUpList[0];
+        }
+        for (var i = 1; i < powerUpList.length; i++) {
+            if (powerUpList[i].type == DAMAGE_PICKUP && (
+                  Math.abs(xDist(powerUpList[i], opp1)) < Math.abs(xDist(target, opp1)) ||
+                  Math.abs(yDist(powerUpList[i], opp1)) < Math.abs(yDist(target, opp1)))) {
+                target = powerUpList[i];
+            }
+        }
+    }    
+
+    if (opp1.getStamina() <= MAX_STAMINA - 30) {
+        if (powerUpList.length > 0 && powerUpList[0].type == STAMINA_PICKUP) {
+            target = powerUpList[0];
+        }
+        for (var i = 1; i < powerUpList.length; i++) {
+            if (powerUpList[i].type == STAMINA_PICKUP && (
+                  Math.abs(xDist(powerUpList[i], opp1)) < Math.abs(xDist(target, opp1)) ||
+                  Math.abs(yDist(powerUpList[i], opp1)) < Math.abs(yDist(target, opp1)))) {
+                target = powerUpList[i];
+            }
         }
     }
 
-    //attempt to bump player1 if able and player1 bump is on cooldown
-    if (opp1.getActionCooldown() == 0 && player1.getActionCooldown() != 0) {
-        if (xDist(player1, opp1) <= bumpDistance * 1.75 && xDist(player1, opp1) >= 0 && yOverlap(opp1, player1)) {
-            opp1.setFacingDirection(RIGHT_DIR);
-            opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
-        } else if (xDist(player1, opp1) >= -bumpDistance * 1.75 && xDist(player1, opp1) <= 0 && yOverlap(opp1, player1)) {
-            opp1.setFacingDirection(LEFT_DIR);
-            opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
-        } else if (yDist(player1, opp1) <= bumpDistance * 1.75 && yDist(player1, opp1) >= 0 && xOverlap(opp1, player1)) {
-            opp1.setFacingDirection(DOWN_DIR);
-            opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
-        } else if (yDist(player1, opp1) >= -bumpDistance * 1.75 && yDist(player1, opp1) <= 0 && xOverlap(opp1, player1)) {
-            opp1.setFacingDirection(UP_DIR);
-            opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
-        } 
+    if (opp1.getActionState() == NORMAL_STATE) {
+        if (target instanceof Entity) {
+            //if far from target, move closer
+            if ((Math.abs(xDist(target, opp1)) >= bumpDistance * 1.75 || Math.abs(yDist(target, opp1)) >= bumpDistance * 1.75) && target.getActionState() != BUMPING_STATE) {
+                
+                //can and will move horizontally and vertically at the same time, just like a player could
+                //prioritize reducing the greatest distance first
+                if (Math.abs(xDist(target, opp1)) > Math.abs(yDist(target, opp1))) {
+                    horizontalMovement();
+                    verticalMovement();
+                } else {
+                    verticalMovement();
+                    horizontalMovement();
+                }   
+            } else if (target.getActionState() == BUMPING_STATE) { //will avoid bumps from players, prioritize moving directly away from an attack
+                if (target.getFacingDirection() == LEFT_DIR) {
+                    AIMove(LEFT_DIR);
+                } else if (target.getFacingDirection() == RIGHT_DIR) {
+                    AIMove(RIGHT_DIR);
+                } else if (target.getFacingDirection() == UP_DIR) {
+                    AIMove(UP_DIR);
+                }else if (target.getFacingDirection() == DOWN_DIR) {
+                    AIMove(DOWN_DIR);
+                }
+            }
+
+            //attempt to bump target if able and target bump is on cooldown
+            if (opp1.getActionCooldown() == 0 && target.getActionCooldown() != 0 && opp1.getHoldingEnt() == null) {
+                if (xDist(target, opp1) <= bumpDistance * 1.75 && xDist(target, opp1) >= 0 && yOverlap(opp1, target)) {
+                    opp1.setFacingDirection(RIGHT_DIR);
+                    opp1.setActionState(BUMPING_STATE);
+                    entityBump(opp1);
+                } else if (xDist(target, opp1) >= -bumpDistance * 1.75 && xDist(target, opp1) <= 0 && yOverlap(opp1, target)) {
+                    opp1.setFacingDirection(LEFT_DIR);
+                    opp1.setActionState(BUMPING_STATE);
+                    entityBump(opp1);
+                } else if (yDist(target, opp1) <= bumpDistance * 1.75 && yDist(target, opp1) >= 0 && xOverlap(opp1, target)) {
+                    opp1.setFacingDirection(DOWN_DIR);
+                    opp1.setActionState(BUMPING_STATE);
+                    entityBump(opp1);
+                } else if (yDist(target, opp1) >= -bumpDistance * 1.75 && yDist(target, opp1) <= 0 && xOverlap(opp1, target)) {
+                    opp1.setFacingDirection(UP_DIR);
+                    opp1.setActionState(BUMPING_STATE);
+                    entityBump(opp1);
+                } 
+            } else if (opp1.getActionCooldown() == 0 && target.getActionCooldown() != 0 && opp1.getActionState() != THROWING_STATE && opp1.getHoldingEnt() != null) {
+                if (xDist(target, opp1) <= bumpDistance * 3 && xDist(target, opp1) >= 0 && yOverlap(opp1, target)) {
+                    opp1.setFacingDirection(RIGHT_DIR);
+                    opp1.setActionState(THROWING_STATE);
+                    entityDrop(opp1, THROW_FORCE);
+                } else if (xDist(target, opp1) >= -bumpDistance * 3 && xDist(target, opp1) <= 0 && yOverlap(opp1, target)) {
+                    opp1.setFacingDirection(LEFT_DIR);
+                    opp1.setActionState(THROWING_STATE);
+                    entityDrop(opp1, THROW_FORCE);
+                } else if (yDist(target, opp1) <= bumpDistance * 3 && yDist(target, opp1) >= 0 && xOverlap(opp1, target)) {
+                    opp1.setFacingDirection(DOWN_DIR);
+                    opp1.setActionState(THROWING_STATE);
+                    entityDrop(opp1, THROW_FORCE);
+                } else if (yDist(target, opp1) >= -bumpDistance * 3 && yDist(target, opp1) <= 0 && xOverlap(opp1, target)) {
+                    opp1.setFacingDirection(UP_DIR);
+                    opp1.setActionState(THROWING_STATE);
+                    entityDrop(opp1, THROW_FORCE);
+                } 
+            } else if (opp1.getActionCooldown() == 0 && opp1.getHoldingEnt() == null) {
+                    for (var i = 0; i < entities.length; i++) {
+                        if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID() && entities[i].getDestructibleObject()) {
+                            opp1.setActionState(PICKUP_STATE);
+                            entityPickup(opp1);
+                        }
+                    }
+            }
+        } else if (target instanceof PowerUp) {
+            if (Math.abs(xDist(target, opp1)) < Math.abs(yDist(target, opp1))) {
+                if (!xOverlap(target, opp1)) {
+                    horizontalMovement();
+                }
+                if (!yOverlap(target, opp1)) {
+                    verticalMovement();
+                }
+            } else {
+                if (!yOverlap(target, opp1)) {
+                    verticalMovement();
+                }
+                if (!xOverlap(target, opp1)) {
+                    horizontalMovement();
+                }
+            }
+        }
+    } else if (opp1.getActionState() == BUMPING_STATE) {
+        entityBump(opp1);
+    } else if(opp1.getActionState() == PICKUP_STATE) {
+        entityPickup(opp1);
+    } else if (opp1.getActionState() == THROWING_STATE) {
+        entityDrop(opp1, THROW_FORCE);
     }
 }
 
 function hardAI() {
-    var bumped = false; //probably a redundant variable, but might as well test it
+    target = player1;
+
+    if (opp1.getPowerUpTimer() <= 0) {
+        if (powerUpList.length > 0 && powerUpList[0].type == DAMAGE_PICKUP) {
+            target = powerUpList[0];
+        }
+        for (var i = 1; i < powerUpList.length; i++) {
+            if (powerUpList[i].type == DAMAGE_PICKUP && (
+                  Math.abs(xDist(powerUpList[i], opp1)) < Math.abs(xDist(target, opp1)) ||
+                  Math.abs(yDist(powerUpList[i], opp1)) < Math.abs(yDist(target, opp1)))) {
+                target = powerUpList[i];
+            }
+        }
+    }    
+
+    if (opp1.getStamina() <= MAX_STAMINA - 30) {
+        if (powerUpList.length > 0 && powerUpList[0].type == STAMINA_PICKUP) {
+            target = powerUpList[0];
+        }
+        for (var i = 1; i < powerUpList.length; i++) {
+            if (powerUpList[i].type == STAMINA_PICKUP && (
+                  Math.abs(xDist(powerUpList[i], opp1)) < Math.abs(xDist(target, opp1)) ||
+                  Math.abs(yDist(powerUpList[i], opp1)) < Math.abs(yDist(target, opp1)))) {
+                target = powerUpList[i];
+            }
+        }
+    }
+    
     if (opp1.getActionState() == NORMAL_STATE) {
-        if (Math.abs(xDist(player1, opp1)) > Math.abs(yDist(player1, opp1)) && player1.getActionState() != BUMPING_STATE) {
-            if (Math.abs(xDist(player1, opp1)) > bumpDistance * 1.75) {
-                horizontalMovement();
-            } else if (Math.abs(xDist(player1, opp1)) < bumpDistance * 1.5 && yOverlap(player1, opp1)) {
-                horizontalMovementAway();
-            } else {
-                if (((opp1.getFacingDirection() == LEFT_DIR || opp1.getFacingDirection() == RIGHT_DIR) && yOverlap(player1, opp1) == false) ||
-                    ((opp1.getFacingDirection() == UP_DIR || opp1.getFacingDirection() == DOWN_DIR) && xOverlap(player1, opp1) == false)) {
-                    if (getRandomInt(70) == 0) {
-                        reverseDirection();
+        if (target instanceof Entity) {
+            if (Math.abs(xDist(target, opp1)) > Math.abs(yDist(target, opp1)) && target.getActionState() != BUMPING_STATE) {
+                if (Math.abs(xDist(target, opp1)) > bumpDistance * 1.75) {
+                    horizontalMovement();
+                } else if (Math.abs(xDist(target, opp1)) < bumpDistance * 1.5 && yOverlap(target, opp1)) {
+                    horizontalMovementAway();
+                } else {
+                    if (((opp1.getFacingDirection() == LEFT_DIR || opp1.getFacingDirection() == RIGHT_DIR) && yOverlap(target, opp1) == false) ||
+                        ((opp1.getFacingDirection() == UP_DIR || opp1.getFacingDirection() == DOWN_DIR) && xOverlap(target, opp1) == false)) {
+                        if (getRandomInt(70) == 0) {
+                            reverseDirection();
+                        }
+                        AIMove(opp1.getFacingDirection());
+                    } else if (yOverlap(target, opp1) == true) {
+                        if (yDist(target, opp1) < 0) {
+                            AIMove(UP_DIR);
+                        } else {
+                            AIMove(DOWN_DIR);
+                        }
                     }
-                    AIMove(opp1.getFacingDirection());
-                } else if (yOverlap(player1, opp1) == true) {
-                    if (yDist(player1, opp1) < 0) {
+                }
+
+                if (Math.abs(yDist(target, opp1)) > bumpDistance * 1.75) {
+                    verticalMovement();
+                } else if (Math.abs(yDist(target, opp1)) < bumpDistance * 1.5 && xOverlap(target, opp1)) {
+                    verticalMovementAway();
+                } else {
+                    
+                }
+            } else if (Math.abs(xDist(target, opp1)) < Math.abs(yDist(target, opp1)) && target.getActionState() != BUMPING_STATE) {
+                if (Math.abs(yDist(target, opp1)) > bumpDistance * 1.75) {
+                    verticalMovement();
+                } else if (Math.abs(yDist(target, opp1)) < bumpDistance * 1.5 && xOverlap(target, opp1)) {
+                    verticalMovementAway();
+                } else {
+                    if (((opp1.getFacingDirection() == UP_DIR || opp1.getFacingDirection() == DOWN_DIR) && xOverlap(target, opp1) == false) ||
+                        ((opp1.getFacingDirection() == LEFT_DIR || opp1.getFacingDirection() == RIGHT_DIR) && yOverlap(target, opp1) == false)) {
+                        if (getRandomInt(70) == 0) {
+                            reverseDirection();
+                        }
+                        AIMove(opp1.getFacingDirection());
+                    } else if (xOverlap(target, opp1) == true) {
+                        if (xDist(target, opp1) < 0) {
+                            AIMove(LEFT_DIR);
+                        } else {
+                            AIMove(RIGHT_DIR);
+                        }
+                    }
+                }
+
+                if (Math.abs(xDist(target, opp1)) > bumpDistance * 1.75) {
+                    horizontalMovement();
+                } else if (Math.abs(xDist(target, opp1)) < bumpDistance * 1.5 && yOverlap(target, opp1)) {
+                    horizontalMovementAway();
+                } else {
+
+                }
+            } else {
+                if (opp1.getFacingDirection() == LEFT_DIR) {
+                    if (yDist(target, opp1) < 0) {
                         AIMove(UP_DIR);
                     } else {
                         AIMove(DOWN_DIR);
                     }
-                }
-            }
-
-            if (Math.abs(yDist(player1, opp1)) > bumpDistance * 1.75) {
-                verticalMovement();
-            } else if (Math.abs(yDist(player1, opp1)) < bumpDistance * 1.5 && xOverlap(player1, opp1)) {
-                verticalMovementAway();
-            } else {
-                
-            }
-        } else if (Math.abs(xDist(player1, opp1)) < Math.abs(yDist(player1, opp1)) && player1.getActionState() != BUMPING_STATE) {
-            if (Math.abs(yDist(player1, opp1)) > bumpDistance * 1.75) {
-                verticalMovement();
-            } else if (Math.abs(yDist(player1, opp1)) < bumpDistance * 1.5 && xOverlap(player1, opp1)) {
-                verticalMovementAway();
-            } else {
-                if (((opp1.getFacingDirection() == UP_DIR || opp1.getFacingDirection() == DOWN_DIR) && xOverlap(player1, opp1) == false) ||
-                    ((opp1.getFacingDirection() == LEFT_DIR || opp1.getFacingDirection() == RIGHT_DIR) && yOverlap(player1, opp1) == false)) {
-                    if (getRandomInt(70) == 0) {
-                        reverseDirection();
+                } else if (opp1.getFacingDirection() == RIGHT_DIR) {
+                    if (yDist(target, opp1) < 0) {
+                        AIMove(UP_DIR);
+                    } else {
+                        AIMove(DOWN_DIR);
                     }
-                    AIMove(opp1.getFacingDirection());
-                } else if (xOverlap(player1, opp1) == true) {
-                    if (xDist(player1, opp1) < 0) {
+                } else if (opp1.getFacingDirection() == UP_DIR) {
+                    if (xDist(target, opp1) < 0) {
+                        AIMove(LEFT_DIR);
+                    } else {
+                        AIMove(RIGHT_DIR);
+                    }
+                } else if (opp1.getFacingDirection() == DOWN_DIR) {
+                    if (xDist(target, opp1) < 0) {
                         AIMove(LEFT_DIR);
                     } else {
                         AIMove(RIGHT_DIR);
                     }
                 }
             }
-
-            if (Math.abs(xDist(player1, opp1)) > bumpDistance * 1.75) {
-                horizontalMovement();
-            } else if (Math.abs(xDist(player1, opp1)) < bumpDistance * 1.5 && yOverlap(player1, opp1)) {
-                horizontalMovementAway();
+        } else if (target instanceof PowerUp) {
+            if (Math.abs(xDist(target, opp1)) < Math.abs(yDist(target, opp1))) {
+                if (!xOverlap(target, opp1)) {
+                    horizontalMovement();
+                }
+                if (!yOverlap(target, opp1)) {
+                    verticalMovement();
+                }
             } else {
-
-            }
-        } else {
-            if (opp1.getFacingDirection() == LEFT_DIR) {
-                if (yDist(player1, opp1) < 0) {
-                    AIMove(UP_DIR);
-                } else {
-                    AIMove(DOWN_DIR);
+                if (!yOverlap(target, opp1)) {
+                    verticalMovement();
                 }
-            } else if (opp1.getFacingDirection() == RIGHT_DIR) {
-                if (yDist(player1, opp1) < 0) {
-                    AIMove(UP_DIR);
-                } else {
-                    AIMove(DOWN_DIR);
-                }
-            } else if (opp1.getFacingDirection() == UP_DIR) {
-                if (xDist(player1, opp1) < 0) {
-                    AIMove(LEFT_DIR);
-                } else {
-                    AIMove(RIGHT_DIR);
-                }
-            } else if (opp1.getFacingDirection() == DOWN_DIR) {
-                if (xDist(player1, opp1) < 0) {
-                    AIMove(LEFT_DIR);
-                } else {
-                    AIMove(RIGHT_DIR);
+                if (!xOverlap(target, opp1)) {
+                    horizontalMovement();
                 }
             }
         }
+
+        if (opp1.getHoldingEnt() == null) {
+            for (var i = 0; i < entities.length; i++) {
+                if (rectCollisionCheck(opp1, entities[i]) && opp1.getEntityID() != entities[i].getEntityID() && entities[i].getDestructibleObject()) {
+                    opp1.setActionState(PICKUP_STATE);
+                }
+            }
+        }
+        
+
     } else if (opp1.getActionState() == BUMPING_STATE) {
-        bumped = true;
         entityBump(opp1);
+    } else if(opp1.getActionState() == PICKUP_STATE) {
+        entityPickup(opp1);
+    } else if (opp1.getActionState() == THROWING_STATE) {
+        entityDrop(opp1, THROW_FORCE);
     }
 
-    //attempt to bump player1 if able and player1 bump is on cooldown
-    /*
-    /   KNOWN BUG:  a single bump can hit the player multiple times and do more damage than intended
-    /               I believe this is due to the player's actionState being able to change from HIT_STATE
-    /               before the bump is finished. through keyboard inputs, the player's actionState is changed
-    /               from HIT_STATE to something else (BUMPING_STATE) before the bump has finished and while still colliding with
-    /               the AI causing multiple hits.
-    */
-    if ((opp1.getActionCooldown() == 0) && opp1.getActionState() != BUMPING_STATE && bumped == false && getRandomInt(65) < 2) { //randomness is to balance out the bug for now. will need to actually fix
-        if (xDist(player1, opp1) <= bumpDistance * 1.75 && xDist(player1, opp1) >= 0 && yOverlap(opp1, player1)) {
+    if (opp1.getActionCooldown() == 0 && opp1.getActionState() != BUMPING_STATE && opp1.getHoldingEnt() == null) {
+        if (xDist(target, opp1) <= bumpDistance * 1.75 && xDist(target, opp1) >= 0 && yOverlap(opp1, target)) {
             opp1.setFacingDirection(RIGHT_DIR);
             opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
-        } else if (xDist(player1, opp1) >= -bumpDistance * 1.75 && xDist(player1, opp1) <= 0 && yOverlap(opp1, player1)) {
+        } else if (xDist(target, opp1) >= -bumpDistance * 1.75 && xDist(target, opp1) <= 0 && yOverlap(opp1, target)) {
             opp1.setFacingDirection(LEFT_DIR);
             opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
-        } else if (yDist(player1, opp1) <= bumpDistance * 1.75 && yDist(player1, opp1) >= 0 && xOverlap(opp1, player1)) {
+        } else if (yDist(target, opp1) <= bumpDistance * 1.75 && yDist(target, opp1) >= 0 && xOverlap(opp1, target)) {
             opp1.setFacingDirection(DOWN_DIR);
             opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
-        } else if (yDist(player1, opp1) >= -bumpDistance * 1.75 && yDist(player1, opp1) <= 0 && xOverlap(opp1, player1)) {
+        } else if (yDist(target, opp1) >= -bumpDistance * 1.75 && yDist(target, opp1) <= 0 && xOverlap(opp1, target)) {
             opp1.setFacingDirection(UP_DIR);
             opp1.setActionState(BUMPING_STATE);
-            entityBump(opp1);
+        } 
+    } else if (opp1.getActionCooldown() == 0 && opp1.getActionState() != THROWING_STATE && opp1.getHoldingEnt() != null) {
+        if (xDist(target, opp1) <= bumpDistance * 3.5 && xDist(target, opp1) >= 0 && yOverlap(opp1, target)) {
+            opp1.setFacingDirection(RIGHT_DIR);
+            opp1.setActionState(THROWING_STATE);
+        } else if (xDist(target, opp1) >= -bumpDistance * 3.5 && xDist(target, opp1) <= 0 && yOverlap(opp1, target)) {
+            opp1.setFacingDirection(LEFT_DIR);
+            opp1.setActionState(THROWING_STATE);
+        } else if (yDist(target, opp1) <= bumpDistance * 3.5 && yDist(target, opp1) >= 0 && xOverlap(opp1, target)) {
+            opp1.setFacingDirection(DOWN_DIR);
+            opp1.setActionState(THROWING_STATE);
+        } else if (yDist(target, opp1) >= -bumpDistance * 3.5 && yDist(target, opp1) <= 0 && xOverlap(opp1, target)) {
+            opp1.setFacingDirection(UP_DIR);
+            opp1.setActionState(THROWING_STATE);
         } 
     }
 }
