@@ -201,6 +201,61 @@ function endGame() {
     maxScore += 50;
   }
 
+  //maintain leaderboard. persists through browser close/reopen. Doesn't work with file:// domains
+  //works with any hosted domain, including localhost. Tested with python local basic http server
+  //not efficient, but it works
+  var score1 = localStorage.getItem("firstScore");
+  var score2 = localStorage.getItem("secondScore");
+  var score3 = localStorage.getItem("thirdScore");
+  var score4 = localStorage.getItem("fourthScore");
+  var score5 = localStorage.getItem("fifthScore");
+
+  var user1 = localStorage.getItem("firstUser");
+  var user2 = localStorage.getItem("secondUser");
+  var user3 = localStorage.getItem("thirdUser");
+  var user4 = localStorage.getItem("fourthUser");
+
+  //should rework to use a loop over an array, but its fine
+  if (score1 == null || maxScore > parseInt(score1)) {
+    localStorage.setItem("firstScore", maxScore);
+    localStorage.setItem("firstUser", winner.username);
+    localStorage.setItem("secondScore", score1);
+    localStorage.setItem("secondUser", user1);
+    localStorage.setItem("thirdScore", score2);
+    localStorage.setItem("thirdUser", user2);
+    localStorage.setItem("fourthScore", score3);
+    localStorage.setItem("fourthUser", user3);
+    localStorage.setItem("fifthScore", score4);
+    localStorage.setItem("fifthUser", user4);
+  } else if (score2 == null || maxScore > parseInt(score2)) {
+    localStorage.setItem("secondScore", maxScore);
+    localStorage.setItem("secondUser", winner.username);
+    localStorage.setItem("thirdScore", score2);
+    localStorage.setItem("thirdUser", user2);
+    localStorage.setItem("fourthScore", score3);
+    localStorage.setItem("fourthUser", user3);
+    localStorage.setItem("fifthScore", score4);
+    localStorage.setItem("fifthUser", user4);
+  } else if (score3 == null || maxScore > parseInt(score3)) {
+    localStorage.setItem("thirdScore", maxScore);
+    localStorage.setItem("thirdUser", winner.username);
+    localStorage.setItem("fourthScore", score3);
+    localStorage.setItem("fourthUser", user3);
+    localStorage.setItem("fifthScore", score4);
+    localStorage.setItem("fifthUser", user4);
+  } else if (score4 == null || maxScore > parseInt(score4)) {
+    localStorage.setItem("fourthScore", maxScore);
+    localStorage.setItem("fourthUser", winner.username);
+    localStorage.setItem("fifthScore", score4);
+    localStorage.setItem("fifthUser", user4);
+  } else if (score5 == null || maxScore > parseInt(score5)) {
+    localStorage.setItem("fifthScore", maxScore);
+    localStorage.setItem("fifthUser", winner.username);
+  }
+  
+  console.log(localStorage.getItem("firstUser"));
+  console.log(localStorage.getItem("firstScore"));
+
   window.location.href = '../win-screen/win-screen.html?winner=' + maxScore + "&2nd=" + second.getScore() + '&winnerimg='
   + winner.getImage().src + "&2ndimg=" + second.getImage().src + "&winnerUser=" + winner.username + "&secondUser=" + second.username;
 
@@ -604,6 +659,10 @@ class Entity {
       }
       else if (this.stamina == 0) {
         shatter.play();
+        //reset holdingEnt to null if an object is destroyed while held
+        if (this.holdingEnt) {
+          this.holdingEnt.setHoldingEnt(null);
+        }
 
         //Spawn Pickup Item
         if (Math.floor(Math.random() * 10) >= 5) {
