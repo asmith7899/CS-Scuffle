@@ -57,6 +57,7 @@ var transitioned = false;               //Added 5 additional seconds before the 
                                         //countdown before the game starts but it felt right with the hard AI being more aggressive right away
 var shouldTransition = 0;               // if = 0, does transition
 var amountScroll = 0;
+var numPlayers = 2;                     // 2 for now (player + opponent), can vary with multiplayer
 
 
 
@@ -146,11 +147,20 @@ var timerInterval = setInterval(function () {
   currTime--;
 }, 1000); // update about every second
 
-function transitionStage() {
+function transitionStage(time = (transitionTime+5)) {
   transitioned = true;
-  window.location.href = '../home-arena/home-arena.html?player1Src=' + player1Src + '&opp1Src=' + opp1Src + '&startTime=' + (transitionTime + 5) + "&transitioned=" + transitioned + '&playerStamina='
+  window.location.href = '../home-arena/home-arena.html?player1Src=' + player1Src + '&opp1Src=' + opp1Src + '&startTime=' + time + "&transitioned=" + transitioned + '&playerStamina='
   + player1.getStamina() + "&opponentStamina=" + opp1.getStamina() + "&playerScore=" + player1.getScore() + "&opponentScore=" + opp1.getScore() + "&difficulty=" + AI_DIFFICULTY;
 }
+
+function transitionObject() {
+  if (shouldTransition==0 && currTime > transitionTime) {
+    transitionStage();
+  } else {
+    endGame();
+  }
+}
+
 function endGame() {
   clearInterval(drawInterval); //stop updating the canvas, also stops AIlogic and (player inputs)?
   clearInterval(timerInterval); //stop the timer
@@ -1465,6 +1475,9 @@ function draw() {
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
+  if (entities.length < numPlayers + 1) { // + 1 for stamina bar, possibly, unsure why it requires + 1
+    transitionObject();
+  }
   if ((currTime <= startTime - 5)) { //allow player and AI actions only after 5 seconds have passed
 
     //When no special actions are being taken by player1: allows free movement
