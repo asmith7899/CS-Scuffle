@@ -23,9 +23,10 @@
     <!-- <link href="/purdue/css/2015/home.css" rel="stylesheet"/> -->
 
     <!-- Bootstrap-map-js -->
-    <!--FIXLOAD
+
     <link rel="stylesheet" type="text/css" href="css/bootstrapmap.css">
-    -->
+
+    
 
     <!-- google tag manager GTM-WWGM6Z -->
     <!--FIXLOAD
@@ -71,7 +72,8 @@
         })(window, document, 'script', 'dataLayer', 'GTM-WWGMN6Z');</script>
     -->
 
-
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="map-arena.css">
     <style type="text/css">
         /* all css here is just amends to outsourced css files */
@@ -230,7 +232,14 @@
     <![endif]-->
     <meta http-equiv="origin-trial"
         content="A7pIQvxLYo3CR+raAuUI8Rfr81qhL4u1c7JIHkL6Clt5Jq0Xi/EH8+lTm0ZzKyi+618U2BxGlpKmCTclb793+AUAAACKeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ21hbmFnZXIuY29tOjQ0MyIsImZlYXR1cmUiOiJDb252ZXJzaW9uTWVhc3VyZW1lbnQiLCJleHBpcnkiOjE2MzQwODMxOTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9">
-</head>
+        <script src="https://kit.fontawesome.com/b8a5583dfc.js" crossorigin="anonymous"></script>
+
+        <script>
+            document.ready(function(){
+                openInstructionModal();
+            });
+        </script>
+    </head>
 
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -1080,14 +1089,78 @@
                 </div>
             </div>
         </div>
-
-
     </div>
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center; align-content: center">
+                <b><h1 class="modal-header-text">How To Play</h1></b>
+                    <span class="close" onclick="closeInstructions()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-6">
+                        <p style="color: black;">Your stats are shown in the upper left corner of the screen; watch
+                            your stamina as you fight!</p>
+                        <p style="color: black;">Your opponents stats are shown in the upper right corner. Watch to
+                            see how your attacks affect them!</p>
+                        <p style="color: black;">Use your arrow keys to move your player through the arena.</p>
+                        <p style="color: black;">You can bump your opponent using the e key or pick up and throw objects
+                            at your opponent using the f key.</p>
+                        <p style="color: black;">Use the instructional button in the top right corner of the stamina bar
+                            to access these instructions throughout the game.</p>
+                    </div>
+                    <div class="col-lg-3"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row" style="display: flex; justify-content: center; align-items: center;">
+                    <div class="col-lg-4"></div>
+                    <div class="col-lg-4" style="display: flex; justify-content: right;">
+                        <b>
+                            <p>You're ready to play - good luck!</p>
+                        </b>
+                    </div>
+                    <div class="col-lg-4" >
+                        <b><button class="button"
+                                style="background-color: #252628; border: 1px gold; border-radius: 6px; padding: 10px 15px;"
+                                onclick="closeInstructions()">Let's Go!</button></b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <i style="position:fixed;top: 60px;right:12px; z-index:9999;" href='#' class="fas fa-info-circle fa-1.5x"
+        onclick="openInstructionModal()"></i>
+
+    <script>
+        // When the user clicks on <span> (x), close the 
+        function closeInstructions() {
+            var modal = document.getElementById("instructionModal");
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            var modal = document.getElementById("instructionModal");
+            if (event.target == modal) {
+                closeInstructions();
+            }
+        }
+
+        function openInstructionModal() {
+            var modal = document.getElementById("instructionModal");
+            modal.style.display = "block";
+        }
+    </script>
     <script type="text/javascript">
 
         var dojoConfig = {
             parseOnLoad: true
         };
+    </script>
+    <script type="text/javascript">
+        openInstructionModal();
     </script>
     <!--FIXLOAD
     <script src="https://js.arcgis.com/3.15/"></script>
@@ -1260,27 +1333,6 @@
         id="">(function (a, c, e, k, b) { a[b] = a[b] || []; a[b].push({ projectId: "10000", properties: { pixelId: "10095996" } }); var d = c.createElement(e); d.src = k; d.async = !0; d.onload = d.onreadystatechange = function () { var f = this.readyState, l = a[b]; if (!f || "complete" == f || "loaded" == f) try { var g = YAHOO.ywa.I13N.fireBeacon; a[b] = []; a[b].push = function (h) { g([h]) }; g(l) } catch (h) { } }; c = c.getElementsByTagName(e)[0]; e = c.parentNode; e.insertBefore(d, c) })(window, document, "script", "https://s.yimg.com/wi/ytc.js", "dotq");</script>
     <script type="text/javascript" id="">!function (b, e, f, g, a, c, d) { b.fbq || (a = b.fbq = function () { a.callMethod ? a.callMethod.apply(a, arguments) : a.queue.push(arguments) }, b._fbq || (b._fbq = a), a.push = a, a.loaded = !0, a.version = "2.0", a.queue = [], c = e.createElement(f), c.async = !0, c.src = g, d = e.getElementsByTagName(f)[0], d.parentNode.insertBefore(c, d)) }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js"); fbq("init", "1290758077759811"); fbq("init", "870989679998130"); fbq("init", "none"); fbq("init", "none");
         fbq("init", "none"); fbq("track", "PageView");</script>
-    <!--FIXLOAD
-    <noscript>
-        <img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=1290758077759811&amp;ev=PageView&amp;noscript=1">
-        <img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=870989679998130&amp;ev=PageView&amp;noscript=1">
-        <img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=none&amp;ev=PageView&amp;noscript=1">
-        <img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=none&amp;ev=PageView&amp;noscript=1">
-    </noscript>
-    
-    <script type="text/javascript"
-        id="">(function (b, f, d, g, a, c, e) { b[a] || (b[a] = {}, b[a].scriptToken = "Xy03NjIyMTQyMjc", b[a].callsQueue = [], b[a].api = function () { b[a].callsQueue.push(arguments) }, c = f.createElement(d), e = f.getElementsByTagName(d)[0], c.async = 1, c.src = g, c.id = a + d, e.parentNode.insertBefore(c, e)) })(window, document, "script", "https://cdn.oribi.io/Xy03NjIyMTQyMjc/oribi.js", "ORIBI");</script>
-    <script type="text/javascript"
-        id="">(function () { var a = document.createElement("script"); a.type = "text/javascript"; a.async = !0; a.src = "//siteimproveanalytics.com/js/siteanalyze_6044943.js"; var b = document.getElementsByTagName("script")[0]; b.parentNode.insertBefore(a, b) })();</script>
-
-    <img class="ywa-10000" style="display: none;"
-        src="https://sp.analytics.yahoo.com/sp.pl?a=10000&amp;d=Thu%2C%2007%20Oct%202021%2005%3A35%3A09%20GMT&amp;n=4d&amp;b=Purdue%20Campus%20Map%20-%20West%20Lafayette%20Campus&amp;.yp=10095996&amp;f=https%3A%2F%2Fwww.purdue.edu%2Fcampus-map%2F%3F_ga%3D2.173646880.220339797.1633582008-1156996463.1619156552&amp;enc=UTF-8&amp;yv=1.10.1&amp;tagmgr=gtm"
-        alt="dot image pixel">
-    -->
     <script
         src="https://analytics.twitter.com/i/adsct?type=javascript&amp;version=2.0.4&amp;p_id=Twitter&amp;p_user_id=0&amp;txn_id=o17jh&amp;events=%5B%5B%22pageview%22%2Cnull%5D%5D&amp;tw_sale_amount=0&amp;tw_order_quantity=0&amp;tw_iframe_status=0&amp;event_id=ae0b25f8-2722-426a-a741-c4cd1da5b20e&amp;tw_document_href=https%3A%2F%2Fwww.purdue.edu%2Fcampus-map%2F%3F_ga%3D2.173646880.220339797.1633582008-1156996463.1619156552&amp;tpx_cb=twttr.conversion.loadPixels"
         type="text/javascript"></script>
