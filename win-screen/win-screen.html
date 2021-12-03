@@ -3,7 +3,127 @@
     <head>
         <link rel="stylesheet" href="win-screen.css">
     </head>
+    
     <body>
+        <main>
+            <div style="height: 5.5%; width: 100%; background-color: #cfb991; position: absolute; left: 0%; top: 0%;"></div>        
+
+            <div style="height: 100px; width: 100%; background-color: black; position: absolute; top: 5.5%; left: 0%;"></div>        
+
+            <object data="https://www.purdue.edu/purdue/images/PU-H.svg"
+                                    tabindex="-1" type="image/svg+xml" style="height: 84px; width: 252px; position: absolute; top: 6.5%; left: 20%;"> 
+                                    <img alt="Purdue University" src="https://www.purdue.edu/purdue/images/PU-H.png">
+                                </object>
+            <h1 style="color:white; clear: both; display: inline-block; overflow: hidden; white-space: nowrap; position:absolute; top: 8%; left: 36%; font-size: 17pt;">
+                Department of Computer Science
+            </h1>
+            <table style="position:absolute; top:20%; left: 20%;">
+                <tr>
+                    <th>
+                        High Scores
+                    </th>
+                </tr>
+                <tr>
+                    <td id="name1">
+                        <script>
+                            if (localStorage.getItem("firstUser") == null || localStorage.getItem("firstUser") == "null") {
+                                document.getElementById("name1").innerHTML="N/A";
+                            } else {
+                                document.getElementById("name1").innerHTML=localStorage.getItem("firstUser");
+                            }
+                        </script>
+                    </td>
+                    <td id="score1">
+                        <script>
+                            if (localStorage.getItem("firstScore") == null || localStorage.getItem("firstScore") == "null") {
+                                document.getElementById("score1").innerHTML="N/A";
+                            } else {
+                                document.getElementById("score1").innerHTML=localStorage.getItem("firstScore");
+                            }
+                        </script>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="name2">
+                        <script>
+                            if (localStorage.getItem("secondUser") == null || localStorage.getItem("secondUser") == "null") {
+                                document.getElementById("name2").innerHTML="N/A";
+                            } else {
+                                document.getElementById("name2").innerHTML=localStorage.getItem("secondUser");
+                            }
+                        </script>
+                    </td>
+                    <td id="score2">
+                        <script>
+                            if (localStorage.getItem("secondScore") == null || localStorage.getItem("secondScore") == "null") {
+                                document.getElementById("score2").innerHTML="N/A";
+                            } else {
+                                document.getElementById("score2").innerHTML=localStorage.getItem("secondScore");
+                            }
+                        </script>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="name3">
+                        <script>
+                            if (localStorage.getItem("thirdUser") == null || localStorage.getItem("thirdUser") == "null") {
+                                document.getElementById("name3").innerHTML="N/A";
+                            } else {
+                                document.getElementById("name3").innerHTML=localStorage.getItem("thirdUser");
+                            }
+                        </script>
+                    </td>
+                    <td id="score3">
+                        <script>
+                            if (localStorage.getItem("thirdScore") == null || localStorage.getItem("thirdScore") == "null") {
+                                document.getElementById("score3").innerHTML="N/A";
+                            } else {
+                                document.getElementById("score3").innerHTML=localStorage.getItem("thirdScore");
+                            }
+                        </script>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="name4">
+                        <script>
+                            if (localStorage.getItem("fourthUser") == null || localStorage.getItem("fourthUser") == "null") {
+                                document.getElementById("name4").innerHTML="N/A";
+                            } else {
+                                document.getElementById("name4").innerHTML=localStorage.getItem("fourthUser");
+                            }
+                        </script>
+                    </td>
+                    <td id="score4">
+                        <script>
+                            if (localStorage.getItem("fourthScore") == null || localStorage.getItem("fourthScore") == "null") {
+                                document.getElementById("score4").innerHTML="N/A";
+                            } else {
+                                document.getElementById("score4").innerHTML=localStorage.getItem("fourthScore");
+                            }
+                        </script>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="name5">
+                        <script>
+                            if (localStorage.getItem("fifthUser") == null || localStorage.getItem("fifthUser") == "null") {
+                                document.getElementById("name5").innerHTML="N/A";
+                            } else {
+                                document.getElementById("name5").innerHTML=localStorage.getItem("fifthUser");
+                            }
+                        </script>
+                    </td>
+                    <td id="score5">
+                        <script>
+                            if (localStorage.getItem("fifthScore") == null || localStorage.getItem("fifthScore") == "null") {
+                                document.getElementById("score5").innerHTML="N/A";
+                            } else {
+                                document.getElementById("score5").innerHTML=localStorage.getItem("fifthScore");
+                            }
+                        </script>
+                    </td>
+                </tr>
+            </table>
         <h1 style="display: flex; justify-content: center; align-items: center; top: 20%; left: 30%; right: 30%; position: absolute;">GAME OVER</h1>
         <script>
             var pageURL = window.location.search.substring(1);
@@ -19,7 +139,7 @@
             <div class="podium__item">
                 <div id="seconduser" class="podium__user"></div>
                 <script>
-                    document.getElementById("seconduser").innerHTML=secondUser;
+                    document.getElementById("seconduser").innerHTML="Loser: "+secondUser;
                 </script>
                 <img id="secondimage" class="podium__image"></img>
                 <script>
@@ -27,13 +147,13 @@
                 </script>
                 <div id="secondentity" class="podium__rank second"></div>
                 <script>
-                    document.getElementById("secondentity").innerHTML=second;
+                    document.getElementById("secondentity").innerHTML=second+"pts";
                 </script>
             </div>
             <div class="podium__item">
                 <div id="winneruser" class="podium__user"></div>
                 <script>
-                    document.getElementById("winneruser").innerHTML=winnerUser;
+                    document.getElementById("winneruser").innerHTML="Winner: "+winnerUser;
                 </script>
                 <img id="winnerimage" class="podium__image"></img>
                 <script>
@@ -41,13 +161,10 @@
                 </script>
                 <div id = "winnerentity" class="podium__rank first"></div>
                 <script>
-                    document.getElementById("winnerentity").innerHTML=winner;
+                    document.getElementById("winnerentity").innerHTML=winner+"pts";
                 </script>
             </div>
-            <div class="podium__item">
-                <img id="thirdimage" class="podium__image"></img>
-                <div class="podium__rank third"></div>
-            </div>
         </div>
+    </main>
     </body>
 </html>
