@@ -767,7 +767,7 @@ else{
 for (var i = 0; i < arenaElementIds.length; i++) {
   var genElement = document.getElementById(arenaElementIds[i].getHtmlElementID());
   if (genElement != null){
-    const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, 'https://www.digitalscrapbook.com/sites/default/files/styles/456_scale/public/s3fs-user-content/template-image/user-12831/node-25755/my-baptism-checkered-doodles-overlay-template-doodle-checks-lines.png', true, false, 'DesObj', arenaElementIds[i]);
+    const tempEntity = new Entity(genElement.getBoundingClientRect().bottom - genElement.getBoundingClientRect().top, genElement.getBoundingClientRect().right - genElement.getBoundingClientRect().left, '', true, false, 'DesObj', arenaElementIds[i]);
     tempEntity.setStartingPosition(genElement.getBoundingClientRect().left, genElement.getBoundingClientRect().top-CANVAS_OFFSET);
     tempEntity.setEntityID(arenaElementIds[i].getHtmlElementID());
     nonDesEntityNumber++;
