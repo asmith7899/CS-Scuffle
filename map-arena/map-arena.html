@@ -21,6 +21,7 @@
     <!-- Custom styles for this map -->
     <link rel="stylesheet" href="https://js.arcgis.com/3.15/dijit/themes/soria/soria.css">
     <link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css">
+   <!--<script src="https://js.arcgis.com/4.21/"></script>-->
     <!-- <link href="/purdue/css/2015/home.css" rel="stylesheet"/> -->
 
     <!-- Bootstrap-map-js -->
@@ -232,6 +233,7 @@
     <meta http-equiv="origin-trial"
         content="A3v9QjmVUCOO7YqFMKHP/NKbn6kY1G1pa2S1TfeXJZUD/tysMONTy6lV0Jkou3rrCjSKRGbqTrgTaZkm1XJ7pQUAAACKeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ21hbmFnZXIuY29tOjQ0MyIsImZlYXR1cmUiOiJDb252ZXJzaW9uTWVhc3VyZW1lbnQiLCJleHBpcnkiOjE2NDMxNTUxOTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9">
     <script src="https://kit.fontawesome.com/b8a5583dfc.js" crossorigin="anonymous"></script>
+    <!--<script data-main="scripts/main" src="require.js"></script>-->
 </head>
 
 <body>
@@ -319,14 +321,14 @@
     </div>
     <div id="map" class="map" data-basemap="topo" data-zoom="18" data-scale="2256.994353" data-loaded="">
 
-        <div id="map_root" style="width: 1504px; height: 750px; direction: ltr;" class="esriMapContainer">
+        <div id="map_root" style="width: 1504px; height: 1000px; direction: ltr;" class="esriMapContainer">
             <div id="map_container" style="position: absolute; cursor: default; user-select: none; clip: auto;"
                 class="esriMapContainer">
                 <div id="map_layers" class="esriMapLayers">
-                    <div style="position: absolute; width: 1504px; height: 750px; overflow: visible; transform: translate3d(-14px, -165px, 0px); display: block;"
+                    <div style="position: absolute; width: 1504px; height: 1000px; overflow: visible; transform: translate3d(-14px, -165px, 0px); display: block;"
                         id="map_layer0">
                         <div
-                            style="position: absolute; width: 1504px; height: 750px; overflow: visible; transition: transform 500ms ease 0s;">
+                            style="position: absolute; width: 1504px; height: 1000px; overflow: visible; transition: transform 500ms ease 0s;" id="mapplus">
                             <img id="map_layer0_tile_17_0_0" alt="" class="layerTile"
                                 style="width: 256px; height: 256px; visibility: visible; transform: translate3d(-26px, 101px, 0px);"
                                 src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/18/98834/67780"><img
@@ -413,10 +415,10 @@
                                 src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/18/98837/67786">
                         </div>
                     </div>
-                    <div style="position: absolute; width: 1504px; height: 714px; overflow: visible; transform: translate3d(-14px, -165px, 0px); display: block;"
+                    <div style="position: absolute; width: 1504px; height: 1000px; overflow: visible; transform: translate3d(-14px, -165px, 0px); display: block;"
                         id="map_OpenStreetMap">
                         <div
-                            style="position: absolute; width: 1504px; height: 714px; overflow: visible; transition: transform 500ms ease 0s;">
+                            style="position: absolute; width: 1504px; height: 1000px; overflow: visible; transition: transform 500ms ease 0s;" id="mapplus2">
                             <img id="map_OpenStreetMap_tile_17_1_0" alt="" class="layerTile"
                                 style="width: 256px; height: 256px; visibility: visible; transform: translate3d(-26px, 101px, 0px); opacity: 0.51;"
                                 src="http://c.tile.openstreetmap.org/18/67780/98834.png"><img
@@ -503,10 +505,10 @@
                                 src="http://c.tile.openstreetmap.org/18/67786/98837.png">
                         </div>
                     </div>
-                    <div style="position: absolute; width: 1504px; height: 714px; overflow: visible; transform: translate3d(0px, 0px, 0px);"
+                    <div style="position: absolute; width: 1504px; height: 1000px; overflow: visible; transform: translate3d(0px, 0px, 0px);"
                         id="map_World_Street_Map_4287">
                         <div
-                            style="position: absolute; width: 1504px; height: 714px; overflow: visible; transition: transform 500ms ease 0s;">
+                            style="position: absolute; width: 1504px; height: 1000px; overflow: visible; transition: transform 500ms ease 0s;" id="map_g">
                         </div>
                     </div><svg overflow="hidden" width="1504" height="750"
                         style="overflow: visible; position: absolute;" id="map_gc">
@@ -1103,7 +1105,7 @@
 
     <!-- FIXLOAD
     <script src="https://js.arcgis.com/3.15/"></script>
-    -->
+  -->
     <script>
         var map;
 
@@ -1113,6 +1115,7 @@
             // these modules must be in line with what is called in the function (map with map, etc)
         ], function (Map, Scalebar, Popup, PopupTemplate, PopupMobile, InfoWindow, query, queryTask, arcgisUtils, FeatureLayer, SimpleFillSymbol, Color, Search, InfoTemplate, domClass, array, domConstruct, on, domStyle) {
 
+            esriConfig.apiKey = "AAPK303743cdb52747a39831e56f8ed673c1fQhIPRiPG7sOZTYwiAfhHv88sAQTL2h9NZdEJSxGyQ1bhbXEmSoTHo4FXVbKs3fP";
 
             /* EDIT THIS FOR MAP UPDATE */
 
@@ -1252,6 +1255,35 @@
 
         }); // end of require and modules
     </script>
+        <script>
+            var map = document.getElementById("mapplus");
+            map.style.width = screen.width;
+            map.style.height = screen.height;
+            var map_root = document.getElementById("map_root");
+            map_root.style.width = screen.width;
+            map_root.style.height = screen.height;
+            var map_layer = document.getElementById("map_layer0");
+            map_layer.style.width = screen.width;
+            map_layer.style.height = screen.height;
+            mapOpen = document.getElementById("map_OpenStreetMap");
+            mapOpen.style.width = screen.width;
+            mapOpen.style.height = screen.height;
+            var map2 = document.getElementById("mapplus2");
+            map2.style.width = screen.width;
+            map2.style.height = screen.height;
+            var mapg = document.getElementById("map_g");
+            mapg.style.width = screen.width;
+            mapg.style.height = screen.height;
+            var mapgc = document.getElementById("map_gc");
+            mapgc.style.width = screen.width;
+            mapgc.style.height = screen.height;
+            var mapWorld = document.getElementById("map_World_Street_Map_4287");
+            mapWorld.style.width = screen.width;
+            mapWorld.style.height = screen.height;
+            var mapWorld2 = document.getElementById("halo_map_labels_255_255_255_1_3");
+            mapWorld2.style.width = screen.width;
+            mapWorld2.style.height = screen.height;
+        </script>
 
     <!-- Bootstrap core JavaScript
                 ================================================== -->
