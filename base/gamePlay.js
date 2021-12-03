@@ -728,19 +728,25 @@ var nonDesEntityNumber = 2;   //Number of non-destructible entities
 //html ElementID Array
 if (arena == FIRST_ARENA){
 
-  var arenaElementIds = new Array(new HtmlElement('map_layer0_tile_17_0_0', 16, -37), new HtmlElement('map_layer0_tile_17_0_1', -240, -37), new HtmlElement('map_layer0_tile_17_1_0', 16, 219),
-                                  new HtmlElement('map_layer0_tile_17_1_1',-240, 219), new HtmlElement('map_layer0_tile_17_0_2',-496, -37), new HtmlElement('map_layer0_tile_17_1_2',-496, 219),
-                                  new HtmlElement('map_layer0_tile_17_0_3',-752, -37), new HtmlElement('map_layer0_tile_17_1_3',-752, 219), new HtmlElement('map_layer0_tile_17_0_4',-1008, -37),
-                                  new HtmlElement('map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219),
-                                  new HtmlElement('map_layer0_tile_17_0_6',-1520, -37), new HtmlElement('map_layer0_tile_17_1_6',-1520, 219), new HtmlElement('map_layer0_tile_17_0_7',-1776, -37),
-                                  new HtmlElement('map_layer0_tile_17_1_7',-1776, 219), new HtmlElement('map_layer0_tile_17_0_8',-2032, -37), new HtmlElement('map_layer0_tile_17_1_8',-2032, 219),
-                                  new HtmlElement('map_layer0_tile_17_0_9',-2288, -37), new HtmlElement('map_layer0_tile_17_1_9',-2288, 219), new HtmlElement('map_layer0_tile_17_0_10',-2544, -37),
-                                  new HtmlElement('map_layer0_tile_17_1_10',-2544, 219), new HtmlElement('map_layer0_tile_17_0_11',-2800, -37), new HtmlElement('map_layer0_tile_17_1_11',-2800, 219),
-                                  new HtmlElement('map_layer0_tile_17_0_12',-3056, -37), new HtmlElement('map_layer0_tile_17_1_12',-3056, 219), new HtmlElement('map_layer0_tile_17_0_13',-3312, -37), new HtmlElement('map_layer0_tile_17_1_13',-3312, 219),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_1_0', 16, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_1', 16, 219), new HtmlElement('map_OpenStreetMap_tile_17_1_2', -240, -37),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_1_3', -240, 219), new HtmlElement('map_OpenStreetMap_tile_17_1_4', -496, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_5', -496, 219),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_1_6', -752, -37), new HtmlElement('map_OpenStreetMap_tile_17_2_0', -752, 219), new HtmlElement('map_OpenStreetMap_tile_17_3_0', -1008, -37),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_4_0', -1008, 219), new HtmlElement('map_OpenStreetMap_tile_17_2_1', -1264, -37), new HtmlElement('map_OpenStreetMap_tile_17_3_1', 0, 0)
+  var arenaElementIds = new Array(new HtmlElement('map_layer0_tile_17_0_0', 26, 101), new HtmlElement('map_layer0_tile_17_0_1', -486, 101), new HtmlElement('map_layer0_tile_17_1_0', -230, 101),
+                                  new HtmlElement('map_layer0_tile_17_1_1',-742, 101), new HtmlElement('map_layer0_tile_17_0_2',-998, 101), new HtmlElement('map_layer0_tile_17_1_2',-1254, 101),
+                                  new HtmlElement('map_layer0_tile_17_0_3',-1510, 101), new HtmlElement('map_layer0_tile_17_1_3', 26, 357), new HtmlElement('map_layer0_tile_17_0_4',-1008, 613),
+                                  new HtmlElement('map_layer0_tile_17_1_4', 26,  869), new HtmlElement('map_layer0_tile_17_0_5',-230, 357), new HtmlElement('map_layer0_tile_17_1_5',-230, 613),
+                                  new HtmlElement('map_layer0_tile_17_0_6',-230, 869), new HtmlElement('map_layer0_tile_17_1_6',-486, 357), new HtmlElement('map_layer0_tile_17_0_7',-486, 613),
+                                  new HtmlElement('map_layer0_tile_17_1_7',-486, 869), new HtmlElement('map_layer0_tile_17_0_8',-742, 357), new HtmlElement('map_layer0_tile_17_1_8',-742, 613),
+                                  new HtmlElement('map_layer0_tile_17_0_9',-742, 869), new HtmlElement('map_layer0_tile_17_1_9',-998, 357), new HtmlElement('map_layer0_tile_17_0_10',-998, 613),
+                                  new HtmlElement('map_layer0_tile_17_1_10',-998, 869), new HtmlElement('map_layer0_tile_17_0_11',-1254, 357), new HtmlElement('map_layer0_tile_17_1_11',-1254, 613),
+                                  new HtmlElement('map_layer0_tile_17_0_12',-1254, 869), new HtmlElement('map_layer0_tile_17_1_12',-1510, 457), new HtmlElement('map_layer0_tile_17_0_13',-1510, 613), new HtmlElement('map_layer0_tile_17_1_13',-1510, 869),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_0', 26, 101), new HtmlElement('map_OpenStreetMap_tile_17_1_1', -230, 101), new HtmlElement('map_OpenStreetMap_tile_17_1_2', -486, 101),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_3', -742, 101), new HtmlElement('map_OpenStreetMap_tile_17_1_4', -998, 101), new HtmlElement('map_OpenStreetMap_tile_17_1_5', -1254, 101),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_6', -1510, 101), new HtmlElement('map_OpenStreetMap_tile_17_2_0', -26, 357), new HtmlElement('map_OpenStreetMap_tile_17_3_0', -26, 613),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_0', -26, 869), new HtmlElement('map_OpenStreetMap_tile_17_2_1', -230, 357), new HtmlElement('map_OpenStreetMap_tile_17_3_1', -230, 613),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_1', -230, 869), new HtmlElement('map_OpenStreetMap_tile_17_2_2', -486, 357), new HtmlElement('map_OpenStreetMap_tile_17_3_2', -486, 613), 
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_2', -486, 869), new HtmlElement('map_OpenStreetMap_tile_17_2_3', -742, 357), new HtmlElement('map_OpenStreetMap_tile_17_3_3', -742, 613), 
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_3', -742, 869), new HtmlElement('map_OpenStreetMap_tile_17_2_4', -998, 357), new HtmlElement('map_OpenStreetMap_tile_17_3_4', -998, 613), 
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_1', -998, 869), new HtmlElement('map_OpenStreetMap_tile_17_2_5', -1254, 357), new HtmlElement('map_OpenStreetMap_tile_17_3_5', -1254, 613), 
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_5', -1254, 869), new HtmlElement('map_OpenStreetMap_tile_17_2_6', -1510, 357), new HtmlElement('map_OpenStreetMap_tile_17_3_6', -1510, 613),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_6', -1510, 869),
                                 );  //Use for map-arena
 }
 else if (arena == SECOND_ARENA){
