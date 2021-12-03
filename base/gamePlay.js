@@ -495,6 +495,12 @@ class Entity {
     return this.y;
   }
 
+  getSizeUnderlayedHtmlElement() {
+    htmlHeight = document.getElementById(this.underlayedHtmlElement.getHtmlElementID()).offsetHeight;
+    htmlWidth = document.getElementById(this.underlayedHtmlElement.getHtmlElementID()).offsetWidth;
+    return htmlHeight * htmlWidth;
+  }
+
   getDx() {
     return this.dx;
   }
@@ -868,6 +874,7 @@ function rectCollisionCheck(entity1, entity2) {
 */
 function entBumpRight(bumpEnt, multiplier = 1) {
   bumpMovement.play();  //Play bump sound effect
+  weightedStaminaMultiplier = 1 + (.01 * bumpEnt.getSizeUnderlayedHtmlElement);
   multipliedBumpMov = bumpMovPerFrame * multiplier;
   if (bumpEnt.getX() + multipliedBumpMov > canvas.width - bumpEnt.getWidth()) {
     bumpEnt.setX(canvas.width - bumpEnt.getWidth() - multipliedBumpMov);
@@ -879,7 +886,7 @@ function entBumpRight(bumpEnt, multiplier = 1) {
   for (var i = 0; i < entities.length; i++) {
     if (rectCollisionCheck(bumpEnt, entities[i]) && bumpEnt.getEntityID() != entities[i].getEntityID()) {
       if (entities[i].getActionState() != HIT_STATE) {
-        entities[i].decreaseStamina(BUMP_DAMAGE*bumpEnt.getDamageMulti());
+        entities[i].decreaseStamina(BUMP_DAMAGE*bumpEnt.getDamageMulti()*weightedStaminaMultiplier);
         if (entities[i].isACharacter() == true) {
           entities[i].setKnockbackDirection(RIGHT_DIR);
           bumpEnt.addScore(100);
