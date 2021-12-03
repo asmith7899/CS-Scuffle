@@ -673,10 +673,15 @@ if (arena == FIRST_ARENA){
                                   new HtmlElement('map_layer0_tile_17_1_1',-240, 219), new HtmlElement('map_layer0_tile_17_0_2',-496, -37), new HtmlElement('map_layer0_tile_17_1_2',-496, 219),
                                   new HtmlElement('map_layer0_tile_17_0_3',-752, -37), new HtmlElement('map_layer0_tile_17_1_3',-752, 219), new HtmlElement('map_layer0_tile_17_0_4',-1008, -37),
                                   new HtmlElement('map_layer0_tile_17_1_4',-1008, 219), new HtmlElement('map_layer0_tile_17_0_5',-1264, -37), new HtmlElement('map_layer0_tile_17_1_5',-1264, 219),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_0_0', 16, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_0', 16, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_1', -240, -37),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_1_1', -240, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_2', -496, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_2', -496, 219),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_0_3', -752, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_3', -752, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_4', -1008, -37),
-                                  new HtmlElement('map_OpenStreetMap_tile_17_1_4', -1008, 219), new HtmlElement('map_OpenStreetMap_tile_17_0_5', -1264, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_5', 0, 0)
+                                  new HtmlElement('map_layer0_tile_17_0_6',-1520, -37), new HtmlElement('map_layer0_tile_17_1_6',-1520, 219), new HtmlElement('map_layer0_tile_17_0_7',-1776, -37),
+                                  new HtmlElement('map_layer0_tile_17_1_7',-1776, 219), new HtmlElement('map_layer0_tile_17_0_8',-2032, -37), new HtmlElement('map_layer0_tile_17_1_8',-2032, 219),
+                                  new HtmlElement('map_layer0_tile_17_0_9',-2288, -37), new HtmlElement('map_layer0_tile_17_1_9',-2288, 219), new HtmlElement('map_layer0_tile_17_0_10',-2544, -37),
+                                  new HtmlElement('map_layer0_tile_17_1_10',-2544, 219), new HtmlElement('map_layer0_tile_17_0_11',-2800, -37), new HtmlElement('map_layer0_tile_17_1_11',-2800, 219),
+                                  new HtmlElement('map_layer0_tile_17_0_12',-3056, -37), new HtmlElement('map_layer0_tile_17_1_12',-3056, 219), new HtmlElement('map_layer0_tile_17_0_13',-3312, -37), new HtmlElement('map_layer0_tile_17_1_13',-3312, 219),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_0', 16, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_1', 16, 219), new HtmlElement('map_OpenStreetMap_tile_17_1_2', -240, -37),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_3', -240, 219), new HtmlElement('map_OpenStreetMap_tile_17_1_4', -496, -37), new HtmlElement('map_OpenStreetMap_tile_17_1_5', -496, 219),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_1_6', -752, -37), new HtmlElement('map_OpenStreetMap_tile_17_2_0', -752, 219), new HtmlElement('map_OpenStreetMap_tile_17_3_0', -1008, -37),
+                                  new HtmlElement('map_OpenStreetMap_tile_17_4_0', -1008, 219), new HtmlElement('map_OpenStreetMap_tile_17_2_1', -1264, -37), new HtmlElement('map_OpenStreetMap_tile_17_3_1', 0, 0)
                                 );  //Use for map-arena
 }
 else if (arena == SECOND_ARENA){
